@@ -8,7 +8,7 @@ import QtQuick.Effects
 Item {
     id: root
     property alias greenBar: greenBar
-    property alias pageText: caption
+    property alias pageText: caption.text
     property alias timer: timer
 
     property int scanTime: 3000

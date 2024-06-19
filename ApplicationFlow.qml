@@ -12,6 +12,9 @@ ApplicationFlowForm {
     property string platform: Qt.platform.os
     property string mode: ""
 
+    property string _nodeIP: ""
+    property string _nodeName: ""
+
     //! [Theme button]
     function themeButton() {
         if (Colors.currentTheme == Colors.dark) {
@@ -65,12 +68,27 @@ ApplicationFlowForm {
             }
 
         }
+    }
+
+    Component {
+        id: remoteNodePage
+        RemoteNode {
+            id: remoteNodeComp
+            visible: true
+            state: applicationFlow.mode
+            Component.onCompleted: {
+                remoteNodeComp.nodeUrl = _nodeIP
+                remoteNodeComp.nodeName = _nodeName
+            }
+        }
 
     }
 
-    function onNodeClicked(ipAddress) {
+    function onNodeClicked(nodeAddress, nodeName) {
         applicationFlow.state = "RemoteIP"
-//      stack.push(remotePage)
+        _nodeIP = nodeAddress
+        _nodeName = nodeName
+        stack.push(remoteNodePage)
     }
 
 /*
@@ -162,6 +180,14 @@ ApplicationFlowForm {
                 target: stack
                 anchors.top: toolbar.bottom
                 anchors.topMargin: 0
+            }
+        },
+        State {
+            name: "RemotePage"
+
+            PropertyChanges {
+                target: applicationFlow
+                previousState: "Remote"
             }
         }
     ]

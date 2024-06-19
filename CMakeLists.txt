@@ -39,6 +39,7 @@ qt_add_qml_module(appunicon_launcher
         Remote.qml
         ProgressItem.qml
         NodeItem.qml
+        RemoteNode.qml
 
     RESOURCES
         qtquickcontrols2.conf

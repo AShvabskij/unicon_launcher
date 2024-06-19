@@ -9,7 +9,7 @@ Item {
     required property var nodesList
 
     //  property alias model: repeater.model
-    signal sendNodeClicked(string ipAddress)
+    signal sendNodeClicked(string ipAddress, string name)
 
     Column {
         id: title
@@ -85,7 +85,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
 
                     onClicked: {
-                        sendNodeClicked(ipAddress)
+                        sendNodeClicked(ipAddress, name)
                     }
                 }
 
