@@ -52,6 +52,7 @@ void NodeListModel::init()
     n3.totalStartNumber = 1000;
     n3.status = NodeStatus::Normal;
     n3.ipAddress = "10.9.0.3";
+    n3.activated = false;
 
     m_nodes << n3;
 
@@ -101,16 +102,16 @@ QVariant NodeListModel::data(const QModelIndex & index, int role) const {
         return node.address;
     case LastAccessTimeRole:
         return node.lastAccessTime.toString( "yyyy-MM-dd hh:mm");
-    case workTimeRole:
+    case WorkTimeRole:
         return QString("%1h(%2\%)").arg(node.currWorkTime).arg(workTimeProc);
-    case startNumberRole:
+    case StartNumberRole:
         return QString("%1(%2\%)").arg(node.currStartNumber).arg(startNumberProc);
-    case statusRole:
-        return node.nodeStatusToString();
-    case ipAddressRole:
+    case StatusRole:
+        return node.activated ? node.nodeStatusToString() : "Not available";
+    case IPAddressRole:
         return node.ipAddress;
-    case activeRole:
-        return true;
+    case ActivatedRole:
+        return node.activated;
 
     default:
         break;
@@ -127,11 +128,11 @@ QHash<int, QByteArray> NodeListModel::roleNames() const {
     roles[OwnerRole] = "owner";
     roles[AddressRole] = "address";
     roles[LastAccessTimeRole] = "lastAccessTime";
-    roles[workTimeRole] = "workTime";
-    roles[startNumberRole] = "startNumber";
-    roles[statusRole] = "status";
-    roles[ipAddressRole] = "ipAddress";
-    roles[activeRole] = "active";
+    roles[WorkTimeRole] = "workTime";
+    roles[StartNumberRole] = "startNumber";
+    roles[StatusRole] = "status";
+    roles[IPAddressRole] = "ipAddress";
+    roles[ActivatedRole] = "activated";
 
     return roles;
 }

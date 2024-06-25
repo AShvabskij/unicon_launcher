@@ -47,11 +47,11 @@ public:
         OwnerRole,
         AddressRole,
         LastAccessTimeRole,
-        workTimeRole,
-        startNumberRole,
-        statusRole,
-        activeRole,
-        ipAddressRole
+        WorkTimeRole,
+        StartNumberRole,
+        StatusRole,
+        ActivatedRole,
+        IPAddressRole
 
     };
 

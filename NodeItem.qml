@@ -9,7 +9,7 @@ AbstractButton {
     // and/or personal preference on what looks nice.
     id: root
 
-    required property bool active
+    required property bool activated
     required property string name
     required property string region
     required property string owner
@@ -107,7 +107,7 @@ AbstractButton {
                         font.pixelSize: !root.isSmallLayout ? 20 : 16
                         font.weight: 600
                         font.family: "Titillium Web"
-                        color: active ? Constants.primaryTextColor : "#898989"
+                        color: activated ? Constants.primaryTextColor : "#898989"
                     }
 
                     Label {
@@ -115,7 +115,7 @@ AbstractButton {
                         font.pixelSize: 12
                         font.weight: 400
                         font.family: "Titillium Web"
-                        color:active ? Constants.primaryTextColor : "#898989"
+                        color:activated ? Constants.primaryTextColor : "#898989"
                     }
 
                     Label {
@@ -123,7 +123,7 @@ AbstractButton {
                         font.pixelSize: 12
                         font.weight: 400
                         font.family: "Titillium Web"
-                        color: active ? Constants.primaryTextColor : "#898989"
+                        color: activated ? Constants.primaryTextColor : "#898989"
                     }
                 }
             }
@@ -144,7 +144,7 @@ AbstractButton {
                         font.pixelSize: !root.isSmallLayout ? 14 : 12
                         font.weight: 400
                         font.family: "Titillium Web"
-                        color: active ? Constants.secondaryTextColor : "#898989"
+                        color: activated ? Constants.secondaryTextColor : "#898989"
                     }
                 }
             }
