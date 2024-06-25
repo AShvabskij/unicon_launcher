@@ -2,10 +2,16 @@
 #include <QQmlApplicationEngine>
 #include <QtWebView/QtWebView>
 
+#include "qtunnel.h"
+#include "nodelistmodel.h"
+
 int main(int argc, char *argv[])
 {
     QtWebView::initialize();
     QGuiApplication app(argc, argv);
+
+    qmlRegisterType<QTunnel>("qmlmodels", 1, 0,"QTunnel");
+    qmlRegisterType<NodeListModel>("qmlmodels", 1, 0,"NodeListModel");
 
     QQmlApplicationEngine engine;
     QObject::connect(
@@ -16,5 +22,11 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection);
     engine.loadFromModule("unicon_launcher", "Main");
 
+/*
+    NodeListModel nodeListModel;
+    nodeListModel.init();
+
+    engine.rootContext()->setContextProperty("nodeListModel", QVariant::fromValue(&nodeListModel));
+*/
     return app.exec();
 }

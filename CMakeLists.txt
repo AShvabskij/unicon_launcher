@@ -58,6 +58,12 @@ qt_add_qml_module(appunicon_launcher
         images/icons/ellipse_light.svg
         images/icons/node.svg
         images/icons/flag.svg
+
+    SOURCES
+        qtunnel.h
+        qtunnel.cpp
+        nodelistmodel.h
+        nodelistmodel.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

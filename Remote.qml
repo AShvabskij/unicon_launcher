@@ -2,9 +2,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
+import qmlmodels 1.0
 
 Item {
-    id: remotePage
+    id: root
     state: ""
     required property var nodesList
 
@@ -22,6 +23,7 @@ Item {
         rightPadding: 27
 
         bottomPadding: 13
+
 /*
         Label {
             id: heading
@@ -47,7 +49,6 @@ Item {
             elide: Text.ElideRight
         }
     }
-
 
     ScrollView {
         id: scrollView
@@ -93,6 +94,16 @@ Item {
         }
     }
 
+    QTunnel {
+        id: tunnelModel
+        onConnected:  {root.state = "connected"}
+        onErrorRaised: {root.error = tunnelModel.lastError}
+    }
 
+    Component.onCompleted: {
+        root.state = "connecting"
+        tunnelModel.connect();
+    }
 
 }
+

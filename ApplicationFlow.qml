@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 import QtQuick
 import QtWebView
+import qmlmodels 1.0
 
 ApplicationFlowForm {
     id: applicationFlow
@@ -62,7 +63,8 @@ ApplicationFlowForm {
         Remote {
             visible: true
             state: applicationFlow.mode
-            nodesList: nodeItemListModel
+//          nodesList: nodeItemListModel
+            nodesList: nodeListModel
             Component.onCompleted: {
                 sendNodeClicked.connect(onNodeClicked)
             }
@@ -192,66 +194,13 @@ ApplicationFlowForm {
         }
     ]
 
-    ListModel {
-        id: nodeItemListModel
-
-        ListElement {
-            region: qsTr("Katar")
-            name: qsTr("Starter 1")
-            address: qsTr("Katar techo park")
-            owner: qsTr("Totem Ltd")
-            iconName: "node.svg"
-            active: true
-            lastAccessTime: "12.12.2023 17:04"
-            workTime: "120h(30%)"
-            startNumber: "500(50%)"
-            status: ""
-            ipAddress: "10.9.0.1"
+    NodeListModel {
+        id: nodeListModel
+        Component.onCompleted: {
+            // root.state = "connecting"
+            nodeListModel.init();
         }
 
-        ListElement {
-            region: qsTr("Katar")
-            name: qsTr("Starter 2")
-            address: qsTr("Katar techo park")
-            owner: qsTr("Totem Ltd")
-
-            iconName: "node.svg"
-            active: true
-            lastAccessTime: "19.11.2023 11:44"
-            workTime: "12h(3%)"
-            startNumber: "7(1%)"
-            status: "service required!"
-            ipAddress: "10.9.0.2"
-        }
-
-        ListElement {
-            region: qsTr("Munhen")
-            name: qsTr("RND Lab")
-            address: qsTr("Germany Hermann-Ritter-Str. 110 Bremen")
-            owner: qsTr("IGEL Electric GmbH")
-
-            iconName: "node.svg"
-            active: true
-            lastAccessTime: "09.07.2023 13:04"
-            workTime: "50h(9%)"
-            startNumber: "10(7%)"
-            status: ""
-            ipAddress: "10.9.0.3"
-        }
-
-        ListElement {
-            region: qsTr("Munhen")
-            name: qsTr(" Starter 1")
-            address: qsTr("Germany Munhen")
-            owner: qsTr("IGEL Electric GmbH")
-
-            iconName: "node.svg"
-            active: true
-            lastAccessTime: "19.11.2023 11:44"
-            workTime: "1200h(93%)"
-            startNumber: "700(91%)"
-            status: "service required!"
-            ipAddress: "10.9.0.4"
-        }
     }
+
 }

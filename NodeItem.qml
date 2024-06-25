@@ -15,7 +15,6 @@ AbstractButton {
     required property string owner
     required property string address
 
-    required property string iconName
     required property string lastAccessTime
     required property string workTime
     required property string startNumber
@@ -23,6 +22,7 @@ AbstractButton {
     required property string ipAddress
 
     property bool isSmallLayout: false
+    property string iconName: "node.svg"
 
     states: State {
         name: "pressed"
