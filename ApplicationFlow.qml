@@ -64,7 +64,7 @@ ApplicationFlowForm {
             visible: true
             state: applicationFlow.mode
 //          nodesList: nodeItemListModel
-            nodesList: nodeListModel
+//          nodesList: nodeList
             Component.onCompleted: {
                 sendNodeClicked.connect(onNodeClicked)
             }
@@ -193,14 +193,4 @@ ApplicationFlowForm {
             }
         }
     ]
-
-    NodeListModel {
-        id: nodeListModel
-        Component.onCompleted: {
-            // root.state = "connecting"
-            nodeListModel.init();
-        }
-
-    }
-
 }

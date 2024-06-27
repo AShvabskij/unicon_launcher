@@ -21,7 +21,7 @@ QtObject {
     readonly property color accentColor: isDarkTheme ? "#002125" : "#FFFFFF"
     readonly property color primaryTextColor: isDarkTheme ? "#FFFFFF": "#000000"
     readonly property color secondaryTextColor: isDarkTheme ? "#D9D9D9" : "#000000"//"#c0c0c0": "#000000"
-    readonly property color iconColor: isDarkTheme ? "#D9D9D9" : "#00414A"
+    readonly property color iconColor: isDarkTheme ? "#FFFFFF" : "#00414A"
     readonly property color iconColorWarn: isDarkTheme ? "#FF0010" : "#00414A"
 
     readonly property color backgroundColor: "#EAEAEA"

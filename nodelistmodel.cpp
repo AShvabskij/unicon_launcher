@@ -1,5 +1,5 @@
 #include "nodelistmodel.h"
-
+#include "licenseservice.h"
 
 NodeListModel::NodeListModel(QObject *parent)
     : QAbstractListModel(parent) {
@@ -9,67 +9,105 @@ NodeListModel::NodeListModel(QObject *parent)
 
 void NodeListModel::init()
 {
+
+    LicenseService license;
+
+    QVariantList nodes;
+    long ret = license.getNodes(nodes);
+    if (ret != 1 ) {
+        emit errorRaised("Couldn't get nodes configuration", "Make sure the license file is valid");
+        license.createLicFile();
+        return;
+    }
+
+    if (nodes.count() == 0) {
+        // log error, it seems json compatability error
+        emit errorRaised("Couldn't get nodes configuration", "Make sure the license file is valid");
+        return;
+    }
+
+    for (QVariant nodeObj: nodes) {
+        QVariantMap nodeMap = nodeObj.toMap();
+
+        Node node;
+        node.name = nodeMap.value("name").toString();
+        node.region = nodeMap.value("region").toString();
+        node.address = nodeMap.value("address").toString();
+        node.owner = nodeMap.value("owner").toString();
+        node.ipAddress = nodeMap.value("ipAddress").toString();
+        node.activated = false;
+
+        addItem(node);
+    }
+}
+
+void NodeListModel::update()
+{
+    QList<Node> fakeNodes;
     QString dtFormat = "yyyy-MM-dd hh:mm";
     Node n1;
-    n1.region = "Katar";
-    n1.name = "Starter 1";
-    n1.address = "Katar techo park";
-    n1.owner = "Totem Ltd";
     n1.lastAccessTime = QDateTime::fromString("2023-12-12 17:04", dtFormat);
     n1.currWorkTime = 120;
     n1.totalWorkTime = 400;
     n1.currStartNumber = 500;
     n1.totalStartNumber = 1000;
     n1.status = NodeStatus::Normal;
-    n1.ipAddress = "10.9.0.1";
+    n1.activated = true;
 
-    m_nodes << n1;
+    fakeNodes << n1;
 
     Node n2;
-    n2.region = "Katar";
-    n2.name = "Starter 2";
-    n2.address = "Katar techo park";
-    n2.owner = "Totem Ltd";
     n2.lastAccessTime = QDateTime::fromString("2023-11-19 11:44", dtFormat);
     n2.currWorkTime = 12;
     n2.totalWorkTime = 400;
     n2.currStartNumber = 7;
     n2.totalStartNumber = 1000;
     n2.status = NodeStatus::Normal;
-    n2.ipAddress = "10.9.0.2";
+    n2.activated = true;
 
-    m_nodes << n2;
+    fakeNodes << n2;
 
     Node n3;
-    n3.region = "Munhen";
-    n3.name = "RND Lab";
-    n3.address = "Germany Hermann-Ritter-Str. 110 Bremen";
-    n3.owner = "IGEL Electric GmbH";
     n3.lastAccessTime = QDateTime::fromString("2023-07-09 13:04", dtFormat);
     n3.currWorkTime = 50;
     n3.totalWorkTime = 500;
     n3.currStartNumber = 10;
     n3.totalStartNumber = 1000;
     n3.status = NodeStatus::Normal;
-    n3.ipAddress = "10.9.0.3";
     n3.activated = false;
 
-    m_nodes << n3;
+    fakeNodes << n3;
 
     Node n4;
-    n4.region = "Munhen";
-    n4.name = "Starter 1";
-    n4.address = "Germany Munhen";
-    n4.owner = "IGEL Electric GmbH";
     n4.lastAccessTime = QDateTime::fromString("2023-11-19 11:44",  dtFormat);
     n4.currWorkTime = 700;
     n4.totalWorkTime = 500;
     n4.currStartNumber = 1200;
     n4.totalStartNumber = 1000;
     n4.status = NodeStatus::ServiceRequired; // service required
-    n4.ipAddress = "10.9.0.4";
+    n4.activated = true;
 
-    m_nodes << n4;
+    fakeNodes << n4;
+
+    int iIndex = 0;
+    int iLastIndex = m_nodes.count() -1;
+
+    for (Node& node: m_nodes) {
+        Node fakeNode = fakeNodes.value(iIndex++, Node());
+        node.lastAccessTime = fakeNode.lastAccessTime;
+        node.currWorkTime = fakeNode.currWorkTime;
+        node.currStartNumber = fakeNode.currStartNumber;
+        node.totalWorkTime = fakeNode.totalWorkTime;
+        node.totalStartNumber = fakeNode.totalStartNumber;
+        node.status = fakeNode.status;
+        node.activated = fakeNode.activated;
+    }
+
+    QList<int> roles;
+    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+    QModelIndex mFirstIndex = this->index(0);
+    QModelIndex mLastIndex = this->index(iLastIndex);
+    emit dataChanged(mFirstIndex, mLastIndex, roles);
 }
 
 void NodeListModel::addItem(const Node &node)
@@ -101,11 +139,11 @@ QVariant NodeListModel::data(const QModelIndex & index, int role) const {
     case AddressRole:
         return node.address;
     case LastAccessTimeRole:
-        return node.lastAccessTime.toString( "yyyy-MM-dd hh:mm");
+        return node.activated ? node.lastAccessTime.toString( "yyyy-MM-dd hh:mm"): "";
     case WorkTimeRole:
-        return QString("%1h(%2\%)").arg(node.currWorkTime).arg(workTimeProc);
+        return node.activated ? QString("%1h(%2\%)").arg(node.currWorkTime).arg(workTimeProc) : "";
     case StartNumberRole:
-        return QString("%1(%2\%)").arg(node.currStartNumber).arg(startNumberProc);
+        return node.activated ? QString("%1(%2\%)").arg(node.currStartNumber).arg(startNumberProc) : "";
     case StatusRole:
         return node.activated ? node.nodeStatusToString() : "Not available";
     case IPAddressRole:

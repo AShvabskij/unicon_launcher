@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QProcess>
+#include <QTcpSocket>
 #include <QTimer>
 
 QTunnel::QTunnel(QObject *parent) : QObject(parent)
@@ -33,66 +34,16 @@ QTunnel::~QTunnel()
     delete m_proc;
 }
 
-void QTunnel::createLicFile()
-{
-    QJsonObject res;
-    QJsonObject config;
-
-    QJsonArray nodesArr;
-
-    config["PrivateKey"] = "oIsGee+Dr8zECo/hs+7LIvJO7b+T6R8f4mdBLb7fynE=";
-    config["Address"] = "10.9.0.2/24";
-
-    config["PublicKey"] = "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=";
-    config["AllowedIPs"] = "10.9.0.0/24";
-    config["Endpoint"] = "92.118.113.157:51820";
-
-    QJsonObject nodeObj1;
-    nodeObj1["region"] = "Katar";
-    nodeObj1["name"] = "Starter 2";
-    nodeObj1["address"] = "Katar techo park";
-    nodeObj1["owner"] = "Totem Ltd";
-    nodeObj1["ipAddress"] = "10.9.0.5";
-
-    QJsonObject nodeObj2;
-    nodeObj2["region"] = "Munhen";
-    nodeObj2["name"] = "RND Lab";
-    nodeObj2["address"] = "Germany Hermann-Ritter-Str. 110 Bremen";
-    nodeObj2["owner"] = "IGEL Electric GmbH";
-    nodeObj2["ipAddress"] = "10.9.0.22";
-
-    nodesArr << nodeObj1 << nodeObj2;
-
-    res["nodes"] = nodesArr;
-    res["config"] = config;
-
-    QString path = QCoreApplication::applicationDirPath() + "\\config";
-    QString baseFileName = "license";
-
-    QString datFile = path + "/" + baseFileName + ".dat";
-    saveObj(datFile, res, false);
-}
 
 long QTunnel::createConfigFile()
 {
+    LicenseService license;
 
-    QString path = QCoreApplication::applicationDirPath() + "\\config";
-    QString datFileName = path + "/" + "license" + ".dat";
-    QFile datFile( datFileName );
-
-    if(!datFile.open( QIODevice::ReadOnly | QIODevice::Text ))
-    {
-        QTextStream(stdout) << "file open failed: " << datFileName << Qt::endl;
-        return 0;
+    QVariantMap configObj;
+    long res = license.getConfig(configObj);
+    if (res != 1) {
+        return res;
     }
-
-    QTextStream inStream( &datFile );
-    QString content = inStream.readAll();
-    datFile.close();
-
-    QJsonDocument d = QJsonDocument::fromJson(content.toUtf8());
-    QJsonObject obj = d.object();
-    QJsonObject configObj = obj.value("config").toObject();
 
     QString configPath = QCoreApplication::applicationDirPath() + "\\config";
     m_configFile = configPath + "\\unicon.conf";
@@ -108,69 +59,41 @@ long QTunnel::createConfigFile()
     QTextStream outStream( &configFile );
     outStream.setEncoding(QStringConverter::Utf8);
 
-    generateContent(configObj, outStream);
+    res = generateContent(configObj, outStream);
     configFile.close();
 
-    return 1;
-}
-
-long QTunnel::generateContent(const QJsonObject& sourceObj, QTextStream& stream)
-{
-    stream << "[Interface]" << Qt::endl;
-    stream << "PrivateKey = ";
-    stream << sourceObj["PrivateKey"].toString() << Qt::endl;
-    stream << "Address = ";
-    stream << sourceObj["Address"].toString() << Qt::endl;
-
-    stream << Qt::endl;
-    stream << "[Peer]" << Qt::endl;
-    stream << "PublicKey = ";
-    stream << sourceObj["PublicKey"].toString() << Qt::endl;
-    stream << "AllowedIPs = ";
-    stream << sourceObj["AllowedIPs"].toString() << Qt::endl;
-    stream << "Endpoint = ";
-    stream << sourceObj["Endpoint"].toString() << Qt::endl;
-
-    return 1;
-}
-
-long QTunnel::saveObj(const QString fileName, const QJsonObject &obj, bool useBinaryFormat)
-{
-    long res = 1;
-
-    QFile file( fileName );
-
-    if (useBinaryFormat) {
-        if( !file.open( QIODevice::WriteOnly |  QIODevice::Truncate ) ) {
-            QTextStream(stdout) << "File open failed: " << fileName << Qt::endl;
-            return 0;
-        }
-
-        QCborStreamWriter writer(&file);
-
-        QCborValue cborValue = QCborValue::fromJsonValue(obj);
-        QByteArray bytes = cborValue.toCbor(QCborValue::UseFloat);
-
-        writer.append(bytes); // serialize the QCborValue to the file
-
-    } else {
-        if( !file.open( QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate ) )
-        {
-            QTextStream(stdout) << "File open failed: " << fileName << Qt::endl;
-            return 0;
-        }
-        QJsonDocument doc(obj);
-        QByteArray bytes = doc.toJson(QJsonDocument::Indented);
-
-        QTextStream iStream( &file );
-        iStream.setEncoding(QStringConverter::Latin1);
-        //      iStream.setCodec( "utf-8" );
-        iStream << bytes;
-    }
-
-    file.close();
     return res;
 }
+
+long QTunnel::generateContent(const QVariantMap &configOb, QTextStream& stream)
+{
+    QStringList interfaceKeys;
+    interfaceKeys << "PrivateKey" << "Address";
+    stream << "[Interface]" << Qt::endl;
+
+    for (QString key: interfaceKeys) {
+        if (!configOb.contains(key)) {
+            qWarning() << "Config file is not valid! Key " << key << "is absent";
+            return 0;
+        }
+        stream << key << " = " << configOb[key].toString() << Qt::endl;;
+    }
+
+    QStringList peerKeys;
+    peerKeys << "PublicKey" << "AllowedIPs" << "Endpoint";
+    stream << "[Peer]" << Qt::endl;
+
+    for (QString key: peerKeys) {
+        if (!configOb.contains(key)) {
+            qWarning() << "Config file is not valid! Key " << key << "is absent";
+            return 0;
+        }
+        stream << key << " = " << configOb[key].toString() << Qt::endl;;
+    }
+
+    return 1;
+}
+
 
 void QTunnel::connect()
 {
@@ -179,13 +102,13 @@ void QTunnel::connect()
     }
 
     // get conf file from license file
-
-//  createLicFile();
-    createConfigFile();
+    long res = createConfigFile();
+    if (res != 1) {
+        emit errorRaised("Couldn't create configuration", "Make sure the license file is valid");
+    }
 
     QProcess proc ;
     m_proc = new QProcess();
-
 
     QStringList args;
     args << "/installtunnelservice";
@@ -197,7 +120,7 @@ void QTunnel::connect()
     m_proc->start(processCmd, args);
     m_proc->waitForFinished(5000);
 
-    QTimer::singleShot(5000, this, SLOT(deleteConfigFile()));
+    QTimer::singleShot(1000, this, SLOT(checkConnection()));
 
     // QProcess::ProcessState state = m_proc->state();
     // QProcess::ProcessError error = m_proc->error();
@@ -210,10 +133,33 @@ QString QTunnel::lastError()
     return 0;
 }
 
-void QTunnel::deleteConfigFile()
+void QTunnel::checkConnection()
 {
+    LicenseService license;
+    QVariantMap configObj;
+    long res = license.getConfig(configObj);
+    if (res != 1) {
+        emit errorRaised("Failed to connect to remote server!", "The configuration is not valid");
+        return;
+    }
+
+    QString checkIP = configObj["Server"].toString();
+    QTcpSocket tcpSocket;
+    QHostAddress mainVpnHost(checkIP);
+
+    tcpSocket.connectToHost(mainVpnHost, 22);
+    if (tcpSocket.waitForConnected(7000)) {
+        emit connected();
+    } else {
+        emit errorRaised("Failed to connect to remote server!", "Make sure the program is running with administrator rights ");
+    }
 
     QFile file (m_configFile);
     file.remove();
+}
 
+void QTunnel::deleteConfigFile()
+{
+    QFile file (m_configFile);
+    file.remove();
 }

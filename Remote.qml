@@ -2,12 +2,15 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
+import QtQuick.Dialogs
+import QtQuick.Window 2.2
+
 import qmlmodels 1.0
 
 Item {
     id: root
     state: ""
-    required property var nodesList
+//  required property var nodesList
 
     //  property alias model: repeater.model
     signal sendNodeClicked(string ipAddress, string name)
@@ -76,7 +79,7 @@ Item {
 
             Repeater {
                 id: repeater
-                model: nodesList
+                model: nodeListModel
 
                 NodeItem {
                     id: nodeItem
@@ -96,12 +99,41 @@ Item {
 
     QTunnel {
         id: tunnelModel
-        onConnected:  {root.state = "connected"}
-        onErrorRaised: {root.error = tunnelModel.lastError}
+        onConnected:  {
+            root.state = "connected"
+            nodeListModel.update();
+        }
+        onErrorRaised: {
+            root.state = "error"
+            msgError.text = error
+            msgError.informativeText = informativeError
+            msgError.visible = true
+        }
+    }
+
+    NodeListModel {
+        id: nodeListModel
+        onErrorRaised: {
+            root.state = "error"
+            msgError.text = error
+            msgError.informativeText = informativeError
+            msgError.visible = true
+        }
+    }
+
+    MessageDialog {
+        id: msgError
+        text: ""
+        informativeText: ""
+        buttons: MessageDialog.Ok
+        visible: false
+
+//      onAccepted: Qt.quit()
     }
 
     Component.onCompleted: {
         root.state = "connecting"
+        nodeListModel.init();
         tunnelModel.connect();
     }
 

@@ -64,6 +64,8 @@ qt_add_qml_module(appunicon_launcher
         qtunnel.cpp
         nodelistmodel.h
         nodelistmodel.cpp
+        licenseservice.h
+        licenseservice.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

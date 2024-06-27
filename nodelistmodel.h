@@ -17,13 +17,13 @@ struct Node
     QString owner;
     QString address;
     QDateTime lastAccessTime;
-    int currWorkTime;
-    int totalWorkTime;
-    int currStartNumber;
-    int totalStartNumber;
+    int currWorkTime = 0;
+    int totalWorkTime = 0;
+    int currStartNumber = 0;
+    int totalStartNumber = 0;
     NodeStatus status;
     QString ipAddress;
-    bool activated = true;
+    bool activated = false;
 
     QString nodeStatusToString() const {
         switch (this->status) {
@@ -57,12 +57,17 @@ public:
 
     NodeListModel(QObject *parent = nullptr);
     Q_INVOKABLE void init();
+    Q_INVOKABLE void update();
 
     void addItem(const Node &node);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+
+signals:
+    void errorRaised(QString error, QString informativeError);
 
 protected:
     QHash<int, QByteArray> roleNames() const;

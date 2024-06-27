@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <qprocess.h>
+#include "licenseservice.h"
+
 
 class QTunnel : public QObject
 {
@@ -17,17 +19,15 @@ public:
 
 signals:
     void connected();
-    void errorRaised();
+    void errorRaised(QString error, QString informativeError);
 
 private slots:
     void deleteConfigFile();
-
+    void checkConnection();
 private:
-    void createLicFile();
     long createConfigFile();
-    long generateContent(const QJsonObject& sourceObj, QTextStream& stream);
+    long generateContent(const QVariantMap &configOb, QTextStream& stream);
 
-    long saveObj(const QString fileName, const QJsonObject &obj, bool useBinaryFormat);
 
     QString m_error = "";
     bool m_connected = "";
