@@ -74,7 +74,7 @@ void NodeListModel::update()
     n3.currStartNumber = 10;
     n3.totalStartNumber = 1000;
     n3.status = NodeStatus::Normal;
-    n3.activated = false;
+    n3.activated = true;
 
     fakeNodes << n3;
 
@@ -85,7 +85,7 @@ void NodeListModel::update()
     n4.currStartNumber = 1200;
     n4.totalStartNumber = 1000;
     n4.status = NodeStatus::ServiceRequired; // service required
-    n4.activated = true;
+    n4.activated = false;
 
     fakeNodes << n4;
 

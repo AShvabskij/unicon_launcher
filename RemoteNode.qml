@@ -8,7 +8,10 @@ import QtWebView
 
 Item {
     id: remoteNode
-    property string nodeUrl: "http://localhost:3000"
+    property string nodeIP: "localhost"
+    property string nodeUrl: "http://" + nodeIP + ":" + nodePort
+    property string nodePort: "3000"
+
     property string nodeName: ""
     state: "progress"
 
@@ -45,7 +48,7 @@ Item {
 
     WebView {
         id: webView
-        url: initialUrl
+        url: nodeUrl
         visible: false
 /*
         Layout.preferredHeight: parent.height

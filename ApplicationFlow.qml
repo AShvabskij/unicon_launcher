@@ -79,7 +79,7 @@ ApplicationFlowForm {
             visible: true
             state: applicationFlow.mode
             Component.onCompleted: {
-                remoteNodeComp.nodeUrl = _nodeIP
+                remoteNodeComp.nodeIP = _nodeIP
                 remoteNodeComp.nodeName = _nodeName
             }
         }

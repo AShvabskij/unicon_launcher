@@ -43,7 +43,7 @@ void LicenseService::createLicFile()
     nodeObj3["name"] = "RND Lab";
     nodeObj3["address"] = "Germany Hermann-Ritter-Str. 110 Bremen";
     nodeObj3["owner"] = "IGEL Electric GmbH";
-    nodeObj3["ipAddress"] = "10.9.0.22";
+    nodeObj3["ipAddress"] = "10.9.0.5";
 
     QJsonObject nodeObj4;
     nodeObj4["region"] = "Munhen";

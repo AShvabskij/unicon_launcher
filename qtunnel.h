@@ -1,10 +1,10 @@
 #ifndef QTUNNEL_H
 #define QTUNNEL_H
 
-#include <QObject>
-#include <qprocess.h>
 #include "licenseservice.h"
+#include "tunnelservice.h"
 
+#include <QObject>
 
 class QTunnel : public QObject
 {
@@ -15,27 +15,16 @@ public:
 
     Q_INVOKABLE void connect();
 
-    Q_INVOKABLE QString lastError();
-
 signals:
     void connected();
     void errorRaised(QString error, QString informativeError);
 
 private slots:
-    void deleteConfigFile();
-    void checkConnection();
+    void finishConnecting();
+
 private:
-    long createConfigFile();
-    long generateContent(const QVariantMap &configOb, QTextStream& stream);
-
-
-    QString m_error = "";
-    bool m_connected = "";
-    QProcess* m_proc = nullptr;
-
-    QString m_configFile = "";
-
-
+    TunnelService m_tunnelSrv;
+    LicenseService m_license;
 };
 
 #endif // QTUNNEL_H
