@@ -7,6 +7,10 @@ class LicenseService
 {
 public:
     LicenseService();
+    static LicenseService* instance() {
+        static LicenseService i;
+        return &i;
+    }
 
     void createLicFile();
     long getConfig(QVariantMap &retDat);

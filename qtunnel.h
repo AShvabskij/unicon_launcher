@@ -20,11 +20,11 @@ signals:
     void errorRaised(QString error, QString informativeError);
 
 private slots:
-    void finishConnecting();
+    void onFinishConnecting();
 
 private:
-    TunnelService m_tunnelSrv;
-    LicenseService m_license;
+    TunnelService* m_tunnelSrv;
+    LicenseService* m_license;
 };
 
 #endif // QTUNNEL_H

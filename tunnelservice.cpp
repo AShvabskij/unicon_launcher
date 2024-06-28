@@ -30,18 +30,18 @@ long TunnelService::createConfigFile(const QVariantMap &configObj)
     return res;
 }
 
-long TunnelService::generateContent(const QVariantMap &configOb, QTextStream& stream)
+long TunnelService::generateContent(const QVariantMap &configObj, QTextStream& stream)
 {
     QStringList interfaceKeys;
     interfaceKeys << "PrivateKey" << "Address";
     stream << "[Interface]" << Qt::endl;
 
     for (QString key: interfaceKeys) {
-        if (!configOb.contains(key)) {
+        if (!configObj.contains(key)) {
             qWarning() << "Config is not valid! Key " << key << "is absent";
             return 0;
         }
-        stream << key << " = " << configOb[key].toString() << Qt::endl;;
+        stream << key << " = " << configObj[key].toString() << Qt::endl;;
     }
 
     QStringList peerKeys;
@@ -49,11 +49,11 @@ long TunnelService::generateContent(const QVariantMap &configOb, QTextStream& st
     stream << "[Peer]" << Qt::endl;
 
     for (QString key: peerKeys) {
-        if (!configOb.contains(key)) {
+        if (!configObj.contains(key)) {
             qWarning() << "Config is not valid! Key " << key << "is absent";
             return 0;
         }
-        stream << key << " = " << configOb[key].toString() << Qt::endl;;
+        stream << key << " = " << configObj[key].toString() << Qt::endl;;
     }
 
     return 1;
@@ -69,6 +69,13 @@ long TunnelService::connect(const QVariantMap &configObj)
     if (m_proc != nullptr) {
         return 0;
     }
+
+    if (!configObj.contains("Server")) {
+        qWarning() << "Config is not valid! Key " << "Server" << "is absent";
+        return 0;
+    }
+
+    m_serverIP = configObj["Server"].toString();
 
     QProcess proc;
 
@@ -88,26 +95,26 @@ long TunnelService::connect(const QVariantMap &configObj)
     // QProcess::ProcessError error = m_proc->error();
     qDebug() << proc.readAllStandardOutput();
     qDebug() << proc.readAllStandardError();
+
     return 1;
 }
 
-long TunnelService::checkConnection(const QVariantMap &configObj)
+long TunnelService::checkConnection()
 {
-    if (!configObj.contains("Server")) {
-        qWarning() << "Config is not valid! Key " << "Server" << "is absent";
+    if (m_serverIP == "") {
+        qCritical() << "Server IP is not defined!";
         return 0;
     }
 
-    QString checkIP = configObj["Server"].toString();
-
     QTcpSocket tcpSocket;
 
-    QHostAddress mainVpnHost(checkIP);
+    QHostAddress mainVpnHost(m_serverIP);
 
     tcpSocket.connectToHost(mainVpnHost, 22);
     if (tcpSocket.waitForConnected(7000)) {
         return 1;
     } else {
+        qWarning() << "Server is not available!";
         return 0;
     }
 }
@@ -131,7 +138,7 @@ long TunnelService::closeConnection()
     return 1;
 }
 
-void TunnelService::onConnected()
+void TunnelService::finish()
 {
     QFile file (m_configFile);
     file.remove();

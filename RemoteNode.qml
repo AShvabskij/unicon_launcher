@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Effects
 import QtWebView
+import QtWebEngine
 
 Item {
     id: remoteNode
@@ -36,7 +37,7 @@ Item {
 
     ProgressItem {
         id: progressItem
-        scanTime: 1000
+        scanTime: 3000
         pageText: "Connecting to remote Node " + nodeName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -45,17 +46,17 @@ Item {
         anchors.top: remoteNode.top
         visible: true
     }
-
+/*
     WebView {
         id: webView
         url: nodeUrl
         visible: false
-/*
-        Layout.preferredHeight: parent.height
-        Layout.preferredWidth: parent.width
-        Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        Layout.margins: 5
-*/
+
+        // Layout.preferredHeight: parent.height
+        // Layout.preferredWidth: parent.width
+        // Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+        // Layout.margins: 5
+
 //      anchors.horizontalCenter: parent.horizontalCenter
 
         anchors.top: remoteNode.top
@@ -73,5 +74,45 @@ Item {
             settings.allowFileAccess = true
             settings.localContentCanAccessFileUrls = true
         }
+    }
+*/
+
+    property QtObject defaultProfile: WebEngineProfile {
+            storageName: "Profile"
+            offTheRecord: false
+            httpCacheType : WebEngineProfile.DiskHttpCache
+     }
+
+    WebEngineView {
+        id: webView
+        anchors.top: remoteNode.top
+        width: parent.width
+        height: parent.height
+
+        url: nodeUrl
+        visible: false
+
+        settings.allowRunningInsecureContent: true
+        settings.allowWindowActivationFromJavaScript: true
+        settings.autoLoadIconsForPage: true
+        settings.autoLoadImages: true
+        settings.errorPageEnabled: true
+        settings.fullScreenSupportEnabled: true
+        settings.javascriptCanOpenWindows: true
+        settings.localStorageEnabled: true
+
+        profile : defaultProfile
+
+        // profile.offTheRecord: false
+        // profile.httpCacheType : WebEngineProfile.DiskHttpCache
+        // profile.cachePath: "web_cache"
+        // profile.storageName: "web_storage"
+
+
+        onLoadingChanged: function(loadRequest) {
+             if (loadRequest.errorString)
+                 console.error(loadRequest.errorString);
+        }
+
     }
 }

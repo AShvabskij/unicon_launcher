@@ -153,7 +153,7 @@ Item {
 
                 Text {
                     color: Colors.green
-                    text: qsTr("Scanning...")
+                    text: qsTr("Loading...")
                     Layout.alignment: Qt.AlignHCenter
                     font.pixelSize: 14
                     font.weight: 600

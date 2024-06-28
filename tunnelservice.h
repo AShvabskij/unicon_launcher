@@ -9,17 +9,25 @@ class TunnelService
 {
 public:
     TunnelService();
+
+    static TunnelService* instance() {
+        static TunnelService i;
+        return &i;
+    }
+
     long connect(const QVariantMap &configObj);
-    long checkConnection(const QVariantMap &configObj);
+    long checkConnection();
     long closeConnection();
-    void onConnected();
+    void finish();
 
 private:
     long createConfigFile(const QVariantMap &configObj);
-    long generateContent(const QVariantMap &configOb, QTextStream& stream);
+    long generateContent(const QVariantMap &configObj, QTextStream& stream);
 
     QProcess* m_proc = nullptr;
     QString m_configFile = "";
+    QString m_serverIP = "";
+
 
 };
 
