@@ -8,12 +8,12 @@ Dialog {
     id: root
     anchors.centerIn: parent
 
-    title: "warning"
+    title: "Warning"
     property string text: ""
     property string informativeText: ""
 
-    implicitWidth: 350
-    implicitHeight: 200
+    implicitWidth: 400
+    implicitHeight: 230
     padding: 0
     // standardButtons: MessageDialog.Ok
     visible: false
@@ -85,7 +85,7 @@ Dialog {
             background: Rectangle {
                 color: btn.pressed ? "#707070" :
                                      btn.hovered ? "#939393" : "#707070"
-                radius: 1
+                radius: 10
                 border.width: 1.0
                 border.color: Colors.border
             }

@@ -51,9 +51,9 @@ Item {
             initialUrl = localModel.getURL();
         }
 
-        onErrorRaised: {
+        onErrorRaised: function(errorTxt, informativeError) {
             state = "error"
-            msgError.text = error
+            msgError.text = errorTxt
             msgError.informativeText = informativeError
             msgError.visible = true
         }

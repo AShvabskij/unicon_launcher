@@ -113,9 +113,9 @@ Item {
 
     NodeListModel {
         id: nodeListModel
-        onErrorRaised: {
+        onErrorRaised: function(errorTxt, informativeError) {
             root.state = "error"
-            msgError.text = error
+            msgError.text = errorTxt
             msgError.informativeText = informativeError
             msgError.visible = true
         }
@@ -123,6 +123,7 @@ Item {
 
     MessageDialog {
         id: msgError
+        title: "Error"
         text: ""
         informativeText: ""
         buttons: MessageDialog.Ok
