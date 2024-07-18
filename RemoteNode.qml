@@ -38,7 +38,7 @@ Item {
     ProgressItem {
         id: progressItem
         scanTime: 3000
-        pageText: "Connecting to remote Node " + nodeName
+        pageText: "Connecting to " + nodeName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         progressText: "Loading..."

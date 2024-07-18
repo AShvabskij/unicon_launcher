@@ -89,7 +89,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
 
                     onClicked: {
-                        sendNodeClicked(ipAddress, name)
+                        sendNodeClicked(ipAddress, fullName)
                     }
                 }
 

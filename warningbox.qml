@@ -68,6 +68,7 @@ Dialog {
         }
 
         AbstractButton {
+            id: btn
             DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
             implicitWidth: 100
             height: parent.height
@@ -82,7 +83,8 @@ Dialog {
                 font.bold: true
             }
             background: Rectangle {
-                color: "#707070"
+                color: btn.pressed ? "#707070" :
+                                     btn.hovered ? "#939393" : "#707070"
                 radius: 1
                 border.width: 1.0
                 border.color: Colors.border

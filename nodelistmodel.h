@@ -5,6 +5,9 @@
 #include <qdatetime.h>
 #include <QtQml/qqmlregistration.h>
 
+#include <QPromise>
+#include <QtConcurrent/QtConcurrent>
+
 enum NodeStatus {
     Normal = 0,
     ServiceRequired
@@ -56,6 +59,8 @@ public:
     };
 
     NodeListModel(QObject *parent = nullptr);
+    ~NodeListModel();
+
     Q_INVOKABLE void init();
     Q_INVOKABLE void update();
 
@@ -71,7 +76,14 @@ signals:
 
 protected:
     QHash<int, QByteArray> roleNames() const;
+
+    QFuture<void> future;
+    QFutureWatcher<void> watcher;
+
 private:
+    bool checkConnection(QString address);
+    void th_update();
+
     QList<Node> m_nodes;
 
 };

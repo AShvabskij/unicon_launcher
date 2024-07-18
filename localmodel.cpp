@@ -2,6 +2,7 @@
 
 #include <qdebug>
 #include <qtcpsocket.h>
+
 #include "RSP_IP_WIN_discovery/RSP_IP_DISCOVERY.h"
 
 LocalModel::LocalModel() {}

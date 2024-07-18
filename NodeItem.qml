@@ -12,6 +12,7 @@ AbstractButton {
     required property bool activated
     required property string name
     required property string region
+    property string fullName: region + " " + name
     required property string owner
     required property string address
 
@@ -103,7 +104,7 @@ AbstractButton {
                     spacing: internal.titleSpacing
 
                     Label {
-                        text: root.region + " " + root.name
+                        text: root.fullName
                         font.pixelSize: !root.isSmallLayout ? 20 : 16
                         font.weight: 600
                         font.family: "Titillium Web"

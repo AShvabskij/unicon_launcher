@@ -1,5 +1,7 @@
 #include "nodelistmodel.h"
 #include "licenseservice.h"
+#include <qtcpsocket.h>
+
 
 NodeListModel::NodeListModel(QObject *parent)
     : QAbstractListModel(parent) {
@@ -7,9 +9,16 @@ NodeListModel::NodeListModel(QObject *parent)
 
 }
 
+NodeListModel::~NodeListModel()
+{
+    qDebug() << "destruction NodeListModel";
+    watcher.cancel();
+    watcher.waitForFinished();
+    qDebug() << "finished";
+}
+
 void NodeListModel::init()
 {
-
     LicenseService license;
 
     QVariantList nodes;
@@ -27,6 +36,7 @@ void NodeListModel::init()
     }
 
     for (QVariant nodeObj: nodes) {
+
         QVariantMap nodeMap = nodeObj.toMap();
 
         Node node;
@@ -41,7 +51,7 @@ void NodeListModel::init()
     }
 }
 
-void NodeListModel::update()
+void NodeListModel::th_update()
 {
     QList<Node> fakeNodes;
     QString dtFormat = "yyyy-MM-dd hh:mm";
@@ -90,24 +100,56 @@ void NodeListModel::update()
     fakeNodes << n4;
 
     int iIndex = 0;
-    int iLastIndex = m_nodes.count() -1;
+//  int iLastIndex = m_nodes.count() -1;
 
     for (Node& node: m_nodes) {
-        Node fakeNode = fakeNodes.value(iIndex++, Node());
+        Node fakeNode = fakeNodes.value(iIndex, Node());
         node.lastAccessTime = fakeNode.lastAccessTime;
         node.currWorkTime = fakeNode.currWorkTime;
         node.currStartNumber = fakeNode.currStartNumber;
         node.totalWorkTime = fakeNode.totalWorkTime;
         node.totalStartNumber = fakeNode.totalStartNumber;
         node.status = fakeNode.status;
-        node.activated = fakeNode.activated;
+
+        node.activated = checkConnection(node.ipAddress); // fakeNode.activated;
+
+        QList<int> roles;
+        roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+        QModelIndex mFirstIndex = this->index(iIndex);
+        QModelIndex mLastIndex = this->index(iIndex);
+        emit dataChanged(mFirstIndex, mLastIndex, roles);
+        iIndex++;
+    }
+}
+
+void NodeListModel::update()
+{
+    auto future = QtConcurrent::run(&NodeListModel::th_update, this);
+    QObject::connect(&watcher, &QFutureWatcher<void>::finished, [this]() {
+        int iIndex = 0;
+        int iLastIndex = m_nodes.count() -1;
+
+        QList<int> roles;
+        roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+        QModelIndex mFirstIndex = this->index(iIndex);
+        QModelIndex mLastIndex = this->index(iLastIndex);
+        emit dataChanged(mFirstIndex, mLastIndex, roles);
+
+    });
+
+    watcher.setFuture(future);
+}
+
+bool NodeListModel::checkConnection(QString address)
+{
+    QTcpSocket tcpSocket;
+    QHostAddress host(address);
+    tcpSocket.connectToHost(host, 22);
+    if (tcpSocket.waitForConnected(1000)) {
+        return true;
     }
 
-    QList<int> roles;
-    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
-    QModelIndex mFirstIndex = this->index(0);
-    QModelIndex mLastIndex = this->index(iLastIndex);
-    emit dataChanged(mFirstIndex, mLastIndex, roles);
+    return true;
 }
 
 void NodeListModel::addItem(const Node &node)
