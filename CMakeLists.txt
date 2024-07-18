@@ -8,9 +8,20 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS Quick WebView)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
+
+file(GLOB IP_DISCOVERY_SOURCES "./RSP_IP_WIN_discovery/*.cpp")
+file(GLOB IP_DISCOVERY_HEADERS "./RSP_IP_WIN_discovery/*.h")
+
 qt_add_executable(appunicon_launcher
     main.cpp
+    ${IP_DISCOVERY_HEADERS}
 )
+
+target_include_directories(appunicon_launcher PRIVATE ${IP_DISCOVERY_HEADERS})
+
+target_sources(appunicon_launcher PRIVATE ${IP_DISCOVERY_SOURCES})
+
+
 
 set_source_files_properties(Constants.qml
     PROPERTIES
@@ -40,6 +51,7 @@ qt_add_qml_module(appunicon_launcher
         ProgressItem.qml
         NodeItem.qml
         RemoteNode.qml
+        WarningBox.qml
 
     RESOURCES
         qtquickcontrols2.conf
@@ -68,6 +80,9 @@ qt_add_qml_module(appunicon_launcher
         licenseservice.cpp
         tunnelservice.h
         tunnelservice.cpp
+        localmodel.h
+        localmodel.cpp
+
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

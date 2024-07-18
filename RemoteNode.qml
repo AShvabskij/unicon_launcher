@@ -41,8 +41,8 @@ Item {
         pageText: "Connecting to remote Node " + nodeName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        progressText: "Loading..."
 
-//      anchors.topMargin: parent.height / 40
         anchors.top: remoteNode.top
         visible: true
     }

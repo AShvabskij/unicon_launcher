@@ -9,6 +9,8 @@ Item {
     id: root
     property alias greenBar: greenBar
     property alias pageText: caption.text
+    property alias progressText: progressText.text
+
     property alias timer: timer
 
     property int scanTime: 3000
@@ -20,6 +22,7 @@ Item {
         id: timer
         interval: scanTime
         running: true
+        repeat: true
         onTriggered: {
             root.parent.onProgressFinished()
         }
@@ -133,25 +136,9 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.right
                 }
-/*
-                Text {
-                    text: "0%"
-                    font.pixelSize: 12
-                    anchors.horizontalCenter: circle.horizontalCenter
-                    anchors.verticalCenter: circle.verticalCenter
-                    color: Colors.currentTheme.textColor
-                }
 
                 Text {
-                    text: "100%"
-                    font.pixelSize: 12
-                    anchors.horizontalCenter: circle3.horizontalCenter
-                    anchors.verticalCenter: circle3.verticalCenter
-                    color: Colors.currentTheme.textColor
-                }
-*/
-
-                Text {
+                    id: progressText
                     color: Colors.green
                     text: qsTr("Loading...")
                     Layout.alignment: Qt.AlignHCenter

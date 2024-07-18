@@ -20,8 +20,6 @@ QTunnel::QTunnel(QObject *parent) : QObject(parent)
 QTunnel::~QTunnel()
 {
     m_tunnelSrv->closeConnection();
-    delete m_tunnelSrv;
-    delete m_license;
 }
 
 void QTunnel::connect()

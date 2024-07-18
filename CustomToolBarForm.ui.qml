@@ -36,6 +36,7 @@ Item {
             Layout.alignment: Qt.AlignCenter
             sourceSize.width: height * 1.4
             sourceSize.height: 25
+            visible: false
         }
         Button {
             id: themeButton

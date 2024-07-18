@@ -4,16 +4,18 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Effects
+import QtQuick.Dialogs
 import QtWebView
+
+import qmlmodels 1.0
 
 Item {
     id: localPage
-    property string initialUrl: "http://localhost:3000"
+    property string initialUrl: "" //"http://localhost:3000"
     state: "progress"
 
     function onProgressFinished() {
-        state = "content"
-        applicationFlow.toogleToFullScreen()
+        progressItem.progressBarValue = progressItem.progressBarValue === 0 ? 1 : 0;
     }
 
     states: [
@@ -34,10 +36,32 @@ Item {
         id: progressItem
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        progressText: "Scanning..."
 
 //      anchors.topMargin: parent.height / 40
         anchors.top: localPage.top
         visible: true
+    }
+
+    LocalModel {
+        id: localModel
+        onConnected:  {
+            state = "content"
+            applicationFlow.toogleToFullScreen()
+            initialUrl = localModel.getURL();
+        }
+
+        onErrorRaised: {
+            state = "error"
+            msgError.text = error
+            msgError.informativeText = informativeError
+            msgError.visible = true
+        }
+    }
+
+    WarningBox {
+        id: msgError
+        onAccepted: applicationFlow.backButton()
     }
 
     WebView {
@@ -68,4 +92,9 @@ Item {
             settings.localContentCanAccessFileUrls = true
         }
     }
+
+    Component.onCompleted: {
+        localModel.scanIP()
+    }
+
 }

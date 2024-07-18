@@ -113,7 +113,7 @@ ApplicationFlowForm {
                 themeButton.enabled: true
                 logo.sourceSize.width: 50
                 logo.sourceSize.height: 40
-                logo.visible: true
+                logo.visible: false
                 visible: true
                 height: 35
             }
@@ -141,9 +141,7 @@ ApplicationFlowForm {
                 backButton.enabled: true
                 themeButton.opacity: 100
                 themeButton.enabled: true
-//              logo.sourceSize.width: 70
-//              logo.sourceSize.height: 50
-                logo.visible: true
+                logo.visible: false
                 visible: true
             }
 
@@ -168,7 +166,7 @@ ApplicationFlowForm {
                 backButton.enabled: true
                 themeButton.opacity: 100
                 themeButton.enabled: true
-                logo.visible: true
+                logo.visible: false
                 visible: true
             }
 

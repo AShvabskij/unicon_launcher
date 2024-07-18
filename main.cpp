@@ -4,6 +4,7 @@
 
 #include "qtunnel.h"
 #include "nodelistmodel.h"
+#include "localmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<QTunnel>("qmlmodels", 1, 0,"QTunnel");
     qmlRegisterType<NodeListModel>("qmlmodels", 1, 0,"NodeListModel");
+    qmlRegisterType<LocalModel>("qmlmodels", 1, 0,"LocalModel");
 
     QQmlApplicationEngine engine;
     QObject::connect(
@@ -28,5 +30,6 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("nodeListModel", QVariant::fromValue(&nodeListModel));
 */
+
     return app.exec();
 }
