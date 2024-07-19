@@ -50,6 +50,10 @@ ApplicationFlowForm {
         stack.push(remotePage)
     }
 
+    NodeListModel {
+        id: nodeListModel
+    }
+
     Component {
         id: localPage
         Local {
@@ -63,8 +67,7 @@ ApplicationFlowForm {
         Remote {
             visible: true
             state: applicationFlow.mode
-//          nodesList: nodeItemListModel
-//          nodesList: nodeList
+            nodesModel: nodeListModel
             Component.onCompleted: {
                 sendNodeClicked.connect(onNodeClicked)
             }

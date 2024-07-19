@@ -10,7 +10,7 @@ import qmlmodels 1.0
 Item {
     id: root
     state: ""
-//  required property var nodesList
+    required property var nodesModel
 
     //  property alias model: repeater.model
     signal sendNodeClicked(string ipAddress, string name)
@@ -79,7 +79,7 @@ Item {
 
             Repeater {
                 id: repeater
-                model: nodeListModel
+                model: nodesModel
 
                 NodeItem {
                     id: nodeItem
@@ -101,7 +101,7 @@ Item {
         id: tunnelModel
         onConnected:  {
             root.state = "connected"
-            nodeListModel.update();
+            nodesModel.update();
         }
         onErrorRaised: {
             root.state = "error"
@@ -111,8 +111,8 @@ Item {
         }
     }
 
-    NodeListModel {
-        id: nodeListModel
+    Connections {
+        target: nodesModel
         onErrorRaised: function(errorTxt, informativeError) {
             root.state = "error"
             msgError.text = errorTxt
@@ -134,9 +134,12 @@ Item {
 
     Component.onCompleted: {
         root.state = "connecting"
-        nodeListModel.init();
+        nodesModel.init();
         tunnelModel.connect();
     }
 
+    Component.onDestruction: {
+        nodesModel.clear();
+    }
 }
 

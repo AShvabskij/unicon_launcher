@@ -63,6 +63,7 @@ public:
 
     Q_INVOKABLE void init();
     Q_INVOKABLE void update();
+    Q_INVOKABLE void clear();
 
     void addItem(const Node &node);
 
@@ -77,14 +78,14 @@ signals:
 protected:
     QHash<int, QByteArray> roleNames() const;
 
-    QFuture<void> future;
-    QFutureWatcher<void> watcher;
+    QList<QFutureWatcher<void>*> m_watcherList;
 
 private:
     bool checkConnection(QString address);
-    void th_update();
+    void th_nodeUpdate(QPromise<void> &promise, int iIndex);
 
     QList<Node> m_nodes;
+    bool m_IsDestroyed = false;
 
 };
 

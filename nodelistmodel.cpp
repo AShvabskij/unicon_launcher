@@ -11,14 +11,37 @@ NodeListModel::NodeListModel(QObject *parent)
 
 NodeListModel::~NodeListModel()
 {
-    qDebug() << "destruction NodeListModel";
-    watcher.cancel();
-    watcher.waitForFinished();
-    qDebug() << "finished";
+    for (auto* watcher: m_watcherList) {
+        watcher->cancel();
+        watcher->deleteLater();
+    }
+    m_watcherList.clear();
+}
+
+void NodeListModel::clear()
+{
+    qDebug() << "clearing NodeListModel";
+
+    m_IsDestroyed = true;
+
+    for (auto* watcher: m_watcherList) {
+        watcher->cancel();
+//      watcher->waitForFinished();
+        watcher->deleteLater();
+    }
+    m_watcherList.clear();
+
+    m_nodes.clear();
+
+    qDebug() << "finish clearing NodeListModel";
 }
 
 void NodeListModel::init()
 {
+    beginResetModel();
+    clear();
+    endResetModel();
+
     LicenseService license;
 
     QVariantList nodes;
@@ -51,7 +74,20 @@ void NodeListModel::init()
     }
 }
 
-void NodeListModel::th_update()
+void NodeListModel::th_nodeUpdate(QPromise<void>& promise, int iIndex)
+{
+    if (m_IsDestroyed) {
+        promise.finish();
+        return;
+    }
+
+    Node& node = m_nodes[iIndex];
+    node.activated = checkConnection(node.ipAddress);
+
+    promise.finish();
+}
+
+void NodeListModel::update()
 {
     QList<Node> fakeNodes;
     QString dtFormat = "yyyy-MM-dd hh:mm";
@@ -99,9 +135,9 @@ void NodeListModel::th_update()
 
     fakeNodes << n4;
 
-    int iIndex = 0;
-//  int iLastIndex = m_nodes.count() -1;
+    m_IsDestroyed = false;
 
+    int iIndex = 0;
     for (Node& node: m_nodes) {
         Node fakeNode = fakeNodes.value(iIndex, Node());
         node.lastAccessTime = fakeNode.lastAccessTime;
@@ -111,33 +147,27 @@ void NodeListModel::th_update()
         node.totalStartNumber = fakeNode.totalStartNumber;
         node.status = fakeNode.status;
 
-        node.activated = checkConnection(node.ipAddress); // fakeNode.activated;
+        auto future = QtConcurrent::run(&NodeListModel::th_nodeUpdate, this, iIndex);
 
-        QList<int> roles;
-        roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
-        QModelIndex mFirstIndex = this->index(iIndex);
-        QModelIndex mLastIndex = this->index(iIndex);
-        emit dataChanged(mFirstIndex, mLastIndex, roles);
+        QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
+        QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex]() {
+            qDebug() << "Thread finished for index = " << iIndex;
+
+            if (m_IsDestroyed) return;
+
+            QList<int> roles;
+            roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+            QModelIndex mFirstIndex = this->index(iIndex);
+            QModelIndex mLastIndex = this->index(iIndex);
+            emit dataChanged(mFirstIndex, mLastIndex, roles);
+
+        });
+
+        watcher->setFuture(future);
+        m_watcherList.append(watcher);
+
         iIndex++;
     }
-}
-
-void NodeListModel::update()
-{
-    auto future = QtConcurrent::run(&NodeListModel::th_update, this);
-    QObject::connect(&watcher, &QFutureWatcher<void>::finished, [this]() {
-        int iIndex = 0;
-        int iLastIndex = m_nodes.count() -1;
-
-        QList<int> roles;
-        roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
-        QModelIndex mFirstIndex = this->index(iIndex);
-        QModelIndex mLastIndex = this->index(iLastIndex);
-        emit dataChanged(mFirstIndex, mLastIndex, roles);
-
-    });
-
-    watcher.setFuture(future);
 }
 
 bool NodeListModel::checkConnection(QString address)
@@ -145,7 +175,7 @@ bool NodeListModel::checkConnection(QString address)
     QTcpSocket tcpSocket;
     QHostAddress host(address);
     tcpSocket.connectToHost(host, 22);
-    if (tcpSocket.waitForConnected(1000)) {
+    if (tcpSocket.waitForConnected(4000)) {
         return true;
     }
 
