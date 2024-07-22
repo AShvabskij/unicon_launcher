@@ -17,6 +17,11 @@ Item {
 
     property double progressBarValue: 0
 
+    FontLoader {
+        id: montserratFont
+        source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+    }
+
     //! [Timer]
     Timer {
         id: timer
@@ -57,7 +62,7 @@ Item {
             id: caption
             text: "Connecting to local device"
             font.pixelSize: 24
-            font.family: "Titillium Web"
+            font.family: montserratFont.name
             font.weight: 700
             color: Colors.currentTheme.textColor
             leftPadding: 20

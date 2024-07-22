@@ -32,7 +32,7 @@ Item {
 
         Image {
             id: logo
-            source: "./images/icons/Qt-logo-white-transparent.svg"
+            source: "./images/icons/logo.png"
             Layout.alignment: Qt.AlignCenter
             sourceSize.width: height * 1.4
             sourceSize.height: 25

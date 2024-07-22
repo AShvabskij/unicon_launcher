@@ -113,6 +113,5 @@ Item {
              if (loadRequest.errorString)
                  console.error(loadRequest.errorString);
         }
-
     }
 }

@@ -55,9 +55,9 @@ qt_add_qml_module(appunicon_launcher
 
     RESOURCES
         qtquickcontrols2.conf
-        images/icons/Qt-logo-white-transparent.svg
         images/icons/home_dark.svg
         images/icons/home_light.svg
+        images/icons/rst_symbol.svg
         images/icons/keyboard_backspace_black.svg
         images/icons/keyboard_backspace_black_left.svg
         images/icons/keyboard_backspace_black_right.svg
@@ -70,6 +70,7 @@ qt_add_qml_module(appunicon_launcher
         images/icons/ellipse_light.svg
         images/icons/node.svg
         images/icons/flag.svg
+        images/icons/logo.png
 
     SOURCES
         qtunnel.h
@@ -82,6 +83,8 @@ qt_add_qml_module(appunicon_launcher
         tunnelservice.cpp
         localmodel.h
         localmodel.cpp
+    RESOURCES
+        fonts/montserrat/montserrat-latin-600-normal.ttf
 
 )
 

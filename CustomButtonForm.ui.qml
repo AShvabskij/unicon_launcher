@@ -17,6 +17,7 @@ AbstractButton {
 
     Layout.minimumHeight: 0
 
+
     states: State {
         name: "pressed"
         when: button.pressed
@@ -39,22 +40,26 @@ AbstractButton {
         border.color: Colors.border
         radius: 10
         anchors.fill: parent
-        Row {
+        RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
+
             Text {
                 text: buttonText
                 color: (buttonColor
                         == "green") ? Colors.dark.textColor : Colors.currentTheme.textColor
-                font.pixelSize: 18
+                font.family: montserratFont.name
+                font.pixelSize: 22
                 font.weight: 700
                 rightPadding: 8
             }
-            Image {
+
+             Image {
                 id: icon
                 visible: showIcon
                 source: (Colors.currentTheme == Colors.dark) ? "./images/icons/keyboard_backspace_white_right.svg" : "./images/icons/keyboard_backspace_black_right.svg"
             }
+
         }
     }
 }

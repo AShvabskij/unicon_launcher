@@ -13,6 +13,11 @@ Item {
     property alias header: header
     property alias caption: caption
 
+    FontLoader {
+        id: montserratFont
+        source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+    }
+
     states: [
         State {
             name: "portrait"
@@ -83,20 +88,22 @@ Item {
             Layout.preferredWidth: height / 1.16
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.margins: 5
-            source: (Colors.currentTheme == Colors.dark) ? "./images/icons/home_dark.svg" : "./images/icons/home_light.svg"
+            source: (Colors.currentTheme == Colors.dark) ? "./images/icons/rst_symbol.svg" : "./images/icons/rst_symbol.svg"
         }
         Text {
             id: header
-            text: qsTr("Remote support service")
+            text: qsTr("Remote support tool")
             font.pixelSize: 32
             font.weight: 700
+            font.family: montserratFont.name
             color: Colors.currentTheme.textColor
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.topMargin: 20
         }
         Text {
             id: caption
-            text: qsTr(" Support devices localy or remotely ")
+            text: qsTr(" Support Devices Localy or Remotely ")
+            font.family: montserratFont.name
             font.pixelSize: 16
             horizontalAlignment: Text.AlignHCenter
             Layout.maximumWidth: home.width
@@ -124,7 +131,8 @@ Item {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.minimumWidth: 150
             Layout.minimumHeight: 40
-            buttonText: "CPlotWeb"
+            enabled: false
+            buttonText: "Reports"
         }
     }
 }

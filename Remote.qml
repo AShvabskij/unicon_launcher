@@ -14,6 +14,10 @@ Item {
 
     //  property alias model: repeater.model
     signal sendNodeClicked(string ipAddress, string name)
+    FontLoader {
+        id: montserratFont
+        source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+    }
 
     Column {
         id: title
@@ -44,10 +48,10 @@ Item {
 
             text: qsTr("Select node to connect")
 //          anchors.horizontalCenter: parent.horizontalCenter
-
+            font.family: montserratFont.name
             font.pixelSize: 24
             font.weight: 600
-            font.family: "Titillium Web"
+//          font.family: "Titillium Web"
             color:  Colors.currentTheme.textColor
             elide: Text.ElideRight
         }

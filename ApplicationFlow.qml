@@ -20,8 +20,10 @@ ApplicationFlowForm {
     function themeButton() {
         if (Colors.currentTheme == Colors.dark) {
             Colors.currentTheme = Colors.light
+            Constants.isDarkTheme = false
         } else {
             Colors.currentTheme = Colors.dark
+            Constants.isDarkTheme = true
         }
     }
 
@@ -144,7 +146,7 @@ ApplicationFlowForm {
                 backButton.enabled: true
                 themeButton.opacity: 100
                 themeButton.enabled: true
-                logo.visible: false
+                logo.visible: true
                 visible: true
             }
 
@@ -169,7 +171,7 @@ ApplicationFlowForm {
                 backButton.enabled: true
                 themeButton.opacity: 100
                 themeButton.enabled: true
-                logo.visible: false
+                logo.visible: true
                 visible: true
             }
 
