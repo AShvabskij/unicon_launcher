@@ -1,0 +1,246 @@
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls 6.5
+
+Item {
+    id: root
+    state: ""
+    property bool licenseValidity: false
+
+    FontLoader {
+        id: montserratFont
+        source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+    }
+
+    ColumnLayout {
+        id: gridLayout
+        width: parent.width
+        anchors.top: parent.top
+        anchors.topMargin: 10
+
+        Rectangle {
+            id: infoPanel
+            height: root.height / 5
+            color: Colors.currentTheme.boxColor
+            radius: 10
+            border.color: Colors.currentTheme.borderColor
+            border.width: 2
+
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.rightMargin: 50
+            Layout.leftMargin: 50
+
+            Text {
+                id: infoText
+                color: Colors.currentTheme.textColor //"#dfdfdf"
+                text: qsTr("This tool is designed for remote or local maintenance of highpower electronic devices. The tool allows you to connect to the web interface of the selected device to monitor the device’s performance parameters and usage statistics./n To run the To receive license Please generate application")
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                font.pixelSize: 16
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignTop
+                wrapMode: Text.Wrap
+                anchors.topMargin: 18
+                anchors.bottomMargin: 18
+                anchors.leftMargin: 24
+                anchors.rightMargin: 24
+                font.weight: Font.Normal
+                font.family: montserratFont.name
+            }
+        }
+
+        Rectangle {
+            id: appKey
+            height: appKeyContent.height + 30
+
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.rightMargin: 50
+            Layout.leftMargin: 50
+            Layout.topMargin: 30
+            color: "transparent"
+            radius: 10
+            border.color: Colors.currentTheme.borderColor//"#3c3535"
+            border.width: 0
+
+            ColumnLayout {
+                id: appKeyContent
+                width: parent.width
+
+                Text {
+                    id: appKeyText
+                    text: qsTr("Application key:")
+                    font.pixelSize: 18
+                    font.weight: Font.Normal
+                    font.family: montserratFont.name
+                    color: Colors.currentTheme.textColor //"#dfdfdf"
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.rightMargin: 10
+                    Layout.leftMargin: 10
+                    Layout.topMargin: 10
+                }
+
+                Text {
+                    id: helpAppKeyText
+                    color: Colors.currentTheme.helpTextColor
+                    text: qsTr("Please generate your APP key and send it to the support team (support@igel.com)")
+                    anchors.left: appKeyText.left
+                    anchors.top: appKeyText.bottom
+                    font.pixelSize: 14
+                    anchors.leftMargin: 0
+                    anchors.topMargin: 6
+                    font.family: montserratFont.name
+                }
+
+                TextField {
+                    id: appKeyInput
+                    Layout.rightMargin: 10
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    font.pixelSize: 18
+                    font.weight: 400
+                    font.family: montserratFont.name
+                    color: Colors.currentTheme.textColor //"#dfdfdf"
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: 10
+                    placeholderText: "APP Key"
+                    placeholderTextColor: Colors.currentTheme.helpTextColor
+                    text: "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA="
+                    background: Rectangle {
+                        color: Colors.currentTheme.boxColor
+                        border.color: Colors.currentTheme.borderColor
+                    }
+                }
+
+                RowLayout {
+                    anchors.top: appKeyInput.bottom
+                    anchors.left: appKeyInput.left
+                    anchors.leftMargin: 10
+                    anchors.topMargin: 10
+                    spacing: 20
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.minimumHeight: 40
+
+                    CustomButton {
+                        id: generateButton
+                        Layout.minimumWidth: 150
+                        Layout.minimumHeight: 50
+                        buttonText: "Generate"
+                        showIcon: false
+                        fontSize: 18
+                    }
+
+                    CustomButton {
+                        id: copyButton
+                        Layout.minimumWidth: 150
+                        Layout.minimumHeight: 50
+                        buttonText: "Copy"
+                        showIcon: false
+                        fontSize: 18
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: license
+            height: licenseContent.height + 30
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.rightMargin: 50
+            Layout.leftMargin: 50
+            Layout.topMargin: 30
+            color: "transparent"
+            radius: 10
+            border.color: Colors.currentTheme.borderColor
+            border.width: 0
+
+            ColumnLayout {
+                id: licenseContent
+                width: parent.width
+                Text {
+                    id: licenseText
+                    text: qsTr("License number:")
+                    font.pixelSize: 18
+                    font.weight: Font.Normal
+                    font.family: montserratFont.name
+                    color: Colors.currentTheme.textColor //"#dfdfdf"
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.rightMargin: 10
+                    Layout.leftMargin: 10
+                    Layout.topMargin: 10
+                }
+
+                Text {
+                    id: helpLicenseText
+                    color: Colors.currentTheme.helpTextColor
+                    text: qsTr("Please select the license file received from the support team")
+                    anchors.left: licenseText.left
+                    anchors.top: licenseText.bottom
+                    font.pixelSize: 14
+                    anchors.leftMargin: 0
+                    anchors.topMargin: 6
+                    font.family: montserratFont.name
+                }
+                TextField {
+                    id: licenseInput
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.rightMargin: 10
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true
+                    font.pixelSize: 18
+                    font.weight: 400
+                    font.family: montserratFont.name
+                    color: Colors.currentTheme.textColor //"#dfdfdf"
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: 10
+                    placeholderText: "License Number"
+                    placeholderTextColor: "#787878"
+                    text: "#1122-5678"
+                    background: Rectangle {
+                        color: Colors.currentTheme.boxColor
+                        border.color: Colors.currentTheme.borderColor
+                    }
+                }
+
+                Text {
+                    id: statusText
+                    color: licenseValidity ? Colors.currentTheme.helpTextColor : "#CC0000"
+                    text: licenseValidity ? qsTr("License added successfully") : qsTr("Invalid license")
+                    anchors.left: licenseText.left
+
+                    font.pixelSize: 14
+                    anchors.leftMargin: 10
+                    anchors.topMargin: 6
+                    font.family: "Titillium Web"
+                    visible: true
+                }
+
+                RowLayout {
+                    anchors.top: statusText.bottom
+                    anchors.left: licenseInput.left
+                    anchors.leftMargin: 10
+                    anchors.topMargin: 10
+                    spacing: 20
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.minimumHeight: 40
+
+                    CustomButton {
+                        anchors.topMargin: 50
+                        id: licenseButton
+                        Layout.minimumWidth: 250
+                        Layout.minimumHeight: 50
+                        buttonText: "Select license"
+                        showIcon: true
+                        fontSize: 18
+                    }
+                }
+            }
+        }
+
+    }
+}

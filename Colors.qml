@@ -9,15 +9,19 @@ Item {
         id: light
         readonly property color background: "#ffffff"
         readonly property color textColor: "#121111"
-        readonly property color borderColor: "#D8D8D8"
+        readonly property color boxColor: "#F6F6F6"
+        readonly property color helpTextColor: "#787878"
+        readonly property color borderColor: "#BFBDBD"
         readonly property color cardColor: "#FFFFFF"
         readonly property color caption: "#898989"
     }
     QtObject {
         id: dark
         readonly property color background: "#121212"
-        readonly property color textColor: "#FEFEFE"
-        readonly property color borderColor: "#3E3E3E"
+        readonly property color textColor: "#f2f2f2"//"#FEFEFE"
+        readonly property color helpTextColor: "#787878"
+        readonly property color boxColor: "#1d1d1d"
+        readonly property color borderColor: "#3c3535"
         readonly property color cardColor: "#212121"
         readonly property color caption: "#898989"
     }

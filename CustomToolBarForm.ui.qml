@@ -11,6 +11,7 @@ Item {
     id: root
     property alias backButton: backButton
     property alias themeButton: themeButton
+    property alias settingsButton: settingsButton
     property alias logo: logo
 
     RowLayout {
@@ -33,23 +34,44 @@ Item {
         Image {
             id: logo
             source: "./images/icons/logo.png"
-            Layout.alignment: Qt.AlignCenter
+            anchors.centerIn: parent
+//          Layout.alignment: Qt.AlignCenter
             sourceSize.width: height * 1.4
             sourceSize.height: 25
-            visible: false
+            visible: true
         }
-        Button {
-            id: themeButton
+
+        Row {
             Layout.alignment: Qt.AlignRight
-            icon.color: (Colors.currentTheme == Colors.dark) ? "#DDE2E8" : "#667085"
-            icon.source: (Colors.currentTheme == Colors.dark) ? "./images/icons/light_mode_black_24dp.svg" : "./images/icons/dark_mode_black_24dp.svg"
-            flat: true
-            background: null
-            transitions: Transition {
-                NumberAnimation {
-                    properties: "scale"
-                    duration: 100
-                    easing.type: Easing.InOutQuad
+
+            Button {
+                id: settingsButton
+                icon.color: (Colors.currentTheme == Colors.dark) ? "#DDE2E8" : "#667085"
+                icon.source: "./images/icons/settings.svg"
+                flat: true
+                background: null
+                transitions: Transition {
+                    NumberAnimation {
+                        properties: "scale"
+                        duration: 100
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+
+            }
+
+            Button {
+                id: themeButton
+                icon.color: (Colors.currentTheme == Colors.dark) ? "#DDE2E8" : "#667085"
+                icon.source: (Colors.currentTheme == Colors.dark) ? "./images/icons/light_mode_black_24dp.svg" : "./images/icons/dark_mode_black_24dp.svg"
+                flat: true
+                background: null
+                transitions: Transition {
+                    NumberAnimation {
+                        properties: "scale"
+                        duration: 100
+                        easing.type: Easing.InOutQuad
+                    }
                 }
             }
         }

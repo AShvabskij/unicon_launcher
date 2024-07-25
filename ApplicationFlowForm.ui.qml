@@ -28,20 +28,6 @@ Rectangle {
         height: 35
         anchors.top: parent.top
     }
-/*
-    Text {
-        id: pageText
-        text: "Selection"
-        font.pixelSize: 24
-        font.family: "Titillium Web"
-        font.weight: 700
-        color: Colors.currentTheme.textColor
-        anchors.top: toolbar.bottom
-        anchors.topMargin: parent.height / 20
-        leftPadding: 20
-    }
-*/
-
 
     //! [Stack view]
     StackView {

@@ -19,35 +19,18 @@ Item {
         source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
     }
 
-    Column {
+    ColumnLayout {
         id: title
 
         width: parent.width
+        anchors.leftMargin: 27
 
-        topPadding: 34
-
-        leftPadding: 27
-        rightPadding: 27
-
-        bottomPadding: 13
-
-/*
-        Label {
-            id: heading
-
-            text: qsTr("Avalable nodes for the license")
-            font.pixelSize: 12
-            font.weight: 600
-            font.family: "Titillium Web"
-            color:  Colors.currentTheme.textColor
-            elide: Text.ElideRight
-        }
-*/
-        Label {
+         Label {
             id: heading2
 
             text: qsTr("Select node to connect")
-//          anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 27
             font.family: montserratFont.name
             font.pixelSize: 24
             font.weight: 600

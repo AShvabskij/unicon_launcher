@@ -14,6 +14,7 @@ AbstractButton {
     property bool showIcon: true
     property string buttonColor: "grey"
     property alias rectangle: rectangle
+    property int fontSize: 22
 
     Layout.minimumHeight: 0
 
@@ -49,7 +50,7 @@ AbstractButton {
                 color: (buttonColor
                         == "green") ? Colors.dark.textColor : Colors.currentTheme.textColor
                 font.family: montserratFont.name
-                font.pixelSize: 22
+                font.pixelSize: fontSize
                 font.weight: 700
                 rightPadding: 8
             }

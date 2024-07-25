@@ -5,6 +5,8 @@ import QtQuick
 CustomToolBarForm {
     backButton.onClicked: applicationFlow.backButton()
     themeButton.onClicked: applicationFlow.themeButton()
+    settingsButton.onClicked: applicationFlow.settingsButton()
+
     backButton.states: State {
         name: "pressed"
         when: backButton.pressed
@@ -18,6 +20,14 @@ CustomToolBarForm {
         when: themeButton.pressed
         PropertyChanges {
             target: themeButton
+            scale: 1.4
+        }
+    }
+    settingsButton.states: State {
+        name: "pressed"
+        when: settingsButton.pressed
+        PropertyChanges {
+            target: settingsButton
             scale: 1.4
         }
     }

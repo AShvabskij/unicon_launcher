@@ -27,6 +27,11 @@ ApplicationFlowForm {
         }
     }
 
+    function settingsButton() {
+        applicationFlow.state = "Settings"
+        stack.push(settingsPage)
+    }
+
     function toogleToFullScreen() {
         window.visibility = "FullScreen" // "Maximized"
     }
@@ -88,7 +93,15 @@ ApplicationFlowForm {
                 remoteNodeComp.nodeName = _nodeName
             }
         }
+    }
 
+    Component {
+        id: settingsPage
+        Settings {
+            id: settingsComp
+            visible: true
+            state: applicationFlow.mode
+        }
     }
 
     function onNodeClicked(nodeAddress, nodeName) {
@@ -118,7 +131,7 @@ ApplicationFlowForm {
                 themeButton.enabled: true
                 logo.sourceSize.width: 50
                 logo.sourceSize.height: 40
-                logo.visible: false
+                logo.visible: true
                 visible: true
                 height: 35
             }

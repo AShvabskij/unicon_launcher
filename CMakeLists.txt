@@ -52,12 +52,14 @@ qt_add_qml_module(appunicon_launcher
         NodeItem.qml
         RemoteNode.qml
         WarningBox.qml
+        Settings.qml
 
     RESOURCES
         qtquickcontrols2.conf
         images/icons/home_dark.svg
         images/icons/home_light.svg
         images/icons/rst_symbol.svg
+        images/icons/option_3.svg
         images/icons/keyboard_backspace_black.svg
         images/icons/keyboard_backspace_black_left.svg
         images/icons/keyboard_backspace_black_right.svg
@@ -71,6 +73,9 @@ qt_add_qml_module(appunicon_launcher
         images/icons/node.svg
         images/icons/flag.svg
         images/icons/logo.png
+        images/icons/settings.svg
+        images/icons/stats.svg
+        fonts/montserrat/montserrat-latin-600-normal.ttf
 
     SOURCES
         qtunnel.h
@@ -83,9 +88,6 @@ qt_add_qml_module(appunicon_launcher
         tunnelservice.cpp
         localmodel.h
         localmodel.cpp
-    RESOURCES
-        fonts/montserrat/montserrat-latin-600-normal.ttf
-
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

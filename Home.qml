@@ -88,7 +88,7 @@ Item {
             Layout.preferredWidth: height / 1.16
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.margins: 5
-            source: (Colors.currentTheme == Colors.dark) ? "./images/icons/rst_symbol.svg" : "./images/icons/rst_symbol.svg"
+            source: (Colors.currentTheme == Colors.dark) ? "./images/icons/option_3.svg" : "./images/icons/option_3.svg"
         }
         Text {
             id: header
@@ -132,7 +132,7 @@ Item {
             Layout.minimumWidth: 150
             Layout.minimumHeight: 40
             enabled: false
-            buttonText: "Reports"
+            buttonText: "Stats"
         }
     }
 }
