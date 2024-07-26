@@ -5,6 +5,7 @@
 #include "qtunnel.h"
 #include "nodelistmodel.h"
 #include "localmodel.h"
+#include "licensemodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<QTunnel>("qmlmodels", 1, 0,"QTunnel");
     qmlRegisterType<NodeListModel>("qmlmodels", 1, 0,"NodeListModel");
     qmlRegisterType<LocalModel>("qmlmodels", 1, 0,"LocalModel");
+    qmlRegisterType<LicenseModel>("qmlmodels", 1, 0,"LicenseModel");
 
     QQmlApplicationEngine engine;
     QObject::connect(

@@ -14,9 +14,13 @@ public:
 
     void createLicFile();
     long getConfig(QVariantMap &retDat);
+    bool checkConfig(const QVariantMap &dat);
     long getNodes(QVariantList &retDat);
+    long saveFile(QString licFilePath);
 private:
     long saveObj(const QString fileName, const QJsonObject &obj, bool useBinaryFormat);
+    long replaceFile(const QString &sourceFilePath, const QString &destinationFilePath);
+    QString removeFilePrefix(const QString &filePath);
 };
 
 #endif // LICENSESERVICE_H

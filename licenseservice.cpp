@@ -132,6 +132,21 @@ long LicenseService::getConfig(QVariantMap& retDat)
     return 1;
 }
 
+bool LicenseService::checkConfig(const QVariantMap &dat)
+{
+    QStringList keys;
+    keys << "Number" << "Address" << "AllowedIPs" << "Endpoint" << "PrivateKey";
+
+    for (QString key : keys) {
+        if (!dat.contains(key)) {
+            qWarning() << "The license file is not valid! Key is absent:" << key;
+            return false;
+        }
+    }
+
+    return true;
+}
+
 long LicenseService::getNodes(QVariantList& retDat)
 {
     QString path = QCoreApplication::applicationDirPath() + "/config";
@@ -166,4 +181,49 @@ long LicenseService::getNodes(QVariantList& retDat)
     }
 
     return 1;
+}
+
+long LicenseService::saveFile(QString licFilePath)
+{
+    QString path = QCoreApplication::applicationDirPath() + "\\config";
+    QString baseFileName = "license";
+
+    QString datFilePath = path + "/" + baseFileName + ".dat";
+
+    licFilePath = removeFilePrefix(licFilePath);
+    long res = replaceFile(licFilePath, datFilePath);
+    return res;
+}
+
+long LicenseService::replaceFile(const QString &sourceFilePath, const QString &destinationFilePath)
+{
+    QFile sourceFile(sourceFilePath);
+    QFile destinationFile(destinationFilePath);
+
+    if (!sourceFile.exists()) {
+        qWarning() << "Source file does not exist:" << sourceFilePath;
+        return 0;
+    }
+
+    if (destinationFile.exists()) {
+        if (!destinationFile.remove()) {
+            qWarning() << "Failed to remove existing destination file:" << destinationFilePath;
+            return 0;
+        }
+    }
+
+    if (!sourceFile.copy(destinationFilePath)) {
+        qWarning() << "Failed to copy file from" << sourceFilePath << "to" << destinationFilePath;
+        return 0;
+    }
+
+    return 1;
+}
+
+QString LicenseService::removeFilePrefix(const QString &filePath) {
+    const QString prefix = "file:///";
+    if (filePath.startsWith(prefix)) {
+        return filePath.mid(prefix.length());
+    }
+    return filePath;
 }

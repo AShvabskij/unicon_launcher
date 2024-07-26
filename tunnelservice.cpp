@@ -7,6 +7,25 @@
 
 TunnelService::TunnelService() {}
 
+QString TunnelService::genPrivateKey()
+{
+    QString configPath = QCoreApplication::applicationDirPath() + "\\config";
+
+    QProcess proc;
+
+    QStringList args;
+    args << "genkey";
+
+    QString processCmd = configPath + "\\wg.exe";
+    proc.start(processCmd, args);
+    proc.waitForFinished(5000);
+
+    QString result = proc.readAllStandardOutput();
+    qDebug() << proc.readAllStandardError();
+
+    return result;
+}
+
 long TunnelService::createConfigFile(const QVariantMap &configObj)
 {
 

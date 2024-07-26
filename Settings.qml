@@ -1,15 +1,51 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls 6.5
+import QtQuick.Controls
+import QtQuick.Dialogs
+import qmlmodels 1.0
 
 Item {
     id: root
     state: ""
-    property bool licenseValidity: false
+    property bool licenseValidity: licenseModel.isValid
 
     FontLoader {
         id: montserratFont
         source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+    }
+
+    FileDialog {
+        id: fileDialog
+        title: "Select a .dat file"
+        currentFolder: StandardPaths.standardLocations(StandardPaths.DownloadLocation)[0]
+        nameFilters: ["*.dat"]
+        onAccepted: {
+            console.log("Selected file: " + selectedFile)
+            licenseModel.saveLicense(selectedFile)
+            licenseModel.parseLicense()
+        }
+        onRejected: {
+            console.log("File selection was canceled")
+        }
+    }
+
+    LicenseModel {
+        id: licenseModel
+        onErrorRaised: {
+            root.state = "error"
+            msgError.text = error
+            msgError.informativeText = informativeError
+            msgError.visible = true
+        }
+
+        Component.onCompleted: {
+            licenseModel.parseLicense()
+        }
+    }
+
+    WarningBox {
+        id: msgError
+        onAccepted: applicationFlow.backButton()
     }
 
     ColumnLayout {
@@ -39,16 +75,16 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignTop
-                wrapMode: Text.Wrap
                 anchors.topMargin: 18
                 anchors.bottomMargin: 18
                 anchors.leftMargin: 24
                 anchors.rightMargin: 24
+                font.pixelSize: 16
                 font.weight: Font.Normal
                 font.family: montserratFont.name
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignTop
+                wrapMode: Text.Wrap
             }
         }
 
@@ -87,11 +123,11 @@ Item {
                     id: helpAppKeyText
                     color: Colors.currentTheme.helpTextColor
                     text: qsTr("Please generate your APP key and send it to the support team (support@igel.com)")
-                    anchors.left: appKeyText.left
-                    anchors.top: appKeyText.bottom
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.leftMargin: 10
+                    Layout.topMargin: 0
+
                     font.pixelSize: 14
-                    anchors.leftMargin: 0
-                    anchors.topMargin: 6
                     font.family: montserratFont.name
                 }
 
@@ -109,7 +145,7 @@ Item {
                     leftPadding: 10
                     placeholderText: "APP Key"
                     placeholderTextColor: Colors.currentTheme.helpTextColor
-                    text: "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA="
+                    text: licenseModel.appKey //"Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA="
                     background: Rectangle {
                         color: Colors.currentTheme.boxColor
                         border.color: Colors.currentTheme.borderColor
@@ -119,7 +155,7 @@ Item {
                 RowLayout {
                     anchors.top: appKeyInput.bottom
                     anchors.left: appKeyInput.left
-                    anchors.leftMargin: 10
+                    anchors.leftMargin: 0
                     anchors.topMargin: 10
                     spacing: 20
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -132,6 +168,11 @@ Item {
                         buttonText: "Generate"
                         showIcon: false
                         fontSize: 18
+                        enabled: !licenseModel.isValid
+
+                        onClicked: {
+                            licenseModel.generateKey();
+                        }
                     }
 
                     CustomButton {
@@ -153,7 +194,7 @@ Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.rightMargin: 50
             Layout.leftMargin: 50
-            Layout.topMargin: 30
+            Layout.topMargin: 10
             color: "transparent"
             radius: 10
             border.color: Colors.currentTheme.borderColor
@@ -175,17 +216,6 @@ Item {
                     Layout.topMargin: 10
                 }
 
-                Text {
-                    id: helpLicenseText
-                    color: Colors.currentTheme.helpTextColor
-                    text: qsTr("Please select the license file received from the support team")
-                    anchors.left: licenseText.left
-                    anchors.top: licenseText.bottom
-                    font.pixelSize: 14
-                    anchors.leftMargin: 0
-                    anchors.topMargin: 6
-                    font.family: montserratFont.name
-                }
                 TextField {
                     id: licenseInput
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -199,8 +229,8 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                     leftPadding: 10
                     placeholderText: "License Number"
-                    placeholderTextColor: "#787878"
-                    text: "#1122-5678"
+                    placeholderTextColor: Colors.currentTheme.helpTextColor
+                    text: licenseModel.licenseNumber
                     background: Rectangle {
                         color: Colors.currentTheme.boxColor
                         border.color: Colors.currentTheme.borderColor
@@ -209,21 +239,33 @@ Item {
 
                 Text {
                     id: statusText
-                    color: licenseValidity ? Colors.currentTheme.helpTextColor : "#CC0000"
-                    text: licenseValidity ? qsTr("License added successfully") : qsTr("Invalid license")
+                    color: licenseValidity ? "#227102" : "#CC0000"
+                    text: licenseValidity ? qsTr("License verified successfully") : qsTr("Invalid license")
                     anchors.left: licenseText.left
 
                     font.pixelSize: 14
-                    anchors.leftMargin: 10
+                    anchors.leftMargin: 00
                     anchors.topMargin: 6
-                    font.family: "Titillium Web"
+                    font.family:  montserratFont.name
                     visible: true
                 }
 
-                RowLayout {
-                    anchors.top: statusText.bottom
+                Text {
+                    id: helpLicenseText
+                    color: Colors.currentTheme.helpTextColor
+                    text: qsTr("Please select the license file received from the support team")
                     anchors.left: licenseInput.left
-                    anchors.leftMargin: 10
+                    anchors.top: statusText.bottom
+                    font.pixelSize: 14
+                    anchors.leftMargin: 0
+                    anchors.topMargin: 24
+                    font.family: montserratFont.name
+                }
+
+                RowLayout {
+                    anchors.top: helpLicenseText.bottom
+                    anchors.left: helpLicenseText.left
+                    anchors.leftMargin: 00
                     anchors.topMargin: 10
                     spacing: 20
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -237,6 +279,9 @@ Item {
                         buttonText: "Select license"
                         showIcon: true
                         fontSize: 18
+                        onClicked: {
+                            fileDialog.open();
+                        }
                     }
                 }
             }
