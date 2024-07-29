@@ -15,7 +15,7 @@ void LicenseService::createLicFile()
 
     QJsonArray nodesArr;
 
-    config["PrivateKey"] = "oIsGee+Dr8zECo/hs+7LIvJO7b+T6R8f4mdBLb7fynE=";
+    config["AppKey"] = "oIsGee+Dr8zECo/hs+7LIvJO7b+T6R8f4mdBLb7fynE=";
     config["Address"] = "10.9.0.2/24";
     config["Server"] = "10.9.0.1";
 
@@ -62,6 +62,14 @@ void LicenseService::createLicFile()
 
     QString datFile = path + "/" + baseFileName + ".dat";
     saveObj(datFile, res, false);
+}
+
+void LicenseService::deleteLicFile()
+{
+    QString path = QCoreApplication::applicationDirPath() + "\\config";
+    QString datFileName = path + "/" + "license" + ".dat";
+    QFile datFile( datFileName );
+    datFile.remove();
 }
 
 long LicenseService::saveObj(const QString fileName, const QJsonObject &obj, bool useBinaryFormat)
@@ -111,7 +119,7 @@ long LicenseService::getConfig(QVariantMap& retDat)
     if(!datFile.open( QIODevice::ReadOnly | QIODevice::Text ))
     {
         qWarning() << "file open failed: " << datFileName << Qt::endl;
-        return 0;
+        return -2;
     }
 
     QTextStream inStream( &datFile );
@@ -135,7 +143,7 @@ long LicenseService::getConfig(QVariantMap& retDat)
 bool LicenseService::checkConfig(const QVariantMap &dat)
 {
     QStringList keys;
-    keys << "Number" << "Address" << "AllowedIPs" << "Endpoint" << "PrivateKey";
+    keys << "Number" << "Address" << "AllowedIPs" << "Endpoint" << "AppKey";
 
     for (QString key : keys) {
         if (!dat.contains(key)) {
@@ -193,6 +201,58 @@ long LicenseService::saveFile(QString licFilePath)
     licFilePath = removeFilePrefix(licFilePath);
     long res = replaceFile(licFilePath, datFilePath);
     return res;
+}
+
+long LicenseService::saveKey(const QString& key)
+{
+    QString path = QCoreApplication::applicationDirPath() + "\\config";
+    QString baseFileName = "appkey";
+
+    QString filePath = path + "/" + baseFileName + ".dat";
+
+    QFile destinationFile(filePath);
+
+    if (destinationFile.exists()) {
+        if (!destinationFile.remove()) {
+            qWarning() << "Failed to remove existing destination file:" << filePath;
+            return 0;
+        }
+    }
+
+    if (!destinationFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "Could not open file for writing";
+        return 0;
+    }
+
+    QTextStream out(&destinationFile);
+    QString textToWrite = key;
+    out << textToWrite;
+    destinationFile.close();
+
+    return 1;
+}
+
+long LicenseService::getKey(QString& key)
+{
+    QString path = QCoreApplication::applicationDirPath() + "\\config";
+    QString baseFileName = "appkey";
+
+    QString datFilePath = path + "/" + baseFileName + ".dat";
+
+    QFile sourcefile(datFilePath);
+
+    if (!sourcefile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Could not open file for reading";
+        return 0;
+    }
+
+    QTextStream in(&sourcefile);
+    QString fileContent = in.readLine();
+    sourcefile.close();
+
+    key = fileContent;
+
+    return 1;
 }
 
 long LicenseService::replaceFile(const QString &sourceFilePath, const QString &destinationFilePath)

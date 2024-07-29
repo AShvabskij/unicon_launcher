@@ -228,7 +228,8 @@ Item {
                     color: Colors.currentTheme.textColor //"#dfdfdf"
                     verticalAlignment: Text.AlignVCenter
                     leftPadding: 10
-                    placeholderText: "License Number"
+                    placeholderText: ""
+                    readOnly: true
                     placeholderTextColor: Colors.currentTheme.helpTextColor
                     text: licenseModel.licenseNumber
                     background: Rectangle {
@@ -247,7 +248,8 @@ Item {
                     anchors.leftMargin: 00
                     anchors.topMargin: 6
                     font.family:  montserratFont.name
-                    visible: true
+                    visible: licenseModel.isExists
+
                 }
 
                 Text {
@@ -255,7 +257,7 @@ Item {
                     color: Colors.currentTheme.helpTextColor
                     text: qsTr("Please select the license file received from the support team")
                     anchors.left: licenseInput.left
-                    anchors.top: statusText.bottom
+//                    anchors.top: statusText.visible ? statusText.bottom :
                     font.pixelSize: 14
                     anchors.leftMargin: 0
                     anchors.topMargin: 24
@@ -281,6 +283,20 @@ Item {
                         fontSize: 18
                         onClicked: {
                             fileDialog.open();
+                        }
+                    }
+
+                    CustomButton {
+                        anchors.topMargin: 50
+                        id: licenseButtonRemove
+                        Layout.minimumWidth: 250
+                        Layout.minimumHeight: 50
+                        buttonText: "Delete license"
+                        showIcon: false
+                        fontSize: 18
+                        enabled: licenseModel.isExists
+                        onClicked: {
+                            licenseModel.deleteLicense()
                         }
                     }
                 }

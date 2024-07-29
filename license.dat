@@ -1,0 +1,40 @@
+{
+    "config": {
+        "Address": "10.9.0.2/24",
+        "AllowedIPs": "10.9.0.0/24",
+        "Endpoint": "92.118.113.157:51820",
+        "AppKey": "SEVLEF0TufZMiHyWHaWYo7Ta4dHXvZmdE9ausfpTDXs=",
+        "PublicKey": "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=",
+        "Number": "#1122-EEEE"        
+    },
+    "nodes": [
+        {
+            "name": "Starter 1",
+            "region": "Katar",
+            "owner": "Totem Ltd",
+            "address": "Katar techo park",
+            "ipAddress": "10.9.0.5"
+        },
+        {
+            "name": "Starter 2",
+            "region": "Katar",
+            "owner": "Totem Ltd",
+            "address": "Katar techo park",
+            "ipAddress": "10.9.0.5"
+        },		
+        {
+            "name": "RND Lab",
+            "region": "Munhen",
+            "owner": "IGEL Electric GmbH",
+            "address": "Germany Hermann-Ritter-Str. 110 Bremen",
+            "ipAddress": "10.9.0.22"
+        },
+        {
+            "name": "Starter 1",
+            "region": "Munhen",
+            "owner": "IGEL Electric GmbH",
+            "address": "Germany Hermann-Ritter-Str. 110 Bremen",
+            "ipAddress": "10.9.0.4"
+        }		
+    ]
+}

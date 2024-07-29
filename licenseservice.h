@@ -13,10 +13,15 @@ public:
     }
 
     void createLicFile();
+    void deleteLicFile();
+
     long getConfig(QVariantMap &retDat);
     bool checkConfig(const QVariantMap &dat);
     long getNodes(QVariantList &retDat);
     long saveFile(QString licFilePath);
+    long saveKey(const QString &key);
+    long getKey(QString &key);
+
 private:
     long saveObj(const QString fileName, const QJsonObject &obj, bool useBinaryFormat);
     long replaceFile(const QString &sourceFilePath, const QString &destinationFilePath);

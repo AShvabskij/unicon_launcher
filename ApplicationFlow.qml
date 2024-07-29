@@ -160,6 +160,7 @@ ApplicationFlowForm {
                 themeButton.opacity: 100
                 themeButton.enabled: true
                 logo.visible: true
+                settingsButton.enabled: false
                 visible: true
             }
 
@@ -207,6 +208,18 @@ ApplicationFlowForm {
                 target: applicationFlow
                 previousState: "Remote"
             }
+        },
+        State {
+            name: "Settings"
+            PropertyChanges {
+                target: toolbar
+                anchors.topMargin:  parent.height / 80
+                settingsButton.visible: false
+                logo.visible: true
+                logo.sourceSize.width: 50
+                logo.sourceSize.height: 40
+            }
+
         }
     ]
 }

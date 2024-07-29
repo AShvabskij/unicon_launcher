@@ -23,6 +23,12 @@ QString TunnelService::genPrivateKey()
     QString result = proc.readAllStandardOutput();
     qDebug() << proc.readAllStandardError();
 
+    int linePos = result.indexOf('=');
+
+    if (linePos != -1) {
+        result = result.left(linePos + 1);
+    }
+
     return result;
 }
 
@@ -51,28 +57,32 @@ long TunnelService::createConfigFile(const QVariantMap &configObj)
 
 long TunnelService::generateContent(const QVariantMap &configObj, QTextStream& stream)
 {
-    QStringList interfaceKeys;
-    interfaceKeys << "PrivateKey" << "Address";
+    QMap<QString, QString> interfaceKeys;
+    interfaceKeys.insert("AppKey", "PrivateKey");
+    interfaceKeys.insert("Address", "Address");
     stream << "[Interface]" << Qt::endl;
 
-    for (QString key: interfaceKeys) {
+    for (QString key: interfaceKeys.keys()) {
         if (!configObj.contains(key)) {
             qWarning() << "Config is not valid! Key " << key << "is absent";
             return 0;
         }
-        stream << key << " = " << configObj[key].toString() << Qt::endl;;
+        stream << interfaceKeys[key] << " = " << configObj[key].toString() << Qt::endl;;
     }
 
-    QStringList peerKeys;
-    peerKeys << "PublicKey" << "AllowedIPs" << "Endpoint";
+    QMap<QString, QString> peerKeys;
+    peerKeys.insert("PublicKey", "PublicKey");
+    peerKeys.insert("AllowedIPs", "AllowedIPs");
+    peerKeys.insert("Endpoint", "Endpoint");
+
     stream << "[Peer]" << Qt::endl;
 
-    for (QString key: peerKeys) {
+    for (QString key: peerKeys.keys()) {
         if (!configObj.contains(key)) {
             qWarning() << "Config is not valid! Key " << key << "is absent";
             return 0;
         }
-        stream << key << " = " << configObj[key].toString() << Qt::endl;;
+        stream << peerKeys[key] << " = " << configObj[key].toString() << Qt::endl;
     }
 
     return 1;

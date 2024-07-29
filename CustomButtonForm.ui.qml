@@ -47,8 +47,7 @@ AbstractButton {
 
             Text {
                 text: buttonText
-                color: (buttonColor
-                        == "green") ? Colors.dark.textColor : Colors.currentTheme.textColor
+                color: button.enabled ? Colors.currentTheme.textColor : "#615D5B"
                 font.family: montserratFont.name
                 font.pixelSize: fontSize
                 font.weight: 700

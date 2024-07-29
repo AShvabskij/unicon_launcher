@@ -3,11 +3,9 @@
 import QtQuick
 
 CustomButtonForm {
-    rectangle.gradient: if (buttonColor == "grey"
-                                && Colors.currentTheme == Colors.dark) {
+    rectangle.gradient: if (Colors.currentTheme == Colors.dark) {
                             Colors.darkButtonGradient
-                        } else if (buttonColor == "grey"
-                                   && Colors.currentTheme == Colors.light) {
+                        } else if (Colors.currentTheme == Colors.light) {
                             Colors.lightButtonGradient
                         } else {
                             Colors.greenButtonGradient
