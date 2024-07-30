@@ -56,7 +56,7 @@ Item {
 
         Rectangle {
             id: infoPanel
-            height: root.height / 5
+            height: 210
             color: Colors.currentTheme.boxColor
             radius: 10
             border.color: Colors.currentTheme.borderColor
@@ -69,20 +69,25 @@ Item {
 
             Text {
                 id: infoText
-                color: Colors.currentTheme.textColor //"#dfdfdf"
-                text: qsTr("This tool is designed for remote or local maintenance of highpower electronic devices. The tool allows you to connect to the web interface of the selected device to monitor the device’s performance parameters and usage statistics./n To run the To receive license Please generate application")
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
+                color: Colors.currentTheme.textColor
+                textFormat: Text.RichText
+                text: qsTr(" This tool is designed for remote or local maintenance of highpower electronic devices. The tool allows you to connect to the web interface of the selected device to monitor the device’s performance parameters and usage statistics.")
+                      + "<br>" + qsTr(` To activate a remote support tool please load a license file, requested from the support team`)
+                      + "<br><br>" + qsTr(` Tech Support: <b>techsupport@solconigel.com`) + "</b>"
+                      + "<br>" + `Visit:  <a href="https://solconigel.com/">SolconIgel</a> for more information`
+                onLinkActivated: {
+                    Qt.openUrlExternally(link);
+                }
+
+                anchors.fill: parent
                 anchors.topMargin: 18
                 anchors.bottomMargin: 18
                 anchors.leftMargin: 24
                 anchors.rightMargin: 24
                 font.pixelSize: 16
                 font.weight: Font.Normal
-                font.family: montserratFont.name
-                horizontalAlignment: Text.AlignHCenter
+                font.family: "Titillium Web"
+                horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignTop
                 wrapMode: Text.Wrap
             }
@@ -122,12 +127,12 @@ Item {
                 Text {
                     id: helpAppKeyText
                     color: Colors.currentTheme.helpTextColor
-                    text: qsTr("Please generate your APP key and send it to the support team (support@igel.com)")
+                    text: qsTr("Please generate your APP key and send it to the support team (techsupport@solconigel.com)")
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     Layout.leftMargin: 10
                     Layout.topMargin: 0
 
-                    font.pixelSize: 14
+                    font.pixelSize: 13
                     font.family: montserratFont.name
                 }
 
@@ -140,12 +145,13 @@ Item {
                     font.pixelSize: 18
                     font.weight: 400
                     font.family: montserratFont.name
-                    color: Colors.currentTheme.textColor //"#dfdfdf"
+                    color: Colors.currentTheme.textColor
                     verticalAlignment: Text.AlignVCenter
                     leftPadding: 10
                     placeholderText: "APP Key"
                     placeholderTextColor: Colors.currentTheme.helpTextColor
-                    text: licenseModel.appKey //"Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA="
+                    text: licenseModel.appKey
+                    selectByMouse: true
                     background: Rectangle {
                         color: Colors.currentTheme.boxColor
                         border.color: Colors.currentTheme.borderColor
@@ -182,6 +188,10 @@ Item {
                         buttonText: "Copy"
                         showIcon: false
                         fontSize: 18
+                        onClicked: {
+                            appKeyInput.selectAll()
+                            appKeyInput.copy()
+                        }
                     }
                 }
             }
@@ -241,10 +251,10 @@ Item {
                 Text {
                     id: statusText
                     color: licenseValidity ? "#227102" : "#CC0000"
-                    text: licenseValidity ? qsTr("License verified successfully") : qsTr("Invalid license")
+                    text: licenseValidity ? qsTr("License activated successfully") : qsTr("Invalid license")
                     anchors.left: licenseText.left
 
-                    font.pixelSize: 14
+                    font.pixelSize: 15
                     anchors.leftMargin: 00
                     anchors.topMargin: 6
                     font.family:  montserratFont.name
@@ -257,10 +267,10 @@ Item {
                     color: Colors.currentTheme.helpTextColor
                     text: qsTr("Please select the license file received from the support team")
                     anchors.left: licenseInput.left
-//                    anchors.top: statusText.visible ? statusText.bottom :
-                    font.pixelSize: 14
+                    anchors.top: statusText.visible ? statusText.bottom : licenseInput.bottom
+                    font.pixelSize: 13
                     anchors.leftMargin: 0
-                    anchors.topMargin: 24
+                    anchors.topMargin: 20
                     font.family: montserratFont.name
                 }
 
@@ -276,7 +286,7 @@ Item {
                     CustomButton {
                         anchors.topMargin: 50
                         id: licenseButton
-                        Layout.minimumWidth: 250
+                        Layout.minimumWidth: 230
                         Layout.minimumHeight: 50
                         buttonText: "Select license"
                         showIcon: true
@@ -289,7 +299,7 @@ Item {
                     CustomButton {
                         anchors.topMargin: 50
                         id: licenseButtonRemove
-                        Layout.minimumWidth: 250
+                        Layout.minimumWidth: 230
                         Layout.minimumHeight: 50
                         buttonText: "Delete license"
                         showIcon: false
