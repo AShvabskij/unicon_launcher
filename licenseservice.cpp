@@ -143,7 +143,7 @@ long LicenseService::getConfig(QVariantMap& retDat)
 bool LicenseService::checkConfig(const QVariantMap &dat)
 {
     QStringList keys;
-    keys << "Number" << "Address" << "AllowedIPs" << "Endpoint" << "AppKey";
+    keys << "Number" << "Address" << "AllowedIPs" << "Endpoint" << "AppKey" << "Server";
 
     for (QString key : keys) {
         if (!dat.contains(key)) {
@@ -251,6 +251,25 @@ long LicenseService::getKey(QString& key)
     sourcefile.close();
 
     key = fileContent;
+
+    return 1;
+}
+
+long LicenseService::deleteKey()
+{
+    QString path = QCoreApplication::applicationDirPath() + "\\config";
+    QString baseFileName = "appkey";
+
+    QString keyFilePath = path + "/" + baseFileName + ".dat";
+
+    QFile file(keyFilePath);
+
+    if (file.exists()) {
+        if (!file.remove()) {
+            qWarning() << "Failed to remove existing key file:" << keyFilePath;
+            return 0;
+        }
+    }
 
     return 1;
 }

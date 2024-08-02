@@ -132,7 +132,7 @@ Item {
             Layout.minimumWidth: 150
             Layout.minimumHeight: 40
             enabled: false
-            buttonText: "Stats"
+            buttonText: "Dashboard"
         }
     }
 }

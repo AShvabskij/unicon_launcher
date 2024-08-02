@@ -19,6 +19,10 @@ Item {
         source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
     }
 
+    function onRefreshPage() {
+        nodesModel.update();
+    }
+
     ColumnLayout {
         id: title
 
@@ -76,7 +80,9 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
 
                     onClicked: {
-                        sendNodeClicked(ipAddress, fullName)
+                        if (activated) {
+                            sendNodeClicked(ipAddress, fullName)
+                        }
                     }
                 }
 
@@ -92,7 +98,7 @@ Item {
         }
         onErrorRaised: {
             root.state = "error"
-            msgError.text = error
+            msgError.text = errorTxt
             msgError.informativeText = informativeError
             msgError.visible = true
         }

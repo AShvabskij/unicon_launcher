@@ -1,0 +1,16 @@
+<Packages>
+    <ApplicationName>IRS Tool</ApplicationName>
+    <ApplicationVersion>1.0.0</ApplicationVersion>
+    <Package>
+        <Name>com.solconigel.irst</Name>
+        <Title>IRS Tool</Title>
+        <Description>The tool for local/remote maintenance of highpower electronic devices</Description>
+        <SortingPriority>0</SortingPriority>
+        <TreeName moveChildren="false"></TreeName>
+        <Version>1.0.0</Version>
+        <LastUpdateDate></LastUpdateDate>
+        <InstallDate>2024-07-30</InstallDate>
+        <Size>332880114</Size>
+        <Checkable>true</Checkable>
+    </Package>
+</Packages>

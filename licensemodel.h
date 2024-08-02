@@ -18,6 +18,7 @@ public:
 
     Q_INVOKABLE void saveLicense(QString filePath);
     Q_INVOKABLE void generateKey();
+    Q_INVOKABLE void clearKey();
     Q_INVOKABLE void parseLicense();
     Q_INVOKABLE void deleteLicense();
 

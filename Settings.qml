@@ -71,10 +71,10 @@ Item {
                 id: infoText
                 color: Colors.currentTheme.textColor
                 textFormat: Text.RichText
-                text: qsTr(" This tool is designed for remote or local maintenance of highpower electronic devices. The tool allows you to connect to the web interface of the selected device to monitor the device’s performance parameters and usage statistics.")
+                text: qsTr(" This tool is designed for local/remote maintenance of highpower electronic devices. The tool allows you to connect to the web interface of the selected device to monitor the device’s performance parameters and usage statistics.")
                       + "<br>" + qsTr(` To activate a remote support tool please load a license file, requested from the support team`)
                       + "<br><br>" + qsTr(` Tech Support: <b>techsupport@solconigel.com`) + "</b>"
-                      + "<br>" + `Visit:  <a href="https://solconigel.com/">SolconIgel</a> for more information`
+                      + "<br>" + `Visit:  <a href="https://solconigel.com/">Solcon-IGEL Group</a> for more information`
                 onLinkActivated: {
                     Qt.openUrlExternally(link);
                 }
@@ -191,6 +191,19 @@ Item {
                         onClicked: {
                             appKeyInput.selectAll()
                             appKeyInput.copy()
+                        }
+                    }
+
+                    CustomButton {
+                        id: clearButton
+                        Layout.minimumWidth: 150
+                        Layout.minimumHeight: 50
+                        buttonText: "Clear"
+                        showIcon: false
+                        fontSize: 18
+                        onClicked: {
+                            appKeyInput.clear()
+                            licenseModel.clearKey()
                         }
                     }
                 }

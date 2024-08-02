@@ -16,6 +16,8 @@ ApplicationFlowForm {
     property string _nodeIP: ""
     property string _nodeName: ""
 
+    signal sendRefreshClicked()
+
     //! [Theme button]
     function themeButton() {
         if (Colors.currentTheme == Colors.dark) {
@@ -32,8 +34,18 @@ ApplicationFlowForm {
         stack.push(settingsPage)
     }
 
+    function refreshButton() {
+        if (applicationFlow.state == "Local") {
+            sendRefreshClicked()
+        } else if (applicationFlow.state == "Remote") {
+            sendRefreshClicked()
+        } else if (applicationFlow.state == "RemoteIP") {
+            sendRefreshClicked()
+        }
+    }
+
     function toogleToFullScreen() {
-        window.visibility = "FullScreen" // "Maximized"
+        window.visibility = "Maximized" //"FullScreen"
     }
 
     function toogleToWindowScreen() {
@@ -66,6 +78,9 @@ ApplicationFlowForm {
         Local {
             visible: true
             state: applicationFlow.mode
+            Component.onCompleted: {
+                sendRefreshClicked.connect(onRefreshPage)
+            }
         }
     }
 
@@ -77,6 +92,7 @@ ApplicationFlowForm {
             nodesModel: nodeListModel
             Component.onCompleted: {
                 sendNodeClicked.connect(onNodeClicked)
+                sendRefreshClicked.connect(onRefreshPage)
             }
 
         }
@@ -91,6 +107,7 @@ ApplicationFlowForm {
             Component.onCompleted: {
                 remoteNodeComp.nodeIP = _nodeIP
                 remoteNodeComp.nodeName = _nodeName
+                sendRefreshClicked.connect(onRefreshPage)
             }
         }
     }
@@ -129,6 +146,7 @@ ApplicationFlowForm {
                 backButton.enabled: false
                 themeButton.opacity: 100
                 themeButton.enabled: true
+                refreshButton.visible: false
                 logo.sourceSize.width: 50
                 logo.sourceSize.height: 40
                 logo.visible: true
@@ -159,6 +177,7 @@ ApplicationFlowForm {
                 backButton.enabled: true
                 themeButton.opacity: 100
                 themeButton.enabled: true
+                refreshButton.visible: true
                 logo.visible: true
                 settingsButton.enabled: false
                 visible: true
@@ -185,6 +204,7 @@ ApplicationFlowForm {
                 backButton.enabled: true
                 themeButton.opacity: 100
                 themeButton.enabled: true
+                refreshButton.visible: true
                 logo.visible: true
                 visible: true
             }
@@ -202,7 +222,19 @@ ApplicationFlowForm {
             }
         },
         State {
-            name: "RemotePage"
+            name: "RemoteIP"
+
+            PropertyChanges {
+                target: toolbar
+                anchors.topMargin: 0
+                backButton.opacity: 100
+                backButton.enabled: true
+                themeButton.opacity: 100
+                themeButton.enabled: true
+                refreshButton.visible: true
+                logo.visible: true
+                visible: true
+            }
 
             PropertyChanges {
                 target: applicationFlow
@@ -215,6 +247,7 @@ ApplicationFlowForm {
                 target: toolbar
                 anchors.topMargin:  parent.height / 80
                 settingsButton.visible: false
+                refreshButton.visible: false
                 logo.visible: true
                 logo.sourceSize.width: 50
                 logo.sourceSize.height: 40

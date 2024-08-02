@@ -21,6 +21,7 @@ public:
     long saveFile(QString licFilePath);
     long saveKey(const QString &key);
     long getKey(QString &key);
+    long deleteKey();
 
 private:
     long saveObj(const QString fileName, const QJsonObject &obj, bool useBinaryFormat);

@@ -21,6 +21,10 @@ Item {
         applicationFlow.toogleToFullScreen()
     }
 
+    function onRefreshPage() {
+        webView.reload()
+    }
+
     states: [
         State {
             name: "content"

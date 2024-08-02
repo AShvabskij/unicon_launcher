@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>IRS Tool</DisplayName>
+    <Description>The tool for local/remote maintenance of highpower electronic devices</Description>
+    <Version>1.0.1</Version>
+    <ReleaseDate>2024-07-30</ReleaseDate>
+    <StartMenuDir>Solcon-IGEL</StartMenuDir>
+    <Default>true</Default>
+    <Script>installscript.qs</Script>
+    <AllowNonEmptyTargetDirectory>true</AllowNonEmptyTargetDirectory>
+</Package>

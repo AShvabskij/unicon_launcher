@@ -73,8 +73,10 @@ qt_add_qml_module(appunicon_launcher
         images/icons/node.svg
         images/icons/flag.svg
         images/icons/logo.png
+        images/icons/logo_window.png
         images/icons/settings.svg
         images/icons/stats.svg
+        images/icons/refresh.svg
         fonts/montserrat/montserrat-latin-600-normal.ttf
 
     SOURCES
@@ -90,7 +92,11 @@ qt_add_qml_module(appunicon_launcher
         localmodel.cpp
         licensemodel.h
         licensemodel.cpp
-)
+
+    RESOURCES
+        resources.qrc
+        images/icons/logo_window.png
+    )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>IRS Tool</Name>
+    <Version>1.0.1</Version>
+    <Title>IRS Tool Installer</Title>
+    <Publisher>Solcon-IGEL Group</Publisher>
+    <StartMenuDir>Solcon-IGEL</StartMenuDir>
+    <TargetDir>@HomeDir@/IRST</TargetDir>
+</Installer>

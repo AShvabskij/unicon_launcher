@@ -17,7 +17,7 @@ public:
 
 signals:
     void connected();
-    void errorRaised(QString error, QString informativeError);
+    void errorRaised(QString errorTxt, QString informativeError);
 
 private slots:
     void onFinishConnecting();

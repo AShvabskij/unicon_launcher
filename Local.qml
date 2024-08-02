@@ -18,6 +18,10 @@ Item {
         progressItem.progressBarValue = progressItem.progressBarValue === 0 ? 1 : 0;
     }
 
+    function onRefreshPage() {
+        webView.reload()
+    }
+
     states: [
         State {
             name: "content"

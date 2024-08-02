@@ -6,6 +6,7 @@ CustomToolBarForm {
     backButton.onClicked: applicationFlow.backButton()
     themeButton.onClicked: applicationFlow.themeButton()
     settingsButton.onClicked: applicationFlow.settingsButton()
+    refreshButton.onClicked: applicationFlow.refreshButton()
 
     backButton.states: State {
         name: "pressed"
@@ -28,6 +29,14 @@ CustomToolBarForm {
         when: settingsButton.pressed
         PropertyChanges {
             target: settingsButton
+            scale: 1.4
+        }
+    }
+    refreshButton.states: State {
+        name: "pressed"
+        when: refreshButton.pressed
+        PropertyChanges {
+            target: refreshButton
             scale: 1.4
         }
     }

@@ -12,10 +12,14 @@ Item {
     property alias backButton: backButton
     property alias themeButton: themeButton
     property alias settingsButton: settingsButton
+    property alias refreshButton: refreshButton
     property alias logo: logo
 
     RowLayout {
         width: parent.width
+        Row {
+            Layout.alignment: Qt.AlignLeft
+
         Button {
             id: backButton
             icon.color: (Colors.currentTheme == Colors.dark) ? "#FFFFFF" : "#121111"
@@ -29,6 +33,22 @@ Item {
                     easing.type: Easing.InOutQuad
                 }
             }
+        }
+        Button {
+            id: refreshButton
+            icon.color: (Colors.currentTheme == Colors.dark) ? "#DDE2E8" : "#667085"
+            icon.source: "./images/icons/refresh.svg"
+            flat: true
+            background: null
+            transitions: Transition {
+                NumberAnimation {
+                    properties: "scale"
+                    duration: 100
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
+        }
         }
 
         Image {

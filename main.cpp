@@ -33,5 +33,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("nodeListModel", QVariant::fromValue(&nodeListModel));
 */
 
+    QIcon icon = QIcon(":/qt/qml/unicon_launcher/images/icons/logo_window.png");
+    app.setWindowIcon(icon);
+
     return app.exec();
 }

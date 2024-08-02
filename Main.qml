@@ -7,7 +7,7 @@ Window {
     width: Constants.width
     height: Constants.height
     visibility: "Windowed"
-    flags: Qt.FramelessWindowHin
+//  flags: Qt.FramelessWindowHint
 
     ApplicationFlow {
         width: parent.width

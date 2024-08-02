@@ -20,7 +20,7 @@ NodeListModel::~NodeListModel()
 
 void NodeListModel::clear()
 {
-    qDebug() << "clearing NodeListModel";
+//  qDebug() << "clearing NodeListModel";
 
     m_IsDestroyed = true;
 
@@ -33,7 +33,7 @@ void NodeListModel::clear()
 
     m_nodes.clear();
 
-    qDebug() << "finish clearing NodeListModel";
+//  qDebug() << "finish clearing NodeListModel";
 }
 
 void NodeListModel::init()
@@ -48,7 +48,6 @@ void NodeListModel::init()
     long ret = license.getNodes(nodes);
     if (ret != 1 ) {
         emit errorRaised("Couldn't get nodes configuration", "Make sure the license file is valid");
-        license.createLicFile();
         return;
     }
 
@@ -146,12 +145,13 @@ void NodeListModel::update()
         node.totalWorkTime = fakeNode.totalWorkTime;
         node.totalStartNumber = fakeNode.totalStartNumber;
         node.status = fakeNode.status;
+        node.activated = false;
 
         auto future = QtConcurrent::run(&NodeListModel::th_nodeUpdate, this, iIndex);
 
         QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
         QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex]() {
-            qDebug() << "Thread finished for index = " << iIndex;
+//          qDebug() << "Thread finished for index = " << iIndex;
 
             if (m_IsDestroyed) return;
 
@@ -168,6 +168,13 @@ void NodeListModel::update()
 
         iIndex++;
     }
+
+    QList<int> roles;
+    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+    QModelIndex mFirstIndex = this->index(0);
+    QModelIndex mLastIndex = this->index(m_nodes.count() - 1);
+    emit dataChanged(mFirstIndex, mLastIndex, roles);
+
 }
 
 bool NodeListModel::checkConnection(QString address)
@@ -179,7 +186,7 @@ bool NodeListModel::checkConnection(QString address)
         return true;
     }
 
-    return true;
+    return false;
 }
 
 void NodeListModel::addItem(const Node &node)

@@ -3,9 +3,10 @@
         "Address": "10.9.0.2/24",
         "AllowedIPs": "10.9.0.0/24",
         "Endpoint": "92.118.113.157:51820",
-        "AppKey": "SEVLEF0TufZMiHyWHaWYo7Ta4dHXvZmdE9ausfpTDXs=",
+        "AppKey": "oIsGee+Dr8zECo/hs+7LIvJO7b+T6R8f4mdBLb7fynE=",
         "PublicKey": "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=",
-        "Number": "#1122-EEEE"        
+        "Number": "#1122-EEEE",
+        "Server": "10.9.0.1"                
     },
     "nodes": [
         {

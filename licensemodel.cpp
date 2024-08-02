@@ -22,6 +22,18 @@ void LicenseModel::generateKey()
     emit appKeyChanged(m_appKey);
 }
 
+void LicenseModel::clearKey()
+{
+    long res = m_license->deleteKey();
+
+    if (res == 1) {
+        m_appKey = "";
+        emit appKeyChanged(m_appKey);
+    } else {
+        emit errorRaised("Error deleting application key!", "");
+    }
+}
+
 void LicenseModel::parseLicense()
 {
     if (m_appKey.isEmpty()) {
@@ -32,13 +44,12 @@ void LicenseModel::parseLicense()
     QVariantMap conf;
     long res = m_license->getConfig(conf);
 
-    m_isExists = res != -2;
-    m_isValid = (res == 1);
-    if (res) {
-        m_isValid = m_license->checkConfig(conf);
+    m_isExists = (res != -2);
+    if (res == 1) {
+        res = m_license->checkConfig(conf);
     }
 
-    if (m_isValid) {
+    if (res == 1) {
         QVariantList nodes;
         res = m_license->getNodes(nodes);
     }
@@ -51,11 +62,11 @@ void LicenseModel::parseLicense()
         emit appKeyChanged(m_appKey);
     }
 
-    if (key == m_appKey)
+    m_licenseNumber = conf.value("Number").toString();
+    emit licenseNumberChanged(m_licenseNumber);
+
+    if (key != m_appKey)
     {
-        m_licenseNumber = conf.value("Number").toString();
-        emit licenseNumberChanged(m_licenseNumber);
-    } else {
         m_isValid = false;
     }
 
