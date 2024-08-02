@@ -7,9 +7,11 @@ Component.prototype.createOperations = function() {
 
     // Create desktop shortcut
     component.addOperation("CreateShortcut", "@TargetDir@/appunicon_launcher.exe", "@DesktopDir@/IRST.lnk",
-                           "iconPath=@TargetDir@/resources/logo.ico");
+                           "workingDirectory=@TargetDir@",
+                           "iconPath=@TargetDir@/resources/logo.ico", "description=Open Intellegent Remote Support Tool");
 
     // Create Start Menu shortcut
     component.addOperation("CreateShortcut", "@TargetDir@/appunicon_launcher.exe", "@StartMenuDir@/IRST.lnk",
-                           "iconPath=@TargetDir@/resources/logo.ico");
+                           "workingDirectory=@TargetDir@",
+                           "iconPath=@TargetDir@/resources/logo.ico", "description=Open Intellegent Remote Support Tool");
 }

@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>IRS Tool</DisplayName>
     <Description>The tool for local/remote maintenance of highpower electronic devices</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <ReleaseDate>2024-07-30</ReleaseDate>
     <StartMenuDir>Solcon-IGEL</StartMenuDir>
     <Default>true</Default>
