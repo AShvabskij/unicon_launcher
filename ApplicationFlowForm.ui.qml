@@ -23,10 +23,11 @@ Rectangle {
 
     CustomToolBar {
         id: toolbar
-        anchors.topMargin: parent.height / 80
-        width: parent.width
-        height: 35
+        anchors.topMargin: 0 //parent.height / 80
         anchors.top: parent.top
+        width: parent.width
+        visible: false
+        height: 35
     }
 
     //! [Stack view]
@@ -36,7 +37,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: parent.height / 20
+        anchors.topMargin: 25//parent.height / 20
         visible: true
         initialItem: Home {
             id: home

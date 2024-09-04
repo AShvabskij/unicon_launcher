@@ -52,6 +52,12 @@ ApplicationFlowForm {
         window.visibility = "Windowed"
     }
 
+    function onWebOpened() {
+        toolbar.theme = Colors.light
+        toolbar.refreshButton.visible = true;
+    }
+
+
     function backButton() {
         stack.pop()
         toogleToWindowScreen()
@@ -141,17 +147,10 @@ ApplicationFlowForm {
             name: "Home"
             PropertyChanges {
                 target: toolbar
-                anchors.topMargin: parent.height / 80
-                backButton.opacity: 0
-                backButton.enabled: false
-                themeButton.opacity: 100
-                themeButton.enabled: true
-                refreshButton.visible: false
-                logo.sourceSize.width: 50
-                logo.sourceSize.height: 40
-                logo.visible: true
-                visible: true
-                height: 35
+                themeButton.opacity: 0
+                // themeButton.enabled: true
+                height: 0
+                visible: false
             }
             PropertyChanges {
                 target: applicationFlow
@@ -161,8 +160,8 @@ ApplicationFlowForm {
 
             PropertyChanges {
                 target: stack
-                anchors.top: toolbar.bottom
-                anchors.topMargin: parent.height / 20
+//              anchors.top: toolbar.bottom
+//              anchors.topMargin: 0 //parent.height / 20
             }
             PropertyChanges {
                 target: window
@@ -175,11 +174,11 @@ ApplicationFlowForm {
                 anchors.topMargin: 0
                 backButton.opacity: 100
                 backButton.enabled: true
-                themeButton.opacity: 100
+                themeButton.opacity: 0
                 themeButton.enabled: true
-                refreshButton.visible: true
-                logo.visible: true
-                settingsButton.enabled: false
+                refreshButton.visible: false
+                settingsButton.visible: false
+                theme: Colors.currentTheme
                 visible: true
             }
 
@@ -202,10 +201,11 @@ ApplicationFlowForm {
                 anchors.topMargin: 0
                 backButton.opacity: 100
                 backButton.enabled: true
-                themeButton.opacity: 100
+                themeButton.opacity: 0
                 themeButton.enabled: true
                 refreshButton.visible: true
-                logo.visible: true
+                settingsButton.visible: true
+                theme: Colors.currentTheme
                 visible: true
             }
 
@@ -229,10 +229,10 @@ ApplicationFlowForm {
                 anchors.topMargin: 0
                 backButton.opacity: 100
                 backButton.enabled: true
-                themeButton.opacity: 100
+                themeButton.opacity: 0
                 themeButton.enabled: true
                 refreshButton.visible: true
-                logo.visible: true
+                theme: Colors.currentTheme
                 visible: true
             }
 
@@ -245,14 +245,19 @@ ApplicationFlowForm {
             name: "Settings"
             PropertyChanges {
                 target: toolbar
-                anchors.topMargin:  parent.height / 80
+//              anchors.topMargin:  parent.height / 80
+                themeButton.opacity: 0
                 settingsButton.visible: false
                 refreshButton.visible: false
-                logo.visible: true
-                logo.sourceSize.width: 50
-                logo.sourceSize.height: 40
+                theme: Colors.currentTheme
+                visible: true
             }
 
+            PropertyChanges {
+                target: applicationFlow
+                previousState: "Remote"
+            }
         }
+
     ]
 }

@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-Item {
+Rectangle {
     // Height, width and any other size related properties containing odd looking float or other dividers
     // that do not seem to have any logical origin are just arbitrary and based on original design
     // and/or personal preference on what looks nice.
@@ -13,16 +13,20 @@ Item {
     property alias themeButton: themeButton
     property alias settingsButton: settingsButton
     property alias refreshButton: refreshButton
-    property alias logo: logo
+    property var darkTheme: Colors.dark
+
+    color: (theme == Colors.dark) ? "#2c2c2c" : "#e5e5e5"
+    border.color: (theme == Colors.dark) ? "#2c2c2c" : "#FFFFFF"
 
     RowLayout {
         width: parent.width
+
         Row {
             Layout.alignment: Qt.AlignLeft
 
         Button {
             id: backButton
-            icon.color: (Colors.currentTheme == Colors.dark) ? "#FFFFFF" : "#121111"
+            icon.color: (theme == Colors.dark) ? "#FFFFFF" : "#121111"
             icon.source: "./images/icons/keyboard_backspace_black_left.svg"
             flat: true
             background: null
@@ -36,7 +40,7 @@ Item {
         }
         Button {
             id: refreshButton
-            icon.color: (Colors.currentTheme == Colors.dark) ? "#DDE2E8" : "#667085"
+            icon.color: (theme == Colors.dark) ? "#DDE2E8" : "#667085"
             icon.source: "./images/icons/refresh.svg"
             flat: true
             background: null
@@ -51,22 +55,12 @@ Item {
         }
         }
 
-        Image {
-            id: logo
-            source: "./images/icons/logo.png"
-            anchors.centerIn: parent
-//          Layout.alignment: Qt.AlignCenter
-            sourceSize.width: height * 1.4
-            sourceSize.height: 25
-            visible: true
-        }
-
         Row {
             Layout.alignment: Qt.AlignRight
 
             Button {
                 id: settingsButton
-                icon.color: (Colors.currentTheme == Colors.dark) ? "#DDE2E8" : "#667085"
+                icon.color: (theme == Colors.dark) ? "#DDE2E8" : "#667085"
                 icon.source: "./images/icons/settings.svg"
                 flat: true
                 background: null
@@ -82,8 +76,8 @@ Item {
 
             Button {
                 id: themeButton
-                icon.color: (Colors.currentTheme == Colors.dark) ? "#DDE2E8" : "#667085"
-                icon.source: (Colors.currentTheme == Colors.dark) ? "./images/icons/light_mode_black_24dp.svg" : "./images/icons/dark_mode_black_24dp.svg"
+                icon.color: (theme == Colors.dark) ? "#DDE2E8" : "#667085"
+                icon.source: (theme == Colors.dark) ? "./images/icons/light_mode_black_24dp.svg" : "./images/icons/dark_mode_black_24dp.svg"
                 flat: true
                 background: null
                 transitions: Transition {
