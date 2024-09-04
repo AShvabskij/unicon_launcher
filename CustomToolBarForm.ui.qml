@@ -13,7 +13,7 @@ Rectangle {
     property alias themeButton: themeButton
     property alias settingsButton: settingsButton
     property alias refreshButton: refreshButton
-    property var darkTheme: Colors.dark
+    property var theme: Colors.dark
 
     color: (theme == Colors.dark) ? "#2c2c2c" : "#e5e5e5"
     border.color: (theme == Colors.dark) ? "#2c2c2c" : "#FFFFFF"

@@ -21,14 +21,14 @@
             "region": "Katar",
             "owner": "Totem Ltd",
             "address": "Katar techo park",
-            "ipAddress": "10.9.0.5"
+            "ipAddress": "10.9.0.7"
         },		
         {
             "name": "RND Lab",
             "region": "Munhen",
             "owner": "IGEL Electric GmbH",
             "address": "Germany Hermann-Ritter-Str. 110 Bremen",
-            "ipAddress": "10.9.0.22"
+            "ipAddress": "10.9.0.42"
         },
         {
             "name": "Starter 1",

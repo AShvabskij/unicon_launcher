@@ -19,7 +19,7 @@ Item {
 
     FontLoader {
         id: montserratFont
-        source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+        source: "./fonts/montserrat/montserrat-regular.ttf"
     }
 
     //! [Timer]
@@ -125,7 +125,7 @@ Item {
                     id: greenBar
                     width: control.visualPosition * parent.width
                     height: parent.height
-                    color: Colors.green
+                    color: (Colors.currentTheme == Colors.dark) ? "#707070" : "#D9D9D9"
                 }
 
                 Image {
@@ -144,7 +144,7 @@ Item {
 
                 Text {
                     id: progressText
-                    color: Colors.green
+                    color: Colors.currentTheme.textColor
                     text: qsTr("Loading...")
                     Layout.alignment: Qt.AlignHCenter
                     font.pixelSize: 14

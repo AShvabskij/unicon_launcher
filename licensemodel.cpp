@@ -1,4 +1,5 @@
 #include "licensemodel.h"
+#include <QDesktopServices>
 
 LicenseModel::LicenseModel(QObject *parent)
     : QObject{parent}
@@ -83,5 +84,26 @@ void LicenseModel::deleteLicense()
     emit isValidChanged(false);
     emit isExistsChanged(false);
     emit licenseNumberChanged("");
- }
+}
 
+void LicenseModel::sendEmail() {
+    QString recipient = "Andrei Drozdov <andrei.d@solconigel.com>";
+    QString subject = "IRST License request";
+    QStringList body;
+    body << "App key: " + m_appKey;
+    body << "Name:";
+    body << "Organization:";
+    body << "";
+    body.join("\n");
+
+
+
+    // Create the mailto URL
+    QString mailtoUrl = QString("mailto:%1?subject=%2&body=%3")
+                            .arg(recipient)
+                            .arg(subject)
+                            .arg(body.join("\n"));
+
+    QUrl url(mailtoUrl);
+    QDesktopServices::openUrl(url);
+}

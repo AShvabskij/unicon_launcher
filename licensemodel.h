@@ -22,6 +22,8 @@ public:
     Q_INVOKABLE void parseLicense();
     Q_INVOKABLE void deleteLicense();
 
+    Q_INVOKABLE void sendEmail();
+
 signals:
     void errorRaised(QString error, QString informativeError);
     void appKeyChanged(QString);

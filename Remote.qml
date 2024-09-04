@@ -16,7 +16,7 @@ Item {
     signal sendNodeClicked(string ipAddress, string name)
     FontLoader {
         id: montserratFont
-        source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+        source: "./fonts/montserrat/montserrat-regular.ttf"
     }
 
     function onRefreshPage() {
@@ -28,6 +28,7 @@ Item {
 
         width: parent.width
         anchors.leftMargin: 27
+        visible: false
 
          Label {
             id: heading2
@@ -36,7 +37,7 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: 27
             font.family: montserratFont.name
-            font.pixelSize: 24
+            font.pixelSize: 18
             font.weight: 600
 //          font.family: "Titillium Web"
             color:  Colors.currentTheme.textColor

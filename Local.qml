@@ -51,7 +51,8 @@ Item {
         id: localModel
         onConnected:  {
             state = "content"
-            applicationFlow.toogleToFullScreen()
+            applicationFlow.toogleToFullScreen();
+            applicationFlow.onWebOpened();
             initialUrl = localModel.getURL();
         }
 

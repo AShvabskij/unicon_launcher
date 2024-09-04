@@ -11,7 +11,7 @@ Item {
 
     FontLoader {
         id: montserratFont
-        source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+        source: "./fonts/montserrat/montserrat-regular.ttf"
     }
 
     FileDialog {
@@ -52,11 +52,11 @@ Item {
         id: gridLayout
         width: parent.width
         anchors.top: parent.top
-        anchors.topMargin: 10
+        anchors.topMargin: 25
 
         Rectangle {
             id: infoPanel
-            height: 210
+            height: 150
             color: Colors.currentTheme.boxColor
             radius: 10
             border.color: Colors.currentTheme.borderColor
@@ -71,10 +71,8 @@ Item {
                 id: infoText
                 color: Colors.currentTheme.textColor
                 textFormat: Text.RichText
-                text: qsTr(" This tool is designed for local/remote maintenance of highpower electronic devices. The tool allows you to connect to the web interface of the selected device to monitor the device’s performance parameters and usage statistics.")
-                      + "<br>" + qsTr(` To activate a remote support tool please load a license file, requested from the support team`)
-                      + "<br><br>" + qsTr(` Tech Support: <b>techsupport@solconigel.com`) + "</b>"
-                      + "<br>" + `Visit:  <a href="https://solconigel.com/">Solcon-IGEL Group</a> for more information`
+                text: qsTr(" This tool enables you to connect to your selected device's web interface, allowing you to monitor its performance parameters and usage statistics")
+                      + "<br><br>" + `Visit:  <a href="https://solconigel.com/">Solcon-IGEL Group</a> for more information`
                 onLinkActivated: {
                     Qt.openUrlExternally(link);
                 }
@@ -86,7 +84,7 @@ Item {
                 anchors.rightMargin: 24
                 font.pixelSize: 16
                 font.weight: Font.Normal
-                font.family: "Titillium Web"
+                font.family: montserratFont.name
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignTop
                 wrapMode: Text.Wrap
@@ -206,6 +204,18 @@ Item {
                             licenseModel.clearKey()
                         }
                     }
+                    CustomButton {
+                        id: sendButton
+                        Layout.minimumWidth: 150
+                        Layout.minimumHeight: 50
+                        buttonText: "Send"
+                        showIcon: false
+                        fontSize: 18
+                        onClicked: {
+                            licenseModel.sendEmail();
+                        }
+                    }
+
                 }
             }
         }

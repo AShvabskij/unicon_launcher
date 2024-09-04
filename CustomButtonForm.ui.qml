@@ -44,20 +44,27 @@ AbstractButton {
         RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-
+            anchors.fill: parent
             Text {
                 text: buttonText
                 color: button.enabled ? Colors.currentTheme.textColor : "#615D5B"
                 font.family: montserratFont.name
                 font.pixelSize: fontSize
                 font.weight: 700
-                rightPadding: 8
+                Layout.alignment: Qt.AlignCenter
+                Layout.leftMargin: showIcon ? 32 : 0
+
+                // rightPadding: 8
+                // leftPadding: 8
+
             }
 
              Image {
                 id: icon
                 visible: showIcon
                 source: (Colors.currentTheme == Colors.dark) ? "./images/icons/keyboard_backspace_white_right.svg" : "./images/icons/keyboard_backspace_black_right.svg"
+                Layout.alignment: Qt.AlignRight
+                Layout.rightMargin: 32
             }
 
         }

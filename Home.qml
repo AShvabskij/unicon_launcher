@@ -11,11 +11,15 @@ Item {
 
     property alias grid: grid
     property alias header: header
-    property alias caption: caption
 
     FontLoader {
         id: montserratFont
-        source: "./fonts/montserrat/montserrat-latin-600-normal.ttf"
+        source: "./fonts/montserrat/montserrat-regular.ttf"
+    }
+
+    FontLoader {
+        id: montserratThinFont
+        source: "./fonts/montserrat/montserrat-thin.ttf"
     }
 
     states: [
@@ -51,7 +55,7 @@ Item {
                 Layout.topMargin: 0
             }
             PropertyChanges {
-                target: cplotButton
+                target: dashButton
                 Layout.preferredWidth: home.width / 3
                 Layout.preferredHeight: home.height / 8
                 Layout.topMargin: 0
@@ -60,79 +64,69 @@ Item {
         }
     ]
 
-    grid.states: [
-        State {
-            name: "small"
-            when: ((Screen.height * Screen.devicePixelRatio)
-                   + (Screen.width * Screen.devicePixelRatio)) < 2000
-            PropertyChanges {
-                target: header
-                font.pixelSize: 28
-            }
-            PropertyChanges {
-                target: caption
-                font.pixelSize: 14
-            }
-        }
-    ]
-
     GridLayout {
         id: grid
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: home.top
         flow: GridLayout.TopToBottom
-        rowSpacing: 20
+        rowSpacing: 30
         Image {
             id: image
             Layout.preferredHeight: home.height / 3
             Layout.preferredWidth: height / 1.16
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.margins: 5
-            source: (Colors.currentTheme == Colors.dark) ? "./images/icons/option_3.svg" : "./images/icons/option_3.svg"
+//            Layout.margins: 5
+            source: "./images/icons/home.svg"
         }
         Text {
             id: header
-            text: qsTr("Remote support tool")
+            text: qsTr("REMOTE SUPPORT TOOL")
             font.pixelSize: 32
-            font.weight: 700
-            font.family: montserratFont.name
+//            font.weight: 700
+            font.bold: true
+            font.family: montserratThinFont.name
             color: Colors.currentTheme.textColor
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.topMargin: 20
         }
-        Text {
-            id: caption
-            text: qsTr(" Support Devices Localy or Remotely ")
-            font.family: montserratFont.name
-            font.pixelSize: 16
-            horizontalAlignment: Text.AlignHCenter
-            Layout.maximumWidth: home.width
-            wrapMode: Text.Wrap
-            font.weight: 400
-            color: Colors.currentTheme.caption
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        }
+
+        // Text {
+        //     id: caption
+        //     text: qsTr(" Support Devices Localy or Remotely ")
+        //     font.family: montserratFont.name
+        //     font.pixelSize: 16
+        //     horizontalAlignment: Text.AlignHCenter
+        //     Layout.maximumWidth: home.width
+        //     wrapMode: Text.Wrap
+        //     font.weight: 400
+        //     color: Colors.currentTheme.caption
+        //     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+        // }
+
         CustomButton {
             id: localButton
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.minimumWidth: 150
+            Layout.minimumWidth: 170
             Layout.minimumHeight: 40
-            buttonText: "Local"
+            buttonText: "LOCAL"
+            showIcon: true
         }
         CustomButton {
             id: remoteButton
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.minimumWidth: 150
+            Layout.minimumWidth: 170
             Layout.minimumHeight: 40
-            buttonText: "Remote"
+            buttonText: "REMOTE"
+            showIcon: true
         }
         CustomButton {
-            id: cplotButton
+            id: dashButton
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.minimumWidth: 150
+            Layout.minimumWidth: 170
             Layout.minimumHeight: 40
             enabled: false
-            buttonText: "Dashboard"
+            buttonText: "DASHBOARD"
+            showIcon: true
         }
     }
 }

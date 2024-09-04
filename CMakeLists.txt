@@ -17,13 +17,11 @@ qt_add_executable(appunicon_launcher
     ${IP_DISCOVERY_HEADERS}
 )
 
-SET_TARGET_PROPERTIES(appunicon_launcher PROPERTIES LINK_FLAGS    "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" /SUBSYSTEM:WINDOWS")
+# SET_TARGET_PROPERTIES(appunicon_launcher PROPERTIES LINK_FLAGS    "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" /SUBSYSTEM:WINDOWS")
 
 target_include_directories(appunicon_launcher PRIVATE ${IP_DISCOVERY_HEADERS})
 
 target_sources(appunicon_launcher PRIVATE ${IP_DISCOVERY_SOURCES})
-
-
 
 set_source_files_properties(Constants.qml
     PROPERTIES
@@ -61,7 +59,7 @@ qt_add_qml_module(appunicon_launcher
         images/icons/home_dark.svg
         images/icons/home_light.svg
         images/icons/rst_symbol.svg
-        images/icons/option_3.svg
+        images/icons/home.svg
         images/icons/keyboard_backspace_black.svg
         images/icons/keyboard_backspace_black_left.svg
         images/icons/keyboard_backspace_black_right.svg
@@ -79,7 +77,11 @@ qt_add_qml_module(appunicon_launcher
         images/icons/settings.svg
         images/icons/stats.svg
         images/icons/refresh.svg
+
         fonts/montserrat/montserrat-latin-600-normal.ttf
+        fonts/montserrat/montserrat-latin-400-normal.ttf
+        fonts/montserrat/montserrat-regular.ttf
+        fonts/montserrat/montserrat-thin.ttf
 
     SOURCES
         qtunnel.h
