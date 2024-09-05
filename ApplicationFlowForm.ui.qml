@@ -33,7 +33,7 @@ Rectangle {
     //! [Stack view]
     StackView {
         id: stack
-        anchors.top: parent.top
+        anchors.top: toolbar.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
