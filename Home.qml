@@ -81,7 +81,7 @@ Item {
         Text {
             id: header
             text: qsTr("REMOTE SUPPORT TOOL")
-            font.pixelSize: 32
+            font.pixelSize: 24
 //            font.weight: 700
             font.bold: true
             font.family: montserratThinFont.name
@@ -106,27 +106,34 @@ Item {
         CustomButton {
             id: localButton
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.minimumWidth: 170
-            Layout.minimumHeight: 40
+            Layout.minimumWidth: 190
+            Layout.minimumHeight: 50
+            Layout.topMargin: 50
+            fontSize: 24
+
             buttonText: "LOCAL"
-            showIcon: true
+            showIcon: false
         }
         CustomButton {
             id: remoteButton
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.minimumWidth: 170
-            Layout.minimumHeight: 40
+            Layout.minimumWidth: 190
+            Layout.minimumHeight: 50
+            fontSize: 24
+
             buttonText: "REMOTE"
-            showIcon: true
+            showIcon: false
         }
         CustomButton {
             id: dashButton
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.minimumWidth: 170
-            Layout.minimumHeight: 40
+            Layout.minimumWidth: 190
+            Layout.minimumHeight: 50
+            fontSize: 24
+
             enabled: false
             buttonText: "DASHBOARD"
-            showIcon: true
+            showIcon: false
         }
     }
 }
