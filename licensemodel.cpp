@@ -49,25 +49,26 @@ void LicenseModel::parseLicense()
     if (res == 1) {
         res = m_license->checkConfig(conf);
     }
-
+/*
     if (res == 1) {
         QVariantList nodes;
         res = m_license->getNodes(nodes);
     }
-
+*/
     m_isValid = (res == 1);
 
-    QString key = conf.value("AppKey").toString();
+    QString key = conf.value("AppKey").toString().trimmed();
     if (m_appKey.isEmpty()) {
         m_appKey = key;
         emit appKeyChanged(m_appKey);
     }
 
-    m_licenseNumber = conf.value("Number").toString();
+    m_licenseNumber = conf.value("Number").toString().trimmed();
     emit licenseNumberChanged(m_licenseNumber);
 
-    if (key != m_appKey)
+    if (key != m_appKey.trimmed())
     {
+        qWarning() << "The license is not valid! License App key " << key << " is not equal to the generated key:" << m_appKey;
         m_isValid = false;
     }
 

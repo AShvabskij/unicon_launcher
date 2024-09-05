@@ -12,11 +12,18 @@ AbstractButton {
     id: button
     property string buttonText: ""
     property bool showIcon: true
+    property string iconPath: ""
     property string buttonColor: "grey"
     property alias rectangle: rectangle
     property int fontSize: 22
 
+
     Layout.minimumHeight: 0
+
+    FontLoader {
+        id: montserratLatinFont
+        source: "./fonts/montserrat/montserrat-semibold.ttf"
+    }
 
 
     states: State {
@@ -48,8 +55,9 @@ AbstractButton {
             Text {
                 text: buttonText
                 color: button.enabled ? Colors.currentTheme.textColor : "#615D5B"
-                font.family: montserratFont.name
+                font.family: montserratLatinFont.name
                 font.pixelSize: fontSize
+                font.bold: true
                 font.weight: 700
                 Layout.alignment: Qt.AlignCenter
                 Layout.leftMargin: showIcon ? 32 : 0
@@ -62,7 +70,10 @@ AbstractButton {
              Image {
                 id: icon
                 visible: showIcon
-                source: (Colors.currentTheme == Colors.dark) ? "./images/icons/keyboard_backspace_white_right.svg" : "./images/icons/keyboard_backspace_black_right.svg"
+                source: iconPath
+                sourceSize.width: button.height / 2
+                sourceSize.height: button.height / 2
+
                 Layout.alignment: Qt.AlignRight
                 Layout.rightMargin: 32
             }

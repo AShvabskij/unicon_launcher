@@ -14,6 +14,7 @@ Item {
         source: "./fonts/montserrat/montserrat-regular.ttf"
     }
 
+
     FileDialog {
         id: fileDialog
         title: "Select a .dat file"
@@ -99,7 +100,7 @@ Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.rightMargin: 50
             Layout.leftMargin: 50
-            Layout.topMargin: 30
+            Layout.topMargin: 10
             color: "transparent"
             radius: 10
             border.color: Colors.currentTheme.borderColor//"#3c3535"
@@ -179,43 +180,114 @@ Item {
                         }
                     }
 
-                    CustomButton {
-                        id: copyButton
-                        Layout.minimumWidth: 150
-                        Layout.minimumHeight: 50
-                        buttonText: "Copy"
-                        showIcon: false
-                        fontSize: 18
-                        onClicked: {
-                            appKeyInput.selectAll()
-                            appKeyInput.copy()
-                        }
-                    }
+                    // CustomButton {
+                    //     id: copyButton
+                    //     Layout.minimumWidth: 150
+                    //     Layout.minimumHeight: 50
+                    //     buttonText: "Copy"
+                    //     showIcon: false
+                    //     fontSize: 18
+                    //     onClicked: {
+                    //         appKeyInput.selectAll()
+                    //         appKeyInput.copy()
+                    //     }
+                    // }
 
-                    CustomButton {
-                        id: clearButton
-                        Layout.minimumWidth: 150
-                        Layout.minimumHeight: 50
-                        buttonText: "Clear"
-                        showIcon: false
-                        fontSize: 18
-                        onClicked: {
-                            appKeyInput.clear()
-                            licenseModel.clearKey()
-                        }
-                    }
+                    // CustomButton {
+                    //     id: clearButton
+                    //     Layout.minimumWidth: 150
+                    //     Layout.minimumHeight: 50
+                    //     buttonText: "Clear"
+                    //     showIcon: false
+                    //     fontSize: 18
+                    //     onClicked: {
+                    //         appKeyInput.clear()
+                    //         licenseModel.clearKey()
+                    //     }
+                    // }
+
                     CustomButton {
                         id: sendButton
                         Layout.minimumWidth: 150
                         Layout.minimumHeight: 50
                         buttonText: "Send"
-                        showIcon: false
+                        showIcon: true
+                        iconPath: "./images/icons/email.svg"
                         fontSize: 18
                         onClicked: {
                             licenseModel.sendEmail();
                         }
                     }
 
+                }
+            }
+        }
+
+        Rectangle {
+            id: userInfo
+            height: userInfoContent.height + 30
+
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.rightMargin: 50
+            Layout.leftMargin: 50
+            Layout.topMargin: 10
+            color: "transparent"
+            radius: 10
+            border.color: Colors.currentTheme.borderColor//"#3c3535"
+            border.width: 0
+
+            ColumnLayout {
+                id: userInfoContent
+                width: parent.width
+
+                Text {
+                    id: userInfoText
+                    text: qsTr("User Info:")
+                    font.pixelSize: 18
+                    font.weight: Font.Normal
+                    font.family: montserratFont.name
+                    color: Colors.currentTheme.textColor
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.rightMargin: 10
+                    Layout.leftMargin: 10
+                    Layout.topMargin: 10
+                }
+
+                RowLayout {
+                    Text {
+                        id: userNameText
+                        text: qsTr("Name:")
+                        font.pixelSize: 18
+                        font.weight: Font.Normal
+                        font.family: montserratFont.name
+                        color: Colors.currentTheme.textColor
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.rightMargin: 10
+                        Layout.leftMargin: 10
+                        Layout.topMargin: 10
+                    }
+
+                    TextField {
+                        id: usrnameInput
+                        Layout.rightMargin: 10
+                        Layout.leftMargin: 10
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        leftPadding: 10
+
+                        font.pixelSize: 18
+                        font.weight: 400
+                        font.family: montserratFont.name
+                        color: Colors.currentTheme.textColor
+
+                        verticalAlignment: Text.AlignVCenter
+                        text: licenseModel.usrName
+                        background: Rectangle {
+                            color: Colors.currentTheme.boxColor
+                            border.color: Colors.currentTheme.borderColor
+                        }
+                    }
                 }
             }
         }
@@ -311,8 +383,9 @@ Item {
                         id: licenseButton
                         Layout.minimumWidth: 230
                         Layout.minimumHeight: 50
-                        buttonText: "Select license"
+                        buttonText: "Add license"
                         showIcon: true
+                        iconPath: "./images/icons/folder-plus.svg" //(Colors.currentTheme == Colors.dark) ? "./images/icons/keyboard_backspace_white_right.svg" : "./images/icons/keyboard_backspace_black_right.svg"
                         fontSize: 18
                         onClicked: {
                             fileDialog.open();
