@@ -1,0 +1,27 @@
+{
+    "config": {
+        "Address": "10.8.0.15/24",
+        "AllowedIPs": "10.8.0.0/24",
+        "Endpoint": "165.22.198.121:51820",
+        "AppKey": "SE3EWFywLD4l4c/TihYpyNwb8fJoLUEq5LGofw4cF0w=",
+        "PublicKey": "g9Z69+9SCKnVy4iEiUWTEB5CM07E/5aVl8txYnQBkGc=",
+        "Number": "#1508-SOLC",
+        "Server": "10.8.0.1"                
+    },
+    "nodes": [
+        {
+            "name": "RND Lab",
+            "region": "Munhen",
+            "owner": "IGEL Electric GmbH",
+            "address": "Germany Hermann-Ritter-Str. 110 Bremen",
+            "ipAddress": "10.8.0.42"
+        },
+        {
+            "name": "Starter 1",
+            "region": "Munhen",
+            "owner": "IGEL Electric GmbH",
+            "address": "Germany Hermann-Ritter-Str. 110 Bremen",
+            "ipAddress": "10.8.0.22"
+        }		
+    ]
+}

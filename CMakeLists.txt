@@ -77,11 +77,15 @@ qt_add_qml_module(appunicon_launcher
         images/icons/settings.svg
         images/icons/stats.svg
         images/icons/refresh.svg
+        images/icons/email.svg
+        images/icons/folder-plus.svg
 
         fonts/montserrat/montserrat-latin-600-normal.ttf
         fonts/montserrat/montserrat-latin-400-normal.ttf
-        fonts/montserrat/montserrat-regular.ttf
         fonts/montserrat/montserrat-thin.ttf
+        fonts/montserrat/montserrat-regular.ttf
+        fonts/montserrat/montserrat-bold.ttf
+        fonts/montserrat/montserrat-semibold.ttf
 
     SOURCES
         qtunnel.h

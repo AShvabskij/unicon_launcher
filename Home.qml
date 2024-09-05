@@ -111,7 +111,7 @@ Item {
             Layout.topMargin: 50
             fontSize: 24
 
-            buttonText: "LOCAL"
+            buttonText: "DIRECT"
             showIcon: false
         }
         CustomButton {

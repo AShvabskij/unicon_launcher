@@ -40,7 +40,8 @@ Item {
         id: progressItem
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        progressText: "Scanning..."
+        pageText: "ESTABLISHING DIRECT CONNECTION"
+        progressText: "searching devices..."
 
 //      anchors.topMargin: parent.height / 40
         anchors.top: localPage.top

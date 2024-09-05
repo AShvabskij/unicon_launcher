@@ -60,7 +60,7 @@ Item {
 
         Text {
             id: caption
-            text: "Connecting to local device"
+            text: "caption"
             font.pixelSize: 24
             font.family: montserratFont.name
             font.weight: 700
