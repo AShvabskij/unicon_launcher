@@ -53,6 +53,8 @@ qt_add_qml_module(appunicon_launcher
         RemoteNode.qml
         WarningBox.qml
         Settings.qml
+        CustomRowSingleTextInput.qml
+        CustomRowDblTextInput.qml
 
     RESOURCES
         qtquickcontrols2.conf

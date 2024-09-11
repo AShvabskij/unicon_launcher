@@ -54,7 +54,7 @@ Item {
         width: parent.width
         anchors.top: parent.top
         anchors.topMargin: 25
-
+        /*
         Rectangle {
             id: infoPanel
             height: 150
@@ -91,6 +91,134 @@ Item {
                 wrapMode: Text.Wrap
             }
         }
+*/
+        Rectangle {
+            id: userInfo
+            height: userInfoContent.height + 30
+
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.rightMargin: 50
+            Layout.leftMargin: 50
+            Layout.topMargin: 10
+            Layout.minimumWidth: 500 // Minimum width it can shrink to
+
+            color: "transparent"
+            radius: 10
+            border.color: Colors.currentTheme.borderColor//"#3c3535"
+            border.width: 1
+
+            ColumnLayout {
+                id: userInfoContent
+                width: parent.width
+                spacing: 10
+
+                Text {
+                    id: userInfoText
+                    text: qsTr("User form:")
+                    font.pixelSize: 16
+                    font.weight: Font.Normal
+                    font.family: montserratFont.name
+                    color: Colors.currentTheme.textColor //"#dfdfdf"
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.rightMargin: 10
+                    Layout.leftMargin: 10
+                    Layout.topMargin: 10
+                }
+
+                CustomRowSingleTextInput {
+                    id: userNameText
+
+                    label: qsTr("Full name:")
+                    input: licenseModel.usrName;
+                }
+
+                CustomRowDblTextInput {
+                    id: userEmailPhone
+
+                    label1: qsTr("Email:")
+                    input1: licenseModel.usrEmail;
+                    inputWidth1: 150
+
+                    label2: qsTr("Phone:")
+                    input2: licenseModel.usrPhone;
+                }
+
+                CustomRowSingleTextInput {
+                    id: orgName
+
+                    label: qsTr("Company:")
+                    input: licenseModel.usrCompany;
+                }
+            }
+        }
+
+        Rectangle {
+            id: equipmentList
+            height: eqContentItem.height + 10
+
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.rightMargin: 50
+            Layout.leftMargin: 50
+            Layout.topMargin: 10
+            Layout.minimumWidth: 500 // Minimum width it can shrink to
+
+            color: "transparent"
+            radius: 10
+            border.color: Colors.currentTheme.borderColor//"#3c3535"
+            border.width: 1
+            ColumnLayout {
+                id: eqContentItem
+                width: parent.width
+                spacing: 5
+                Repeater {
+                    id: eqList
+                    model: [
+                        { name: "Equipment 1", region: "Region 1", address: "Address 1" },
+                        { name: "Equipment 2", region: "Region 2", address: "Address 2" },
+                        { name: "Equipment 3", region: "Region 3", address: "Address 3" }
+                    ]
+
+                    delegate:
+                        ColumnLayout {
+                        id: equipmentInfoContent
+                        width: parent.width
+                        spacing: 10
+
+                        Text {
+                            color: Colors.currentTheme.helpTextColor
+                            text: qsTr("Equipment ") + (index+1) + ": "
+                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                            Layout.leftMargin: 10
+                            Layout.topMargin: 10
+
+                            font.pixelSize: 13
+                            font.family: montserratFont.name
+                        }
+
+                        CustomRowDblTextInput {
+                            id: equipNameRegion
+
+                            label1: qsTr("Name:")
+                            input1: modelData.name
+                            inputWidth1: 150
+
+                            label2: qsTr("Region:")
+                            input2: modelData.region
+                        }
+
+                        CustomRowSingleTextInput {
+                            id: equipAddress
+
+                            label: qsTr("Address:")
+                            input: modelData.address
+                        }
+                    }
+
+                }
+            }
+        }
 
         Rectangle {
             id: appKey
@@ -104,7 +232,7 @@ Item {
             color: "transparent"
             radius: 10
             border.color: Colors.currentTheme.borderColor//"#3c3535"
-            border.width: 0
+            border.width: 1
 
             ColumnLayout {
                 id: appKeyContent
@@ -113,7 +241,7 @@ Item {
                 Text {
                     id: appKeyText
                     text: qsTr("Application key:")
-                    font.pixelSize: 18
+                    font.pixelSize: 16
                     font.weight: Font.Normal
                     font.family: montserratFont.name
                     color: Colors.currentTheme.textColor //"#dfdfdf"
@@ -141,7 +269,7 @@ Item {
                     Layout.leftMargin: 10
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    font.pixelSize: 18
+                    font.pixelSize: 16
                     font.weight: 400
                     font.family: montserratFont.name
                     color: Colors.currentTheme.textColor
@@ -172,39 +300,13 @@ Item {
                         Layout.minimumHeight: 50
                         buttonText: "Generate"
                         showIcon: false
-                        fontSize: 18
+                        fontSize: 16
                         enabled: !licenseModel.isValid
 
                         onClicked: {
                             licenseModel.generateKey();
                         }
                     }
-
-                    // CustomButton {
-                    //     id: copyButton
-                    //     Layout.minimumWidth: 150
-                    //     Layout.minimumHeight: 50
-                    //     buttonText: "Copy"
-                    //     showIcon: false
-                    //     fontSize: 18
-                    //     onClicked: {
-                    //         appKeyInput.selectAll()
-                    //         appKeyInput.copy()
-                    //     }
-                    // }
-
-                    // CustomButton {
-                    //     id: clearButton
-                    //     Layout.minimumWidth: 150
-                    //     Layout.minimumHeight: 50
-                    //     buttonText: "Clear"
-                    //     showIcon: false
-                    //     fontSize: 18
-                    //     onClicked: {
-                    //         appKeyInput.clear()
-                    //         licenseModel.clearKey()
-                    //     }
-                    // }
 
                     CustomButton {
                         id: sendButton
@@ -213,79 +315,9 @@ Item {
                         buttonText: "Send"
                         showIcon: true
                         iconPath: "./images/icons/email.svg"
-                        fontSize: 18
+                        fontSize: 16
                         onClicked: {
                             licenseModel.sendEmail();
-                        }
-                    }
-
-                }
-            }
-        }
-
-        Rectangle {
-            id: userInfo
-            height: userInfoContent.height + 30
-
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.rightMargin: 50
-            Layout.leftMargin: 50
-            Layout.topMargin: 10
-            color: "transparent"
-            radius: 10
-            border.color: Colors.currentTheme.borderColor//"#3c3535"
-            border.width: 0
-
-            ColumnLayout {
-                id: userInfoContent
-                width: parent.width
-
-                Text {
-                    id: userInfoText
-                    text: qsTr("User Info:")
-                    font.pixelSize: 18
-                    font.weight: Font.Normal
-                    font.family: montserratFont.name
-                    color: Colors.currentTheme.textColor
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 10
-                    Layout.topMargin: 10
-                }
-
-                RowLayout {
-                    Text {
-                        id: userNameText
-                        text: qsTr("Name:")
-                        font.pixelSize: 18
-                        font.weight: Font.Normal
-                        font.family: montserratFont.name
-                        color: Colors.currentTheme.textColor
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        Layout.rightMargin: 10
-                        Layout.leftMargin: 10
-                        Layout.topMargin: 10
-                    }
-
-                    TextField {
-                        id: usrnameInput
-                        Layout.rightMargin: 10
-                        Layout.leftMargin: 10
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        leftPadding: 10
-
-                        font.pixelSize: 18
-                        font.weight: 400
-                        font.family: montserratFont.name
-                        color: Colors.currentTheme.textColor
-
-                        verticalAlignment: Text.AlignVCenter
-                        text: licenseModel.usrName
-                        background: Rectangle {
-                            color: Colors.currentTheme.boxColor
-                            border.color: Colors.currentTheme.borderColor
                         }
                     }
                 }
@@ -303,7 +335,7 @@ Item {
             color: "transparent"
             radius: 10
             border.color: Colors.currentTheme.borderColor
-            border.width: 0
+            border.width: 1
 
             ColumnLayout {
                 id: licenseContent
@@ -311,7 +343,7 @@ Item {
                 Text {
                     id: licenseText
                     text: qsTr("License number:")
-                    font.pixelSize: 18
+                    font.pixelSize: 16
                     font.weight: Font.Normal
                     font.family: montserratFont.name
                     color: Colors.currentTheme.textColor //"#dfdfdf"
@@ -327,7 +359,7 @@ Item {
                     Layout.rightMargin: 10
                     Layout.leftMargin: 10
                     Layout.fillWidth: true
-                    font.pixelSize: 18
+                    font.pixelSize: 16
                     font.weight: 400
                     font.family: montserratFont.name
                     color: Colors.currentTheme.textColor //"#dfdfdf"
@@ -347,7 +379,7 @@ Item {
                     id: statusText
                     color: licenseValidity ? "#227102" : "#CC0000"
                     text: licenseValidity ? qsTr("License activated successfully") : qsTr("Invalid license")
-                    anchors.left: licenseText.left
+                    Layout.leftMargin: 10
 
                     font.pixelSize: 15
                     anchors.leftMargin: 00
@@ -361,11 +393,11 @@ Item {
                     id: helpLicenseText
                     color: Colors.currentTheme.helpTextColor
                     text: qsTr("Please select the license file received from the support team")
-                    anchors.left: licenseInput.left
-                    anchors.top: statusText.visible ? statusText.bottom : licenseInput.bottom
+
+                    Layout.leftMargin: 10
+                    Layout.topMargin: 20
+
                     font.pixelSize: 13
-                    anchors.leftMargin: 0
-                    anchors.topMargin: 20
                     font.family: montserratFont.name
                 }
 
@@ -386,7 +418,7 @@ Item {
                         buttonText: "Add license"
                         showIcon: true
                         iconPath: "./images/icons/folder-plus.svg" //(Colors.currentTheme == Colors.dark) ? "./images/icons/keyboard_backspace_white_right.svg" : "./images/icons/keyboard_backspace_black_right.svg"
-                        fontSize: 18
+                        fontSize: 16
                         onClicked: {
                             fileDialog.open();
                         }
@@ -399,7 +431,7 @@ Item {
                         Layout.minimumHeight: 50
                         buttonText: "Delete license"
                         showIcon: false
-                        fontSize: 18
+                        fontSize: 16
                         enabled: licenseModel.isExists
                         onClicked: {
                             licenseModel.deleteLicense()

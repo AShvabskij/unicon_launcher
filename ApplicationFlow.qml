@@ -149,8 +149,9 @@ ApplicationFlowForm {
                 target: toolbar
                 themeButton.opacity: 0
                 // themeButton.enabled: true
+                settingsButton.visible: true
                 height: 0
-                visible: false
+                visible: true
             }
             PropertyChanges {
                 target: applicationFlow
