@@ -52,7 +52,7 @@ Item {
         id: localModel
         onConnected:  {
             state = "content"
-            applicationFlow.toogleToFullScreen();
+            applicationFlow.toggleToFullScreen();
             applicationFlow.onWebOpened();
             initialUrl = localModel.getURL();
         }

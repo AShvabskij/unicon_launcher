@@ -47,7 +47,7 @@ void NodeListModel::init()
     QVariantList nodes;
     long ret = license.getNodes(nodes);
     if (ret != 1 ) {
-        emit errorRaised("Couldn't get nodes configuration", "Make sure the license file is valid");
+        emit errorRaised("License not found", "Please request license before starting remote support");
         return;
     }
 
@@ -220,9 +220,9 @@ QVariant NodeListModel::data(const QModelIndex & index, int role) const {
     case LastAccessTimeRole:
         return node.activated ? node.lastAccessTime.toString( "yyyy-MM-dd hh:mm"): "";
     case WorkTimeRole:
-        return node.activated ? QString("%1h(%2\%)").arg(node.currWorkTime).arg(workTimeProc) : "";
+        return node.activated ? QString("%1h(%2/%)").arg(node.currWorkTime).arg(workTimeProc) : "";
     case StartNumberRole:
-        return node.activated ? QString("%1(%2\%)").arg(node.currStartNumber).arg(startNumberProc) : "";
+        return node.activated ? QString("%1(%2/%)").arg(node.currStartNumber).arg(startNumberProc) : "";
     case StatusRole:
         return node.activated ? node.nodeStatusToString() : "Not available";
     case IPAddressRole:

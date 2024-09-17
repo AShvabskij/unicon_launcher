@@ -30,8 +30,15 @@ ApplicationFlowForm {
     }
 
     function settingsButton() {
+        applicationFlow.previousState = applicationFlow.state
         applicationFlow.state = "Settings"
         stack.push(settingsPage)
+    }
+
+    function aboutButton() {
+        applicationFlow.previousState = applicationFlow.state
+        applicationFlow.state = "About"
+        stack.push(aboutPage)
     }
 
     function refreshButton() {
@@ -44,11 +51,11 @@ ApplicationFlowForm {
         }
     }
 
-    function toogleToFullScreen() {
+    function toggleToFullScreen() {
         window.visibility = "Maximized" //"FullScreen"
     }
 
-    function toogleToWindowScreen() {
+    function toggleToWindowScreen() {
         window.visibility = "Windowed"
     }
 
@@ -60,8 +67,17 @@ ApplicationFlowForm {
 
     function backButton() {
         stack.pop()
-        toogleToWindowScreen()
+        toggleToWindowScreen()
+        if (applicationFlow.state == "Settings" && applicationFlow.previousState == "Remote") {
+            stack.pop()
+            applicationFlow.state = "Home";
+            return;
+        }
+
         applicationFlow.state = applicationFlow.previousState
+        if (applicationFlow.state == "Remote") {
+            sendRefreshClicked();
+        }
     }
 
     //! [On clicked]
@@ -127,6 +143,15 @@ ApplicationFlowForm {
         }
     }
 
+    Component {
+        id: aboutPage
+        About {
+            id: aboutComp
+            visible: true
+            state: applicationFlow.mode
+        }
+    }
+
     function onNodeClicked(nodeAddress, nodeName) {
         applicationFlow.state = "RemoteIP"
         _nodeIP = nodeAddress
@@ -149,7 +174,11 @@ ApplicationFlowForm {
                 target: toolbar
                 themeButton.opacity: 0
                 // themeButton.enabled: true
-                settingsButton.visible: true
+                settingsButton.visible: false
+                aboutButton.visible: true
+                refreshButton.visible: false
+                backButton.visible: false
+
                 height: 0
                 visible: true
             }
@@ -173,12 +202,12 @@ ApplicationFlowForm {
             PropertyChanges {
                 target: toolbar
                 anchors.topMargin: 0
-                backButton.opacity: 100
-                backButton.enabled: true
+                backButton.visible: true
                 themeButton.opacity: 0
                 themeButton.enabled: true
                 refreshButton.visible: false
                 settingsButton.visible: false
+                about.visible: true
                 theme: Colors.currentTheme
                 visible: true
             }
@@ -200,12 +229,12 @@ ApplicationFlowForm {
             PropertyChanges {
                 target: toolbar
                 anchors.topMargin: 0
-                backButton.opacity: 100
-                backButton.enabled: true
+                backButton.visible: true
                 themeButton.opacity: 0
                 themeButton.enabled: true
                 refreshButton.visible: true
                 settingsButton.visible: true
+                aboutButton.visible: true
                 theme: Colors.currentTheme
                 visible: true
             }
@@ -228,11 +257,11 @@ ApplicationFlowForm {
             PropertyChanges {
                 target: toolbar
                 anchors.topMargin: 0
-                backButton.opacity: 100
-                backButton.enabled: true
+                backButton.visible: true
                 themeButton.opacity: 0
                 themeButton.enabled: true
                 refreshButton.visible: true
+                aboutButton.visible: false
                 theme: Colors.currentTheme
                 visible: true
             }
@@ -249,7 +278,9 @@ ApplicationFlowForm {
 //              anchors.topMargin:  parent.height / 80
                 themeButton.opacity: 0
                 settingsButton.visible: false
+                aboutButton.visible: false
                 refreshButton.visible: false
+                backButton.visible: true
                 theme: Colors.currentTheme
                 visible: true
             }
@@ -258,6 +289,26 @@ ApplicationFlowForm {
                 target: applicationFlow
                 previousState: "Remote"
             }
+        },
+        State {
+            name: "About"
+            PropertyChanges {
+                target: toolbar
+//              anchors.topMargin:  parent.height / 80
+                themeButton.opacity: 0
+                settingsButton.visible: false
+                aboutButton.visible: false
+                refreshButton.visible: false
+                backButton.visible: true
+
+                theme: Colors.currentTheme
+                visible: true
+            }
+            PropertyChanges {
+                target: applicationFlow
+                previousState: applicationFlow.previousState
+            }
+
         }
 
     ]

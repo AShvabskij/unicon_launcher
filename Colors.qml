@@ -14,6 +14,7 @@ Item {
         readonly property color borderColor: "#BFBDBD"
         readonly property color cardColor: "#FFFFFF"
         readonly property color caption: "#898989"
+        readonly property color iconColor: "#667085" //#121111
     }
     QtObject {
         id: dark
@@ -24,6 +25,7 @@ Item {
         readonly property color borderColor: "#3c3535"
         readonly property color cardColor: "#212121"
         readonly property color caption: "#898989"
+        readonly property color iconColor: "#FFFFFF" //"#DDE2E8"
     }
 
     Gradient {

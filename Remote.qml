@@ -20,7 +20,12 @@ Item {
     }
 
     function onRefreshPage() {
-        nodesModel.update();
+        licenseModel.parseLicense();
+        if (licenseModel.isExists) {
+            nodesModel.update();
+        } else {
+            applicationFlow.backButton();
+        }
     }
 
     ColumnLayout {
@@ -28,20 +33,37 @@ Item {
 
         width: parent.width
         anchors.leftMargin: 27
-        visible: false
+        anchors.topMargin: 20
 
-         Label {
-            id: heading2
+        visible: true
 
-            text: qsTr("Select node to connect")
-            anchors.left: parent.left
-            anchors.leftMargin: 27
-            font.family: montserratFont.name
-            font.pixelSize: 18
-            font.weight: 600
-//          font.family: "Titillium Web"
-            color:  Colors.currentTheme.textColor
-            elide: Text.ElideRight
+        RowLayout{
+            Layout.alignment: Qt.AlignRight | Qt.AlignTop
+            Layout.rightMargin: 27
+            Layout.topMargin: 10
+
+            Image {
+                id: icon
+                visible: showIcon
+                source: "./images/icons/user-circle.svg"
+                sourceSize.width: heading2.height
+                sourceSize.height: heading2.height
+
+                Layout.alignment: Qt.AlignRight
+                Layout.rightMargin: 10
+            }
+
+            Label {
+                id: heading2
+
+                text: licenseModel.usrName //qsTr("Select node to connect")
+                font.family: montserratFont.name
+                font.pixelSize: 18
+                font.weight: 600
+                //          font.family: "Titillium Web"
+                color:  Colors.currentTheme.textColor
+                elide: Text.ElideRight
+            }
         }
     }
 
@@ -91,13 +113,26 @@ Item {
         }
     }
 
+    LicenseModel {
+        id: licenseModel
+        onErrorRaised: {
+            root.state = "error"
+            msgError.text = error
+            msgError.informativeText = informativeError
+            msgError.visible = true
+        }
+        Component.onDestruction: {
+            root.state = ""
+        }
+    }
+
     QTunnel {
         id: tunnelModel
         onConnected:  {
             root.state = "connected"
             nodesModel.update();
         }
-        onErrorRaised: {
+        onErrorRaised: function(errorTxt, informativeError) {
             root.state = "error"
             msgError.text = errorTxt
             msgError.informativeText = informativeError
@@ -108,28 +143,36 @@ Item {
     Connections {
         target: nodesModel
         onErrorRaised: function(errorTxt, informativeError) {
-            root.state = "error"
+            root.state = "warning"
             msgError.text = errorTxt
             msgError.informativeText = informativeError
             msgError.visible = true
         }
     }
 
-    MessageDialog {
+    WarningBox {
         id: msgError
-        title: "Error"
-        text: ""
-        informativeText: ""
-        buttons: MessageDialog.Ok
-        visible: false
-
-//      onAccepted: Qt.quit()
+        onAccepted: {
+            if (!licenseModel.isExists) {
+                applicationFlow.settingsButton()
+            }
+        }
     }
 
     Component.onCompleted: {
-        root.state = "connecting"
-        nodesModel.init();
-        tunnelModel.connect();
+
+        licenseModel.parseLicense();
+        if (licenseModel.isExists) {
+            root.state = "connecting"
+            nodesModel.init();
+            tunnelModel.connect();
+        } else {
+            root.state = "warning"
+            msgError.text = "License not found"
+            msgError.informativeText = "Please request license before starting remote support"
+            msgError.visible = true
+        }
+
     }
 
     Component.onDestruction: {

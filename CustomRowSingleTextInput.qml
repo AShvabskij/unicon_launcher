@@ -6,8 +6,8 @@ import qmlmodels 1.0
 
 RowLayout {
 
-    property alias label: label.text
-    property alias input: input.text
+    property alias label: label
+    property alias input: input
 
     Layout.topMargin: 0
     Layout.rightMargin: 10
@@ -16,7 +16,7 @@ RowLayout {
     Text {
         id: label
         text: ""
-        font.pixelSize: 16
+        font.pixelSize: 16 - Constants.fontCoeff
         font.weight: Font.Normal
         font.family: montserratFont.name
         color: Colors.currentTheme.textColor
@@ -32,13 +32,14 @@ RowLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         leftPadding: 10
 
-        font.pixelSize: 16
+        font.pixelSize: 16 - Constants.fontCoeff
         font.weight: 400
         font.family: montserratFont.name
         color: Colors.currentTheme.textColor
 
         verticalAlignment: Text.AlignVCenter
         text: ""
+
         background: Rectangle {
             color: Colors.currentTheme.boxColor
             border.color: Colors.currentTheme.borderColor

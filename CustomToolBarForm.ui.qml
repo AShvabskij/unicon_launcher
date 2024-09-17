@@ -12,10 +12,12 @@ Rectangle {
     property alias backButton: backButton
     property alias themeButton: themeButton
     property alias settingsButton: settingsButton
+    property alias aboutButton: aboutButton
     property alias refreshButton: refreshButton
+
     property var theme: Colors.dark
 
-    color: (theme == Colors.dark) ? "#2c2c2c" : "#e5e5e5"
+    color: (theme == Colors.dark) ? "#1e1e1e" : "#e5e5e5"
     border.color: (theme == Colors.dark) ? "#2c2c2c" : "#FFFFFF"
 
     RowLayout {
@@ -24,35 +26,35 @@ Rectangle {
         Row {
             Layout.alignment: Qt.AlignLeft
 
-        Button {
-            id: backButton
-            icon.color: (theme == Colors.dark) ? "#FFFFFF" : "#121111"
-            icon.source: "./images/icons/keyboard_backspace_black_left.svg"
-            flat: true
-            background: null
-            transitions: Transition {
-                NumberAnimation {
-                    properties: "scale"
-                    duration: 100
-                    easing.type: Easing.InOutQuad
+            Button {
+                id: backButton
+                icon.color: theme.iconColor //(theme == Colors.dark) ? "#FFFFFF" : "#121111"
+                icon.source: "./images/icons/keyboard_backspace_black_left.svg"
+                flat: true
+                background: null
+                transitions: Transition {
+                    NumberAnimation {
+                        properties: "scale"
+                        duration: 100
+                        easing.type: Easing.InOutQuad
+                    }
                 }
             }
-        }
-        Button {
-            id: refreshButton
-            icon.color: (theme == Colors.dark) ? "#DDE2E8" : "#667085"
-            icon.source: "./images/icons/refresh.svg"
-            flat: true
-            background: null
-            transitions: Transition {
-                NumberAnimation {
-                    properties: "scale"
-                    duration: 100
-                    easing.type: Easing.InOutQuad
+            Button {
+                id: refreshButton
+                icon.color: theme.iconColor
+                icon.source: "./images/icons/refresh.svg"
+                flat: true
+                background: null
+                transitions: Transition {
+                    NumberAnimation {
+                        properties: "scale"
+                        duration: 100
+                        easing.type: Easing.InOutQuad
+                    }
                 }
-            }
 
-        }
+            }
         }
 
         Row {
@@ -60,8 +62,8 @@ Rectangle {
 
             Button {
                 id: settingsButton
-                icon.color: (theme == Colors.dark) ? "#DDE2E8" : "#667085"
-                icon.source: "./images/icons/settings.svg"
+                icon.color: theme.iconColor
+                icon.source: "./images/icons/license.svg"
                 flat: true
                 background: null
                 transitions: Transition {
@@ -75,8 +77,23 @@ Rectangle {
             }
 
             Button {
+                id: aboutButton
+                icon.color: theme.iconColor
+                icon.source: "./images/icons/info.svg"
+                flat: true
+                background: null
+                transitions: Transition {
+                    NumberAnimation {
+                        properties: "scale"
+                        duration: 100
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+
+            Button {
                 id: themeButton
-                icon.color: (theme == Colors.dark) ? "#DDE2E8" : "#667085"
+                icon.color: theme.iconColor
                 icon.source: (theme == Colors.dark) ? "./images/icons/light_mode_black_24dp.svg" : "./images/icons/dark_mode_black_24dp.svg"
                 flat: true
                 background: null

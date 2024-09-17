@@ -27,7 +27,7 @@ Item {
         id: timer
         interval: scanTime
         running: true
-        repeat: true
+        repeat: false
         onTriggered: {
             root.parent.onProgressFinished()
         }

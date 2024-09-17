@@ -6,6 +6,7 @@
 #include "nodelistmodel.h"
 #include "localmodel.h"
 #include "licensemodel.h"
+#include "equipmentlistmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +17,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<NodeListModel>("qmlmodels", 1, 0,"NodeListModel");
     qmlRegisterType<LocalModel>("qmlmodels", 1, 0,"LocalModel");
     qmlRegisterType<LicenseModel>("qmlmodels", 1, 0,"LicenseModel");
+    qmlRegisterType<EquipmentListModel>("qmlmodels", 1, 0,"EquipmentListModel");
+    qRegisterMetaType<EquipmentListModel::Equipment>("Equipment");
 
     QQmlApplicationEngine engine;
     QObject::connect(

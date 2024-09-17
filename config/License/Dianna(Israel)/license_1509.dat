@@ -6,7 +6,11 @@
         "AppKey": "SE3EWFywLD4l4c/TihYpyNwb8fJoLUEq5LGofw4cF0w=",
         "PublicKey": "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=",
         "Number": "#1509-SOLC",
-        "Server": "10.9.0.1"                
+        "Server": "10.9.0.1",
+        "UserName": "Andrey Drozdov",
+        "UserEmail": "Andrey.D@solcon-igel.com",
+        "UserPhone": "(+1)900-111-111",
+        "Company": "Solcon-IGEL"
     },
     "nodes": [
         {

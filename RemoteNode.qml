@@ -18,7 +18,7 @@ Item {
 
     function onProgressFinished() {
         state = "content"
-        applicationFlow.toogleToFullScreen();
+        applicationFlow.toggleToFullScreen();
         applicationFlow.onWebOpened();
     }
 

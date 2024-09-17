@@ -73,7 +73,7 @@ public:
 
 
 signals:
-    void errorRaised(QString error, QString informativeError);
+    void errorRaised(QString errorText, QString informativeError);
 
 protected:
     QHash<int, QByteArray> roleNames() const;

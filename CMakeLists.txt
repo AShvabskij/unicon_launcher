@@ -53,8 +53,10 @@ qt_add_qml_module(appunicon_launcher
         RemoteNode.qml
         WarningBox.qml
         Settings.qml
+        About.qml
         CustomRowSingleTextInput.qml
         CustomRowDblTextInput.qml
+        CustomRowSingleText.qml
 
     RESOURCES
         qtquickcontrols2.conf
@@ -77,10 +79,13 @@ qt_add_qml_module(appunicon_launcher
         images/icons/logo.png
         images/icons/logo_window.png
         images/icons/settings.svg
+        images/icons/license.svg
+        images/icons/info.svg
         images/icons/stats.svg
         images/icons/refresh.svg
         images/icons/email.svg
         images/icons/folder-plus.svg
+        images/icons/user-circle.svg
 
         fonts/montserrat/montserrat-latin-600-normal.ttf
         fonts/montserrat/montserrat-latin-400-normal.ttf
@@ -102,6 +107,8 @@ qt_add_qml_module(appunicon_launcher
         localmodel.cpp
         licensemodel.h
         licensemodel.cpp
+        equipmentlistmodel.h
+        equipmentlistmodel.cpp
 
     RESOURCES
         resources.qrc

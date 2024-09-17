@@ -15,9 +15,10 @@ Rectangle {
     property alias toolbar: toolbar
     property alias stack: stack
     property alias home: home
+    anchors.fill: parent
 
-    width: Constants.width
-    height: Constants.height
+    // width: Constants.width
+    // height: Screen.desktopAvailableHeight*0.8// < Constants.height ? Screen.desktopAvailableHeight*0.9 : Constants.height
 
     color: Colors.currentTheme.background
 

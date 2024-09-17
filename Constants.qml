@@ -3,7 +3,7 @@ import QtQuick 6.2
 
 QtObject {
     readonly property int width: 740
-    readonly property int height: 800
+    readonly property int height: Screen.desktopAvailableHeight * 0.96 < 850 ? Screen.desktopAvailableHeight*0.96 : 850 // Screen.desktopAvailableHeight * 0.8
     property bool isDarkTheme: true
 
     property string relativeFontDirectory: "fonts"
@@ -17,6 +17,8 @@ QtObject {
                                                   family: Qt.application.font.family,
                                                   pixelSize: Qt.application.font.pixelSize * 1.6
                                               })
+
+    readonly property int fontCoeff: height < 850 ? 1 : 0 // Screen.desktopAvailableHeight * 0.8
 
     readonly property color accentColor: isDarkTheme ? "#002125" : "#DDE1E1"
     readonly property color primaryTextColor: isDarkTheme ? "#FFFFFF": "#000000"
