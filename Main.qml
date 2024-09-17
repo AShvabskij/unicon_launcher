@@ -4,8 +4,8 @@ Window {
     id: window
     visible: true
     title: qsTr("IRST")
-    width: Constants.width
-    height: Constants.height
+    width: Constants.scaledWidth
+    height: Constants.scaledHeight
     visibility: "Windowed"
 //  flags: Qt.FramelessWindowHint
 

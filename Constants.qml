@@ -2,8 +2,14 @@ pragma Singleton
 import QtQuick 6.2
 
 QtObject {
-    readonly property int width: 740
-    readonly property int height: Screen.desktopAvailableHeight * 0.96 < 850 ? Screen.desktopAvailableHeight*0.96 : 850 // Screen.desktopAvailableHeight * 0.8
+    readonly property int width: 493
+    readonly property int height: 566
+
+    property real scale: Screen.pixelDensity > 2.0 ? 1.5 : Screen.pixelDensity > 1.5 ? 1.2 : 1.0
+
+    readonly property int scaledWidth: width * scale
+    readonly property int scaledHeight: height * scale < Screen.desktopAvailableHeight * 0.95 ?  height * scale : Screen.desktopAvailableHeight * 0.95
+
     property bool isDarkTheme: true
 
     property string relativeFontDirectory: "fonts"
