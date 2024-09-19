@@ -8,7 +8,7 @@ Dialog {
     id: root
     anchors.centerIn: parent
 
-    title: "Warning"
+    title: "Info"
     property string text: ""
     property string informativeText: ""
 

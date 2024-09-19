@@ -47,7 +47,7 @@ void NodeListModel::init()
     QVariantList nodes;
     long ret = license.getNodes(nodes);
     if (ret != 1 ) {
-        emit errorRaised("License not found", "Please request license before starting remote support");
+        emit errorRaised("NO LICENSE FOUND", "Please request license before starting remote support");
         return;
     }
 

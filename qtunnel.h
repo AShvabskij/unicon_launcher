@@ -25,6 +25,8 @@ private slots:
 private:
     TunnelService* m_tunnelSrv;
     LicenseService* m_license;
+
+    bool m_isConnected = false;
 };
 
 #endif // QTUNNEL_H

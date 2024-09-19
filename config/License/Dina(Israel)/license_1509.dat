@@ -7,32 +7,32 @@
         "PublicKey": "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=",
         "Number": "#1509-SOLC",
         "Server": "10.9.0.1",
-        "UserName": "Andrey Drozdov",
-        "UserEmail": "Andrey.D@solcon-igel.com",
-        "UserPhone": "(+1)900-111-111",
-        "Company": "Solcon-IGEL"
+        "UserName": "Andrey D.",
+        "UserEmail": "andrei.drozdov@igelelectric.de",
+        "UserPhone": "+49 231 7930500",
+        "Company": "SI-GROUP"
     },
     "nodes": [
         {
             "name": "DEMO Lab",
-            "region": "Munich",
-            "owner": "IGEL Electric GmbH",
-            "address": "Germany Hermann-Ritter-Str. 110 Bremen",
+            "region": "Dortmund",
+            "owner": "SI-GROUP",
+            "address": "Hauert 12, 44227 Dortmund Germany",
             "ipAddress": "10.9.0.42"
         },
         {
             "name": "Starter 1",
-            "region": "Munich",
-            "owner": "IGEL Electric GmbH",
-            "address": "Germany Hermann-Ritter-Str. 110 Bremen",
+            "region": "Dortmund",
+            "owner": "SI-GROUP",
+            "address": "Hauert 12, 44227 Dortmund Germany",
             "ipAddress": "10.9.0.22"
         },
         {
-            "name": "R&D Lab",
+            "name": "R&D Lab Demo",
             "region": "Konig",
-            "owner": "IGEL Electric GmbH",
-            "address": "",
-            "ipAddress": "10.9.0.4"
+            "owner": "SI-GROUP",
+            "address": "Pravaia Naberejnaya 21",
+            "ipAddress": "10.9.0.7"
         }		        
     ]
 }

@@ -40,6 +40,7 @@ private:
     void sendEmail();
     void sendPutRequest();
     QString buildSendMessage();
+    void copyToClipboard();
 
 signals:
     void errorRaised(QString error, QString informativeError);

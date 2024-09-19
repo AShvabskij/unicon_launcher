@@ -2,11 +2,15 @@
 #include <QDesktopServices>
 
 #include <QCoreApplication>
+#include <QClipboard>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QHttpMultiPart>
+#include <QHttpPart>
 #include <QUrl>
 #include <QUrlQuery>
+#include <QGuiApplication>
 
 LicenseModel::LicenseModel(QObject *parent)
     : QObject{parent}
@@ -48,7 +52,6 @@ void LicenseModel::parseLicense()
 {
     if (m_appKey.isEmpty()) {
         m_license->getKey(m_appKey);
-        emit appKeyChanged(m_appKey);
     }
 
     QVariantMap conf;
@@ -62,23 +65,20 @@ void LicenseModel::parseLicense()
     m_isValid = (res == 1);
 
     QString key = conf.value("AppKey").toString().trimmed();
-    if (m_appKey.isEmpty()) {
+
+    if (m_appKey.isEmpty() && m_isValid) {
         m_appKey = key;
-        emit appKeyChanged(m_appKey);
+    }
+
+    if (m_appKey.isEmpty()) {
+        generateKey();
     }
 
     m_licenseNumber = conf.value("Number").toString().trimmed();
-    emit licenseNumberChanged(m_licenseNumber);
-
     m_usrFullName = conf.value("UserName").toString().trimmed();
     m_usrEmail = conf.value("UserEmail").toString().trimmed();
     m_usrPhone = conf.value("UserPhone").toString().trimmed();
     m_usrCompany = conf.value("Company").toString().trimmed();
-
-    emit usrNameChanged(m_usrFullName);
-    emit usrEmailChanged(m_usrEmail);
-    emit usrPhoneChanged(m_usrPhone);
-    emit usrCompanyChanged(m_usrCompany);
 
     if (res == 1) {
         QVariantList nodes;
@@ -94,12 +94,18 @@ void LicenseModel::parseLicense()
         }
     }
 
-    if (key != m_appKey.trimmed())
+    if (m_isValid && key != m_appKey.trimmed())
     {
         qWarning() << "The license is not valid! License App key " << key << " is not equal to the generated key:" << m_appKey;
         m_isValid = false;
     }
 
+    emit appKeyChanged(m_appKey);
+    emit licenseNumberChanged(m_licenseNumber);
+    emit usrNameChanged(m_usrFullName);
+    emit usrEmailChanged(m_usrEmail);
+    emit usrPhoneChanged(m_usrPhone);
+    emit usrCompanyChanged(m_usrCompany);
     emit isValidChanged(m_isValid);
     emit isExistsChanged(m_isExists);
 }
@@ -119,6 +125,7 @@ void LicenseModel::sendRequest()
 {
     sendEmail();
 //  sendPutRequest();
+    copyToClipboard();
 }
 
 void LicenseModel::sendEmail()
@@ -138,43 +145,80 @@ void LicenseModel::sendEmail()
 
 }
 
+void LicenseModel::copyToClipboard()
+{
+    QString recipient = "Andrei Drozdov <andrei.d@solconigel.com>";
+    QString subject = "IRST License request";
+    QString msg = buildSendMessage();
+
+    QStringList res;
+    res << "Send to: " + recipient;
+    res << "";
+    res << "Subject: " + subject;
+    res << "";
+    res << "Message: " << msg;
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(res.join("\n"));
+}
+
 void LicenseModel::sendPutRequest()
 {
-    // Create a QNetworkAccessManager instance
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkAccessManager* networkManager = new QNetworkAccessManager;
 
-    // Create the URL for the request
-    QUrl url("https://solconigel.com/api/");
-
-    QString body = QUrl::toPercentEncoding(buildSendMessage());
-
-    // Add query parameters to the URL
-    QUrlQuery query;
-    query.addQueryItem("fname", m_usrFullName);
-    query.addQueryItem("email", m_usrEmail);
-    query.addQueryItem("subject", "IRST License request");
-    query.addQueryItem("message", body);
-    url.setQuery(query);
-
-    // Create a QNetworkRequest
+    // Endpoint URL
+    QUrl url("https://solconigel.com/wp-json/contact-form-7/v1/contact-forms/81848/feedback");
     QNetworkRequest request(url);
 
-    // Set headers if required (e.g., Content-Type or authentication)
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    // Set headers
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data");
 
-    // You can set the body for a PUT request (if required)
-    QByteArray data = body.toUtf8();  // Empty body if the parameters are passed in the URL
+    // Create the multipart object
+    QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
-    // Send the PUT request
-    QNetworkReply *reply = manager->put(request, data);
+    // Add 'fname' field
+    QHttpPart fnamePart;
+    fnamePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"fname\""));
+    fnamePart.setBody("YOUR_NAME");
+    multiPart->append(fnamePart);
 
-    // Connect signals to handle the response
+    // Add 'email' field
+    QHttpPart emailPart;
+    emailPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"email\""));
+    emailPart.setBody("YOUR_EMAIL");
+    multiPart->append(emailPart);
+
+    // Add 'subject' field
+    QHttpPart subjectPart;
+    subjectPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"subject\""));
+    subjectPart.setBody("YOUR_SUBJECT");
+    multiPart->append(subjectPart);
+
+    // Add 'message' field
+    QHttpPart messagePart;
+    messagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"message\""));
+    messagePart.setBody("YOUR_MESSAGE");
+    multiPart->append(messagePart);
+
+    // Add '_wpcf7_unit_tag' field
+    QHttpPart unitTagPart;
+    unitTagPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"_wpcf7_unit_tag\""));
+    unitTagPart.setBody("wpcf7-f81848-o2");
+    multiPart->append(unitTagPart);
+
+    // Send the POST request
+    QNetworkReply* reply = networkManager->post(request, multiPart);
+
+    // Ensure the multiPart is deleted after the request is sent
+    multiPart->setParent(reply);
+
+    // Handle the response
     QObject::connect(reply, &QNetworkReply::finished, [reply]() {
         if (reply->error() == QNetworkReply::NoError) {
             QByteArray response = reply->readAll();
-            qDebug() << "Response:" << response;
+            qDebug() << "Success:" << response;
         } else {
-            qDebug() << "Error occurred:" << reply->errorString();
+            qDebug() << "Error:" << reply->errorString();
         }
         reply->deleteLater();
     });
@@ -184,11 +228,11 @@ QString LicenseModel::buildSendMessage()
 {
     QStringList body;
     body << "App key: " + m_appKey;
-    body << "User:" + m_usrFullName;
-    body << "Phone:" + m_usrPhone;
-    body << "EMail:" + m_usrEmail;
-    body << "Company:" + m_usrCompany;
-    body << "------------------------------------------";
+    body << "User: " + m_usrFullName;
+    body << "Phone: " + m_usrPhone;
+    body << "EMail: " + m_usrEmail;
+    body << "Company: " + m_usrCompany;
+    body << "";
 
     for (int i = 0; i < m_equipmentListmodel->rowCount(); i++) {
         QModelIndex index = m_equipmentListmodel->index(i);
@@ -203,7 +247,7 @@ QString LicenseModel::buildSendMessage()
         body << "";
 
     }
-    body << "------------------------------------------";
+    body << "";
 
     QString res = body.join("\n");
     return res;

@@ -44,7 +44,7 @@ Item {
 
             Image {
                 id: icon
-                visible: showIcon
+                visible: licenseModel.usrName != ""
                 source: "./images/icons/user-circle.svg"
                 sourceSize.width: heading2.height
                 sourceSize.height: heading2.height
@@ -60,7 +60,6 @@ Item {
                 font.family: montserratFont.name
                 font.pixelSize: 18
                 font.weight: 600
-                //          font.family: "Titillium Web"
                 color:  Colors.currentTheme.textColor
                 elide: Text.ElideRight
             }
@@ -89,7 +88,7 @@ Item {
             columnSpacing: 24
             rowSpacing: 24
             flow: GridLayout.LeftToRight
-            columns:  scrollView.contentWidth / (scrollView.delegatePreferredWidth  + gridLayout.columnSpacing) // scrollView.contentWidth < (scrollView.delegatePreferredWidth * 2  + gridLayout.columnSpacing) ? 1 : 2
+            columns:  scrollView.contentWidth / (scrollView.delegatePreferredWidth  + gridLayout.columnSpacing)
 
             Repeater {
                 id: repeater
@@ -142,7 +141,7 @@ Item {
 
     Connections {
         target: nodesModel
-        onErrorRaised: function(errorTxt, informativeError) {
+        function onErrorRaised(errorTxt, informativeError) {
             root.state = "warning"
             msgError.text = errorTxt
             msgError.informativeText = informativeError
@@ -152,7 +151,7 @@ Item {
 
     WarningBox {
         id: msgError
-        onAccepted: {
+        onClosed: {
             if (!licenseModel.isExists) {
                 applicationFlow.settingsButton()
             }
@@ -167,8 +166,8 @@ Item {
             nodesModel.init();
             tunnelModel.connect();
         } else {
-            root.state = "warning"
-            msgError.text = "License not found"
+            root.state = "Info"
+            msgError.text = "NO LICENSE FOUND"
             msgError.informativeText = "Please request license before starting remote support"
             msgError.visible = true
         }

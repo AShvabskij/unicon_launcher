@@ -66,6 +66,8 @@ RowLayout {
         id: input2
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+        Layout.minimumWidth: 120
+
         leftPadding: 10
 
         font.pixelSize: 16 - Constants.fontCoeff
@@ -74,8 +76,9 @@ RowLayout {
         color: Colors.currentTheme.textColor
 
         verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignLeft
+
         text: ""
-        Layout.minimumWidth: 100 // Minimum width it can shrink to
         background: Rectangle {
             color: Colors.currentTheme.boxColor
             border.color: Colors.currentTheme.borderColor

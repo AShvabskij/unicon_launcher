@@ -16,6 +16,10 @@ EquipmentListModel::EquipmentListModel(QObject *parent) {
 
 void EquipmentListModel::addItem(const Equipment &item)
 {
+    if (m_dataList.count() >= EQUIPMENT_COUNT) {
+        qWarning() << "The permissible number of equipment elements has been exceeded!";
+    }
+
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_dataList << item;
     endInsertRows();

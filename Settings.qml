@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Dialogs
 import qmlmodels 1.0
+// import QtCore
 
 Item {
     id: root
@@ -19,7 +20,7 @@ Item {
     FileDialog {
         id: fileDialog
         title: "Select a .dat file"
-        currentFolder: StandardPaths.standardLocations(StandardPaths.DownloadLocation)[0]
+//      currentFolder: StandardPaths.standardLocations(StandardPaths.DownloadLocation)[0]
         nameFilters: ["*.dat"]
         onAccepted: {
             console.log("Selected file: " + selectedFile)
@@ -58,11 +59,11 @@ Item {
 
         Rectangle {
             id: infoPanel
-            height: 80
-            color: Colors.currentTheme.boxColor
+            height: 40
+            color: "Transparent" //Colors.currentTheme.boxColor
             radius: 10
             border.color: Colors.currentTheme.borderColor
-            border.width: 2
+            border.width: 0
 
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -73,9 +74,7 @@ Item {
                 id: infoText
                 color: Colors.currentTheme.textColor
                 textFormat: Text.RichText
-                text: qsTr(" You need a license to get remote access to equipments.")
-                    + qsTr(" Please fill the form and click ") + "<b>" + qsTr("Request license") + "</b>" + qsTr(" to send request to the support team")
-                    + "<br>" + "<b>" + qsTr("Add license ") + "</b>" + qsTr("when the license file received from the support team")
+                text: qsTr(" Please fill the form to get remote access to your devices")
                 onLinkActivated: {
                     Qt.openUrlExternally(link);
                 }
@@ -131,7 +130,7 @@ Item {
                 CustomRowSingleTextInput {
                     id: userNameText
                     Layout.topMargin: 10
-                    label.text: qsTr("Full name:")
+                    label.text: qsTr("User name:")
                     input.text: licenseModel.usrName;
                     input.onTextChanged: {
                         licenseModel.usrName = input.text;
@@ -164,15 +163,6 @@ Item {
                     input.onTextChanged: {
                         licenseModel.usrCompany = input.text
                     }
-                }
-
-                CustomRowSingleTextInput {
-                    id: appKey
-
-                    label.text: qsTr("App key:")
-                    input.text: licenseModel.appKey;
-                    input.color: Colors.currentTheme.helpTextColor
-                    input.readOnly: true
                 }
 
                 Repeater {
@@ -266,59 +256,21 @@ Item {
             ColumnLayout {
                 id: licenseContent
                 width: parent.width
-/*
-                Text {
-                    id: licenseText
-                    text: qsTr("License number:")
-                    font.pixelSize: 16
-                    font.weight: Font.Normal
-                    font.family: montserratFont.name
-                    color: Colors.currentTheme.textColor //"#dfdfdf"
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 10
+
+                CustomRowSingleTextInput {
+                    id: appKey
                     Layout.topMargin: 10
+
+                    label.text: qsTr("App key:")
+                    input.text: licenseModel.appKey;
+                    input.color: Colors.currentTheme.helpTextColor
+                    input.readOnly: true
                 }
 
-                TextField {
-                    id: licenseInput
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.rightMargin: 10
-                    Layout.leftMargin: 10
-                    Layout.fillWidth: true
-                    font.pixelSize: 16
-                    font.weight: 400
-                    font.family: montserratFont.name
-                    color: Colors.currentTheme.textColor //"#dfdfdf"
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: 10
-                    placeholderText: ""
-                    readOnly: true
-                    placeholderTextColor: Colors.currentTheme.helpTextColor
-                    text: licenseModel.licenseNumber
-                    background: Rectangle {
-                        color: Colors.currentTheme.boxColor
-                        border.color: Colors.currentTheme.borderColor
-                    }
-                }
-*/
-/*
-                Text {
-                    id: helpLicenseText
-                    color: Colors.currentTheme.helpTextColor
-                    text: qsTr("Please select the license file received from the support team")
-
-                    Layout.leftMargin: 10
-                    Layout.topMargin: 20
-
-                    font.pixelSize: 13
-                    font.family: montserratFont.name
-                }
-*/
                 CustomRowSingleTextInput {
                     id: licNumber
-                    Layout.topMargin: 10
 
+                    Layout.topMargin: 10
                     label.text: qsTr("License :")
                     input.text: licenseModel.licenseNumber;
                 }
@@ -329,7 +281,7 @@ Item {
                     text: {
                         function genStatusText() {
                             if (!licenseModel.isExists) {
-                                return qsTr("Please add the license file received from the support team");
+                                return qsTr("Please request the license and add the license file received from the support team");
                             }
 
                             return licenseValidity ? qsTr("License activated successfully") : qsTr("Invalid license");
@@ -356,6 +308,19 @@ Item {
                     Layout.minimumHeight: 40
 
                     CustomButton {
+                        id: sendButton
+                        Layout.alignment: Qt.AlignCenter// | Qt.AlignTop
+                        Layout.minimumWidth: 200
+                        Layout.minimumHeight: 50
+                        buttonText: "Request license"
+                        showIcon: true
+                        iconPath: "./images/icons/email.svg"
+                        fontSize: 16 - Constants.fontCoeff
+                        onClicked: {
+                            licenseModel.sendRequest();
+                        }
+                    }
+                    CustomButton {
                         anchors.topMargin: 50
                         id: licenseButton
                         Layout.minimumWidth: 200
@@ -380,20 +345,6 @@ Item {
                         enabled: licenseModel.isExists
                         onClicked: {
                             licenseModel.deleteLicense()
-                        }
-                    }
-
-                    CustomButton {
-                        id: sendButton
-                        Layout.alignment: Qt.AlignCenter// | Qt.AlignTop
-                        Layout.minimumWidth: 200
-                        Layout.minimumHeight: 50
-                        buttonText: "Request license"
-                        showIcon: true
-                        iconPath: "./images/icons/email.svg"
-                        fontSize: 16 - Constants.fontCoeff
-                        onClicked: {
-                            licenseModel.sendRequest();
                         }
                     }
 

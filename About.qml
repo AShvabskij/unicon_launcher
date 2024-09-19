@@ -57,7 +57,7 @@ Item {
                 color: Colors.currentTheme.textColor
                 textFormat: Text.RichText
                 text: qsTr(" This tool allows you to connect to the selected device's web interface, enabling you to monitor its performance parameters and usage statistics.")
-                      + "<br><br>" + `Visit:  <a href="https://solconigel.com/">Solcon-IGEL Group</a> for more information`
+//                      + "<br><br>" + `Visit:  <a href="https://solconigel.com/">Solcon-IGEL Group</a> for more information`
                       + "<br>"
                       + `<h3>Work Modes</h3>`
                       + `<ul>`
@@ -109,7 +109,7 @@ Item {
 
                     Text {
                         id: licNumberLabel
-                        text: licenseModel.isExists ? qsTr("License registered to:") : qsTr("License not found")
+                        text: licenseModel.isExists ? qsTr("License registered to:") : qsTr("NO LICENSE FOUND")
                         font.pixelSize: 18 - Constants.fontCoeff
                         font.weight: Font.Normal
                         font.family: montserratFont.name

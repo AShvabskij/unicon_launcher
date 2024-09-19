@@ -160,7 +160,12 @@ long TunnelService::closeConnection()
     QString configPath = QCoreApplication::applicationDirPath() + "\\config";
 
     QString processCmd = configPath + "\\vpn.exe";
-    proc.startDetached(processCmd, args);
+    proc.start(processCmd, args);
+
+    proc.waitForFinished(5000);
+
+    qDebug() << proc.readAllStandardOutput();
+    qDebug() << proc.readAllStandardError();
 
     proc.close();
 

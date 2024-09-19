@@ -7,7 +7,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QProcess>
 #include <QTcpSocket>
 #include <QTimer>
 
@@ -24,6 +23,11 @@ QTunnel::~QTunnel()
 
 void QTunnel::connect()
 {
+    if (m_isConnected == true) {
+        onFinishConnecting();
+        return;
+    }
+
     // get conf file from license file
     QVariantMap configObj;
     long res = m_license->getConfig(configObj);
@@ -47,8 +51,11 @@ void QTunnel::onFinishConnecting()
 
     if (res == 1) {
         emit connected();
+        m_isConnected = true;
     } else {
         emit errorRaised("Failed to connect to remote server!", "Make sure the program is running with administrator rights ");
+        m_tunnelSrv->closeConnection();
+        m_isConnected = false;
     }
 
     m_tunnelSrv->finish();
