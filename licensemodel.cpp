@@ -123,8 +123,8 @@ void LicenseModel::deleteLicense()
 
 void LicenseModel::sendRequest()
 {
-    sendEmail();
-//  sendPutRequest();
+//  sendEmail();
+    sendAPIRequest();
     copyToClipboard();
 }
 
@@ -162,7 +162,7 @@ void LicenseModel::copyToClipboard()
     clipboard->setText(res.join("\n"));
 }
 
-void LicenseModel::sendPutRequest()
+void LicenseModel::sendAPIRequest()
 {
     QNetworkAccessManager* networkManager = new QNetworkAccessManager;
 
@@ -171,34 +171,10 @@ void LicenseModel::sendPutRequest()
     QNetworkRequest request(url);
 
     // Set headers
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data");
+//    request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data;  boundary=1BEF0A57BE110FD467A");
 
     // Create the multipart object
     QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-
-    // Add 'fname' field
-    QHttpPart fnamePart;
-    fnamePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"fname\""));
-    fnamePart.setBody("YOUR_NAME");
-    multiPart->append(fnamePart);
-
-    // Add 'email' field
-    QHttpPart emailPart;
-    emailPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"email\""));
-    emailPart.setBody("YOUR_EMAIL");
-    multiPart->append(emailPart);
-
-    // Add 'subject' field
-    QHttpPart subjectPart;
-    subjectPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"subject\""));
-    subjectPart.setBody("YOUR_SUBJECT");
-    multiPart->append(subjectPart);
-
-    // Add 'message' field
-    QHttpPart messagePart;
-    messagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"message\""));
-    messagePart.setBody("YOUR_MESSAGE");
-    multiPart->append(messagePart);
 
     // Add '_wpcf7_unit_tag' field
     QHttpPart unitTagPart;
@@ -206,7 +182,33 @@ void LicenseModel::sendPutRequest()
     unitTagPart.setBody("wpcf7-f81848-o2");
     multiPart->append(unitTagPart);
 
+    // Add 'fname' field
+    QHttpPart fnamePart;
+    fnamePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"fname\""));
+    fnamePart.setBody(m_usrFullName.toUtf8());
+    multiPart->append(fnamePart);
+
+    // Add 'email' field
+    QHttpPart emailPart;
+    emailPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"email\""));
+    emailPart.setBody(m_usrEmail.toUtf8());
+    multiPart->append(emailPart);
+
+    // Add 'subject' field
+    QHttpPart subjectPart;
+    subjectPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"subject\""));
+    subjectPart.setBody("IRST License request");
+    multiPart->append(subjectPart);
+
+    // Add 'message' field
+    QString msg = buildSendMessage();
+    QHttpPart messagePart;
+    messagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"message\""));
+    messagePart.setBody(msg.toUtf8());
+    multiPart->append(messagePart);
+
     // Send the POST request
+
     QNetworkReply* reply = networkManager->post(request, multiPart);
 
     // Ensure the multiPart is deleted after the request is sent
@@ -214,9 +216,11 @@ void LicenseModel::sendPutRequest()
 
     // Handle the response
     QObject::connect(reply, &QNetworkReply::finished, [reply]() {
+        QByteArray response = reply->readAll();
+        qDebug() << "Response:" << response;
+
         if (reply->error() == QNetworkReply::NoError) {
-            QByteArray response = reply->readAll();
-            qDebug() << "Success:" << response;
+            qDebug() << "Success:";
         } else {
             qDebug() << "Error:" << reply->errorString();
         }

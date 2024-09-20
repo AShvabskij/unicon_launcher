@@ -38,7 +38,7 @@ public:
     }
 private:
     void sendEmail();
-    void sendPutRequest();
+    void sendAPIRequest();
     QString buildSendMessage();
     void copyToClipboard();
 
