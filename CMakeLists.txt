@@ -17,7 +17,7 @@ qt_add_executable(appunicon_launcher
     ${IP_DISCOVERY_HEADERS}
 )
 
-# SET_TARGET_PROPERTIES(appunicon_launcher PROPERTIES LINK_FLAGS    "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" /SUBSYSTEM:WINDOWS")
+SET_TARGET_PROPERTIES(appunicon_launcher PROPERTIES LINK_FLAGS    "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" /SUBSYSTEM:WINDOWS")
 
 target_include_directories(appunicon_launcher PRIVATE ${IP_DISCOVERY_HEADERS})
 
