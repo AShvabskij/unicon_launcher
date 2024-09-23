@@ -17,9 +17,9 @@ void LicenseService::createLicFile()
 
     config["AppKey"] = "oIsGee+Dr8zECo/hs+7LIvJO7b+T6R8f4mdBLb7fynE=";
     config["Address"] = "10.9.0.2/24";
-    config["Server"] = "10.9.0.1";
+    config["ServerIP"] = "10.9.0.1";
 
-    config["PublicKey"] = "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=";
+    config["ServerKey"] = "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=";
     config["AllowedIPs"] = "10.9.0.0/24";
     config["Endpoint"] = "92.118.113.157:51820";
     config["Endpoint"] = "92.118.113.157:51820";
@@ -143,7 +143,7 @@ long LicenseService::getConfig(QVariantMap& retDat)
 bool LicenseService::checkConfig(const QVariantMap &dat)
 {
     QStringList keys;
-    keys << "Number" << "Address" << "AllowedIPs" << "Endpoint" << "AppKey" << "Server";
+    keys << "Number" << "Address" << "AllowedIPs" << "Endpoint" << "AppKey" << "VPKey" << "ServerKey" << "ServerIP";
 
     for (QString key : keys) {
         if (!dat.contains(key)) {

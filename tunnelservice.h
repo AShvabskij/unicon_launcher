@@ -16,6 +16,7 @@ public:
     }
 
     QString genPrivateKey();
+    QString genPublicKey(QString privateKey);
     long connect(const QVariantMap &configObj);
     long checkConnection();
     long closeConnection();

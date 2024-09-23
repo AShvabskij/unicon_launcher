@@ -53,7 +53,7 @@ void QTunnel::onFinishConnecting()
         emit connected();
         m_isConnected = true;
     } else {
-        emit errorRaised("Failed to connect to remote server!", "Make sure the program is running with administrator rights ");
+        emit errorRaised("Server is not available!", "Please try again");
         m_tunnelSrv->closeConnection();
         m_isConnected = false;
     }

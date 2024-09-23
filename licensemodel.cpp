@@ -96,8 +96,10 @@ void LicenseModel::parseLicense()
 
     if (m_isValid && key != m_appKey.trimmed())
     {
-        qWarning() << "The license is not valid! License App key " << key << " is not equal to the generated key:" << m_appKey;
-        m_isValid = false;
+        QString msg = "The license is generated for another App key ";
+        qWarning() << msg;
+        emit errorRaised(msg, "Please request the valid license from the support team");
+//      m_isValid = false;
     }
 
     emit appKeyChanged(m_appKey);

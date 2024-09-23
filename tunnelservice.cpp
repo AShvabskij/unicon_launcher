@@ -32,6 +32,35 @@ QString TunnelService::genPrivateKey()
     return result;
 }
 
+QString TunnelService::genPublicKey(QString privateKey)
+{
+    QString configPath = QCoreApplication::applicationDirPath() + "\\config";
+
+    QProcess proc;
+
+    QStringList args;
+    args << "pubkey";
+    args << "<";
+    args << configPath + "\\privatekey";
+    args << ">";
+    args << configPath + "\\publickey";
+
+    QString processCmd = configPath + "\\wg.exe";
+    proc.start(processCmd, args);
+    proc.waitForFinished(5000);
+
+    QString result = proc.readAllStandardOutput();
+    qDebug() << proc.readAllStandardError();
+
+    int linePos = result.indexOf('=');
+
+    if (linePos != -1) {
+        result = result.left(linePos + 1);
+    }
+
+    return result;
+}
+
 long TunnelService::createConfigFile(const QVariantMap &configObj)
 {
 
@@ -58,7 +87,7 @@ long TunnelService::createConfigFile(const QVariantMap &configObj)
 long TunnelService::generateContent(const QVariantMap &configObj, QTextStream& stream)
 {
     QMap<QString, QString> interfaceKeys;
-    interfaceKeys.insert("AppKey", "PrivateKey");
+    interfaceKeys.insert("VPKey", "PrivateKey");
     interfaceKeys.insert("Address", "Address");
     stream << "[Interface]" << Qt::endl;
 
@@ -71,7 +100,8 @@ long TunnelService::generateContent(const QVariantMap &configObj, QTextStream& s
     }
 
     QMap<QString, QString> peerKeys;
-    peerKeys.insert("PublicKey", "PublicKey");
+    QString privateKey = configObj["PublicKey"].toString();
+    peerKeys.insert("ServerKey", "PublicKey");
     peerKeys.insert("AllowedIPs", "AllowedIPs");
     peerKeys.insert("Endpoint", "Endpoint");
 
@@ -99,12 +129,12 @@ long TunnelService::connect(const QVariantMap &configObj)
         return 0;
     }
 
-    if (!configObj.contains("Server")) {
-        qWarning() << "Config is not valid! Key " << "Server" << "is absent";
+    if (!configObj.contains("ServerIP")) {
+        qWarning() << "Config is not valid! Key " << "ServerIP" << "is absent";
         return 0;
     }
 
-    m_serverIP = configObj["Server"].toString();
+    m_serverIP = configObj["ServerIP"].toString();
 
     QProcess proc;
 
@@ -120,10 +150,12 @@ long TunnelService::connect(const QVariantMap &configObj)
     proc.start(processCmd, args);
     proc.waitForFinished(5000);
 
-    // QProcess::ProcessState state = m_proc->state();
-    // QProcess::ProcessError error = m_proc->error();
-    qDebug() << proc.readAllStandardOutput();
-    qDebug() << proc.readAllStandardError();
+    QString output = proc.readAllStandardOutput();
+    QString errOutput = proc.readAllStandardError();
+    if (output != "" || errOutput != "") {
+        qWarning() << output;
+        qWarning() << errOutput;
+    }
 
     return 1;
 }

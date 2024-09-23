@@ -48,7 +48,6 @@ Item {
 
     WarningBox {
         id: msgError
-        onAccepted: applicationFlow.backButton()
     }
 
     ColumnLayout {

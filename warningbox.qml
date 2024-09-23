@@ -45,21 +45,39 @@ Dialog {
     //     height: 30
     // }
 
-    contentItem:  Label {
-        text: root.text
-        font.pointSize: 12
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        color: "#ffffff"
-        font.bold: true
-        padding: 0
-        background: Rectangle {
-            color: "#353535"
-            border.width: 1.0
-            border.color: Colors.border
+    contentItem:Rectangle {
+
+        anchors.fill: parent
+
+        color: "#353535"
+        border.width: 1.0
+        border.color: Colors.border
+
+        Column {
+        anchors.centerIn: parent
+        spacing: 10
+
+        Label {
+            text: root.text
+            font.pointSize: 12
+            horizontalAlignment: Text.AlignHCenter
+//            verticalAlignment: Text.AlignVCenter
+            color: "#ffffff"
+            font.bold: true
+
+        }
+
+        Label {
+            text: root.informativeText
+            font.pointSize: 8
+            horizontalAlignment: Text.AlignHCenter
+//            verticalAlignment: Text.AlignVCenter
+            color: "#ffffff"
+            font.bold: false
+
+        }
         }
     }
-
     footer: DialogButtonBox {
         background: Rectangle {
             color: "#353535"
