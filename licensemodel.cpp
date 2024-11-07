@@ -98,7 +98,7 @@ void LicenseModel::parseLicense()
     {
         QString msg = "The license is generated for another App key ";
         qWarning() << msg;
-        emit errorRaised(msg, "Please request the valid license from the support team");
+        emit errorRaised(msg, "Please request a valid license from support");
 //      m_isValid = false;
     }
 
@@ -123,8 +123,40 @@ void LicenseModel::deleteLicense()
     emit licenseNumberChanged("");
 }
 
+
+bool LicenseModel::checkData()
+{
+    auto isValidEmail = [](const QString &email) -> bool {
+        QRegularExpression emailRegex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+        QRegularExpressionMatch match = emailRegex.match(email);
+        return match.hasMatch();
+    };
+
+    if (!m_usrEmail.isEmpty() && !isValidEmail(m_usrEmail)) {
+        emit errorRaised("Email is filled in incorrectly!", "Please correct the errors and try again");
+        return false;
+    }
+
+    auto isValidPhoneNumber = [](const QString &phoneNumber) -> bool {
+        QRegularExpression phoneRegex("^\\+?[1-9]\\d{0,2}[ -]?\(?\\d{1,3}\\)?[ -]?\\d{1,3}[ -]?\\d{1,9}$");
+        QRegularExpressionMatch match = phoneRegex.match(phoneNumber);
+        return match.hasMatch();
+    };
+
+    if (m_usrPhone.isEmpty() /*|| !isValidPhoneNumber(m_usrPhone)*/) {
+        emit errorRaised("Phone number is filled in incorrectly!", "Please correct the errors and try again");
+        return false;
+    }
+
+    return true;
+}
+
 void LicenseModel::sendRequest()
 {
+    if (!checkData()) {
+        return;
+    }
+
 //  sendEmail();
     sendAPIRequest();
     copyToClipboard();
@@ -217,14 +249,18 @@ void LicenseModel::sendAPIRequest()
     multiPart->setParent(reply);
 
     // Handle the response
-    QObject::connect(reply, &QNetworkReply::finished, [reply]() {
+    QObject::connect(reply, &QNetworkReply::finished, [reply, this]() {
         QByteArray response = reply->readAll();
         qDebug() << "Response:" << response;
 
         if (reply->error() == QNetworkReply::NoError) {
             qDebug() << "Success:";
+            emit errorRaised("Request succeded", "");
+
         } else {
             qDebug() << "Error:" << reply->errorString();
+            emit errorRaised("Request failed!", "Please contact support to resolve this issue.");
+
         }
         reply->deleteLater();
     });

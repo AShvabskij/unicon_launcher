@@ -1,14 +1,21 @@
-#include <windows.h>
-
 #include "RSP_IP_DISCOVERY.h"
+#include <QDebug>
 
-#include <iphlpapi.h>
+#ifdef QT_VERSION
+    #include <QProcess>
+#endif
 
-using namespace std;
 
-//#pragma comment(lib, "iphlpapi.lib")
-#pragma comment(lib, "iphlpapi.lib")
+
+
+
+
 #pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "iphlpapi.lib")
+
+
+void pingIP(const std::string& ip);
+std::vector<int> getIPFields(const std::string& ip);
 
 RSP_IP_DISCOVERY::RSP_IP_DISCOVERY()
 {
@@ -47,10 +54,15 @@ void RSP_IP_DISCOVERY::IP_discovery_proc()
         state_prev = state;
         
         switch (state) {
-        case SM_INIT:
+        case SM_INIT_GET_INTERFACES:
+            get_interfaces_win();
+            state = SM_WIFI_CONNEX_CONNECTED;
+            break;
+        case SM_WIFI_CONNEX_CONNECTED:
+            //scan_wifi("CONNEX");
+            scan_and_ping_wifi("CONNEX");
             state = SM_READ_ARP;
             break;
-
         case SM_READ_ARP:
             read_ARP();
             done = true;
@@ -90,7 +102,7 @@ string RSP_IP_DISCOVERY::get_status_string()
 
 void RSP_IP_DISCOVERY::read_ARP()
 {
-    get_interfaces_win();
+
     read_ARP_win();
 //
 //#if defined(_WIN32)
@@ -112,7 +124,7 @@ void RSP_IP_DISCOVERY::read_ARP_win() {
         // Allocate memory for the ARP table
         ULONG size = 0;
         GetIpNetTable(nullptr, &size, false);
-        vector<std::byte> buffer(size);
+        vector<BYTE> buffer(size);
 
         // Retrieve the ARP table
         PMIB_IPNETTABLE arpTable = reinterpret_cast<PMIB_IPNETTABLE>(buffer.data());
@@ -126,9 +138,12 @@ void RSP_IP_DISCOVERY::read_ARP_win() {
                 MIB_IPNETROW& row = arpTable->table[i];
                 
                 // Print IP address
-                in_addr ipAddr;
+                struct in_addr ipAddr;
                 ipAddr.S_un.S_addr = row.dwAddr;
-                string s_ipAddr = inet_ntoa(ipAddr);
+                //string s_ipAddr = inet_ntoa(ipAddr);
+                char ipv4Str[INET_ADDRSTRLEN];
+                string s_ipAddr = inet_ntop(AF_INET, &ipAddr, ipv4Str,INET_ADDRSTRLEN);
+
                 cout << s_ipAddr << "  dwIndex "<< row.dwIndex<<"  ";
 
                 // Print MAC address
@@ -203,7 +218,7 @@ void RSP_IP_DISCOVERY::get_interfaces_win()
     ULONG outBufLen = 0;
     DWORD dwRetVal = 0;
     IP_ADAPTER_INFO* pAdapterInfos = (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO));
-
+    found_WiFi_IP.clear();
     // retry up to 5 times, to get the adapter infos needed
     for (int i = 0; i < 5 && (dwRetVal == ERROR_BUFFER_OVERFLOW || dwRetVal == NO_ERROR); ++i)
     {
@@ -231,29 +246,182 @@ void RSP_IP_DISCOVERY::get_interfaces_win()
             IP_ADDR_STRING* pIpAddress = &(pAdapterInfo->IpAddressList);
             while (pIpAddress != 0)
             {
-                // 
-                // <<<<
-                // here pAdapterInfo->Address should contain the MAC address
-                // >>>>
-                // 
-                cout << "Description " << pAdapterInfo->Description ;
-                cout << " Index " << hex<< pAdapterInfo->Index;
+                // print only if WIFI
+                if (pAdapterInfo->Type == IF_TYPE_IEEE80211) // IF_TYPE_ETHERNET_CSMACD) || (pAdapterInfo->Type == IF_TYPE_ETHERNET_CSMACD)) 
+                   {    // 
+                    // <<<<
+                    // here pAdapterInfo->Address should contain the MAC address
+                    // >>>>
+                    // 
+                    cout << "Description " << pAdapterInfo->Description;
+                        cout << " Index " << hex << pAdapterInfo->Index;
 
-                cout<< " MAC Address " <<   hex << static_cast<int>(pAdapterInfo->Address[0]) <<\
-                                            hex << static_cast<int>(pAdapterInfo->Address[1]) <<\
-                                            hex << static_cast<int>(pAdapterInfo->Address[2]) <<\
-                                            hex << static_cast<int>(pAdapterInfo->Address[3]) <<\
-                                            hex << static_cast<int>(pAdapterInfo->Address[4]) <<\
-                                            hex << static_cast<int>(pAdapterInfo->Address[5]) <<endl;
+                        cout << " Type " << hex<<pAdapterInfo->Type;// IF_TYPE_IEEE80211 ot IF_TYPE_ETHERNET_CSMACD
+                        string IP_addr = pAdapterInfo->IpAddressList.IpAddress.String;
+                        cout << " IP addr " << IP_addr;// pAdapterInfo->IpAddressList.IpAddress.String;
+                        cout << " MAC Address " << hex << static_cast<int>(pAdapterInfo->Address[0]) << \
+                        hex << static_cast<int>(pAdapterInfo->Address[1]) << \
+                        hex << static_cast<int>(pAdapterInfo->Address[2]) << \
+                        hex << static_cast<int>(pAdapterInfo->Address[3]) << \
+                        hex << static_cast<int>(pAdapterInfo->Address[4]) << \
+                        hex << static_cast<int>(pAdapterInfo->Address[5]) << endl;
+
+                        if (IP_addr!="0.0.0.0") found_WiFi_IP= IP_addr;
+                    }
                 pIpAddress = pIpAddress->Next;
             }
             pAdapterInfo = pAdapterInfo->Next;
+
         }
     }
     free(pAdapterInfos);
    
 }
 
+
+
+
+void RSP_IP_DISCOVERY::scan_and_ping_wifi(string wifi_name)
+{
+    /*
+        call netsh wlan show int
+        There is 1 interface on the system :
+
+    Name: Wi - Fi
+    Description : Intel(R) Wi - Fi 6 AX200 160MHz
+    GUID : 9e003efe - 6e83 - 4ca4 - b2eb - fddceece3e70
+    Physical address : 08 : d2 : 3e : 28 : 69 : e6
+    State : connected
+    SSID : CONNEX
+    BSSID : c6:17 : 5a : 98 : d9 : df
+    Network type : Infrastructure
+    Radio type : 802.11n
+    Authentication : WPA2 - Personal
+    Cipher : CCMP
+    Connection mode : Profile
+    Channel : 1
+    Receive rate(Mbps) : 144.4
+    Transmit rate(Mbps) : 144.4
+    Signal : 96 %
+    Profile : CONNEX
+
+    Hosted network status : Not available */
+
+    STARTUPINFO info = { sizeof(info) };
+    //LPWSTR cmd = ("netsh wlan show int");
+    //wchar_t cmd[] = L"netsh wlan show int";
+    
+    if (found_WiFi_IP != "0.0.0.0") {
+        
+        vector<int> ip_addr = getIPFields(found_WiFi_IP);
+
+        
+        std::vector<std::thread> threads;
+        std::string baseIP = to_string(ip_addr[0])+"."+\
+                             to_string(ip_addr[1])+"."+ \
+                             to_string(ip_addr[2])+"." ; //""192.168.1.";
+
+        // Ping addresses from 192.168.1.1 to 192.168.1.255 in parallel
+        for (int i = 1; i < 255; i++) {
+            std::string ip = baseIP + std::to_string(i);
+            threads.emplace_back(std::thread(pingIP, ip));  // Start a new thread for each ping
+            std::cout << "ping ip " << ip << "\n";
+        }
+
+        // Join all threads to ensure they finish before exiting
+        for (auto& t : threads) {
+            if (t.joinable()) {
+                t.join();
+            }
+        }
+    }
+     
+}
+
+
+string s;
+// Function to ping a single IP address
+void pingIP(const std::string& ip) 
+{
+
+#if defined(_WIN32)
+
+    #ifdef QT_VERSION
+            QProcess proc;
+            QStringList args = { "-n", "1", ip.c_str() };
+            proc.start("ping", args);
+    #else
+        std::string command = "ping -n 1 " + ip + " | FIND \"TTL\" ";  // Windows command; for Linux use `ping -c 1`
+        int result = system(command.c_str());      // Execute the ping command
+    #endif
+
+#endif
+
+    // if (!proc.waitForFinished()) {
+    //     qDebug() << "Ping process failed!";
+    //     return;
+    // }
+
+    // if (result == 0) {
+    //     //std::cout << ip << " is reachable.\n";
+    // }
+    // else {
+    //     //std::cout << ip << " is not reachable.\n";
+    // }
+}
+
+
+// Function to split the IP string and return its octets as integers
+std::vector<int> getIPFields(const std::string& ip) {
+    std::vector<int> octets;
+    std::stringstream ss(ip);
+    std::string segment;
+    
+    // Split the IP address string by '.'
+    while (std::getline(ss, segment, '.')) {
+        try {
+            int octet = std::stoi(segment);  // Convert string segment to integer
+            if (octet < 0 || octet > 255) {
+                throw std::out_of_range("Octet value out of range (0-255)");
+            }
+            octets.push_back(octet);
+        } catch (const std::exception& e) {
+            std::cerr << "Invalid IP address segment: " << e.what() << "\n";
+            return {};
+        }
+    }
+
+    // Ensure there are exactly 4 octets for a valid IPv4 address
+    if (octets.size() != 4) {
+        std::cerr << "Invalid IP address format\n";
+        return {};
+    }
+
+    return octets;
+}
+
+
+//void  ExecAndCaptureOutuput(string cmd, OutputCapture, ErrorCapture)
+//{
+//
+//    //char char_buff_from_pipe[128]; //   buff for pipe receive end
+//    //int _res;
+//    //int result = 0;
+//    //GCB_CAN_MSG gcb_can_msg;
+//
+//    //std::fgets(char_buff_from_pipe, 128, f_pipe);
+//    //std::cout << char_buff_from_pipe; //print to terminal received data
+//
+//    //f_pipe = popen(cmd.c_str(), "r");
+//    //if (f_pipe)
+//    //{
+//    //    pclose(f_pipe);
+//    //    f_pipe = NULL;
+//    //}
+//  
+//
+//
+//}
 
 /*
 void RSP_IP_DISCOVERY::read_ARP_linux () {

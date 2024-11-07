@@ -41,6 +41,7 @@ private:
     void sendAPIRequest();
     QString buildSendMessage();
     void copyToClipboard();
+    bool checkData();
 
 signals:
     void errorRaised(QString error, QString informativeError);

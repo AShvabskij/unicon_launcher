@@ -42,6 +42,7 @@ RowLayout {
         font.weight: 400
         font.family: montserratFont.name
         color: Colors.currentTheme.textColor
+        palette.placeholderText: Colors.currentTheme.helpTextColor
 
         verticalAlignment: Text.AlignVCenter
         text: ""
@@ -74,6 +75,7 @@ RowLayout {
         font.weight: 400
         font.family: montserratFont.name
         color: Colors.currentTheme.textColor
+        palette.placeholderText: Colors.currentTheme.helpTextColor
 
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft

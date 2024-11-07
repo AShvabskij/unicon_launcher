@@ -41,12 +41,14 @@ void LocalModel::th_scanIP(QPromise<void>& promise)
         QString address = s.c_str();
         qDebug() << address << Qt::endl;
 
-        QTcpSocket tcpSocket;
-        QHostAddress host(address);
-        tcpSocket.connectToHost(host, 22);
-        if (tcpSocket.waitForConnected(1000)) {
-            m_listIP.append(address);
-        }
+        m_listIP.append(address);
+
+        // QTcpSocket tcpSocket;
+        // QHostAddress host(address);
+        // tcpSocket.connectToHost(host, 22);
+        // if (tcpSocket.waitForConnected(1000)) {
+        //     m_listIP.append(address);
+        // }
     }
 
     promise.finish();

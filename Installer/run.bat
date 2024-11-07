@@ -1,0 +1,1 @@
+binarycreator --offline-only -c config/config.xml -p packages -t installerbase.exe IRST_installer.exe

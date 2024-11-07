@@ -145,13 +145,16 @@ Item {
                     input1.onTextChanged: {
                         licenseModel.usrEmail = input1.text;
                     }
+                    input1.placeholderText: "example@domain.com"
+                    input1.inputMethodHints: Qt.ImhEmailCharacters // Show email keyboard on mobile platforms
 
                     label2: qsTr("Phone:")
                     input2.text: licenseModel.usrPhone;
                     input2.onTextChanged: {
                         licenseModel.usrPhone = input2.text;
                     }
-
+                    input2.placeholderText: "+1 (___) ___-____"
+                    input2.inputMask: "+9 (999) 999-9999;_"
                 }
 
                 CustomRowSingleTextInput {

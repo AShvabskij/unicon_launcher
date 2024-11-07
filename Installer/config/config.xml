@@ -6,4 +6,6 @@
     <Publisher>SI Group</Publisher>
     <StartMenuDir>Remote Support Tool SI</StartMenuDir>
     <TargetDir>@ApplicationsDirX64@/IRST</TargetDir>
+    <RunProgram>@TargetDir@/appunicon_launcher.exe</RunProgram>    
+    <ControlScript>controlcript.qs</ControlScript>
 </Installer>
