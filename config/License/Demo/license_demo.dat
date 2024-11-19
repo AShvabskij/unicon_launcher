@@ -15,11 +15,11 @@
     },
     "nodes": [
         {
-            "name": "DEMO Lab",
-            "region": "Dortmund",
-            "owner": "SI-GROUP",
-            "address": "Hauert 12, 44227 Dortmund Germany",
-            "ipAddress": "10.9.0.42"
+            "name": "Demo unit",
+            "region": "USA",
+            "owner": "Solcon Industries",
+            "address": "",
+            "ipAddress": "10.9.0.16"
         },
         {
             "name": "Starter 1",

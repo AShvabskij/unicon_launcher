@@ -2,14 +2,38 @@
 #include <QQmlApplicationEngine>
 #include <QtWebView/QtWebView>
 
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
+
 #include "qtunnel.h"
 #include "nodelistmodel.h"
 #include "localmodel.h"
 #include "licensemodel.h"
 #include "equipmentlistmodel.h"
 
+#include <iostream>
+#include <fstream>
+
+QFile qtLogFile("log_qt.txt");
+
+void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    if (msg.contains("QMetaObject::indexOfSignal")) {
+        return; // Suppress this message
+    }
+
+    QTextStream out(&qtLogFile);
+    out << msg << Qt::endl;
+}
+
 int main(int argc, char *argv[])
 {
+    // qputenv("QT_OPENGL", "software");
+    // qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu");
+
+    // Optional: Log to confirm the environment variable
+    // qDebug() << "QT_OPENGL set to" << qgetenv("QT_OPENGL");
+
     QtWebView::initialize();
     QGuiApplication app(argc, argv);
 
@@ -38,6 +62,32 @@ int main(int argc, char *argv[])
 
     QIcon icon = QIcon(":/qt/qml/unicon_launcher/images/icons/logo_window.png");
     app.setWindowIcon(icon);
+
+//  QLoggingCategory::defaultCategory()->setEnabled(QtDebugMsg, true);
+    QLoggingCategory::setFilterRules("qt.qmetaobject.warning=false");
+
+    qInstallMessageHandler(logMessageHandler);
+
+    std::ofstream logFile("log_cpp.txt");
+
+    // Check if the file opened successfully
+    if (!logFile.is_open()) {
+        std::cerr << "Error opening log file!" << std::endl;
+        return 1;
+    }
+
+    // Redirect std::cout to the log file
+    std::cout.rdbuf(logFile.rdbuf()); // Redirect to file buffer
+
+    qtLogFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    if (!qtLogFile.isOpen()) {
+        std::cerr << "Error opening log file!" << std::endl;
+        return 1;
+    }
+
+    QTextStream out(&qtLogFile);
+
+    out << Qt::endl << "App started at " << QDateTime::currentDateTime().toString() << Qt::endl;
 
     return app.exec();
 }

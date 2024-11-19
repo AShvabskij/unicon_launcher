@@ -22,7 +22,9 @@ Item {
     function onRefreshPage() {
         licenseModel.parseLicense();
         if (licenseModel.isExists) {
-            nodesModel.update();
+            root.state = "connecting"
+            nodesModel.init();
+            tunnelModel.connect();
         } else {
             applicationFlow.backButton();
         }

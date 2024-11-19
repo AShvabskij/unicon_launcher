@@ -55,15 +55,18 @@ void RSP_IP_DISCOVERY::IP_discovery_proc()
         
         switch (state) {
         case SM_INIT_GET_INTERFACES:
+            cout << "call get_interfaces_win " << endl;
             get_interfaces_win();
             state = SM_WIFI_CONNEX_CONNECTED;
             break;
         case SM_WIFI_CONNEX_CONNECTED:
             //scan_wifi("CONNEX");
+            cout << "call scan_and_ping_wifi" << endl;
             scan_and_ping_wifi("CONNEX");
             state = SM_READ_ARP;
             break;
         case SM_READ_ARP:
+            cout << "call read_ARP()" << endl;
             read_ARP();
             done = true;
             break;
@@ -116,11 +119,6 @@ void RSP_IP_DISCOVERY::read_ARP()
 
 
 void RSP_IP_DISCOVERY::read_ARP_win() {
-
-
-
-
-    
         // Allocate memory for the ARP table
         ULONG size = 0;
         GetIpNetTable(nullptr, &size, false);
@@ -217,27 +215,39 @@ void RSP_IP_DISCOVERY::get_interfaces_win()
 {
     ULONG outBufLen = 0;
     DWORD dwRetVal = 0;
-    IP_ADAPTER_INFO* pAdapterInfos = (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO));
+    DWORD s = sizeof(IP_ADAPTER_INFO);
+    cout << "size = " << s << std::endl;
+
+    IP_ADAPTER_INFO* pAdapterInfos = nullptr;
+
     found_WiFi_IP.clear();
+
+    // Get the required buffer size by passing nullptr
+    if (GetAdaptersInfo(nullptr, &outBufLen) == ERROR_BUFFER_OVERFLOW) {
+        pAdapterInfos = (PIP_ADAPTER_INFO)malloc(outBufLen);
+        if (pAdapterInfos == nullptr) {
+            std::cerr << "Failed to allocate memory for adapter information." << std::endl;
+            return;
+        }
+    } else {
+        std::cerr << "Failed to calc size for adapter information." << std::endl;
+        return;
+    }
+
     // retry up to 5 times, to get the adapter infos needed
-    for (int i = 0; i < 5 && (dwRetVal == ERROR_BUFFER_OVERFLOW || dwRetVal == NO_ERROR); ++i)
+    for (int i = 0; i < 5; ++i)
     {
+        cout << "call GetAdaptersInfo for i = " << i << std::endl;
+
         dwRetVal = GetAdaptersInfo(pAdapterInfos, &outBufLen);
+
         if (dwRetVal == NO_ERROR)
         {
-            break;
-        }
-        else if (dwRetVal == ERROR_BUFFER_OVERFLOW)
-        {
-            free(pAdapterInfos);
-            pAdapterInfos = (IP_ADAPTER_INFO*)malloc(outBufLen);
-        }
-        else
-        {
-            pAdapterInfos = 0;
+            cout << "GetAdaptersInfo: no error";
             break;
         }
     }
+
     if (dwRetVal == NO_ERROR)
     {
         IP_ADAPTER_INFO* pAdapterInfo = pAdapterInfos;
@@ -248,38 +258,38 @@ void RSP_IP_DISCOVERY::get_interfaces_win()
             {
                 // print only if WIFI
                 if (pAdapterInfo->Type == IF_TYPE_IEEE80211) // IF_TYPE_ETHERNET_CSMACD) || (pAdapterInfo->Type == IF_TYPE_ETHERNET_CSMACD)) 
-                   {    // 
-                    // <<<<
-                    // here pAdapterInfo->Address should contain the MAC address
-                    // >>>>
-                    // 
-                    cout << "Description " << pAdapterInfo->Description;
-                        cout << " Index " << hex << pAdapterInfo->Index;
+                {
+                    string IP_addr = pAdapterInfo->IpAddressList.IpAddress.String;
+                    if (IP_addr != "0.0.0.0") {
 
+                        cout << "Description " << pAdapterInfo->Description;
+                        cout << " Index " << hex << pAdapterInfo->Index;
                         cout << " Type " << hex<<pAdapterInfo->Type;// IF_TYPE_IEEE80211 ot IF_TYPE_ETHERNET_CSMACD
-                        string IP_addr = pAdapterInfo->IpAddressList.IpAddress.String;
                         cout << " IP addr " << IP_addr;// pAdapterInfo->IpAddressList.IpAddress.String;
                         cout << " MAC Address " << hex << static_cast<int>(pAdapterInfo->Address[0]) << \
-                        hex << static_cast<int>(pAdapterInfo->Address[1]) << \
-                        hex << static_cast<int>(pAdapterInfo->Address[2]) << \
-                        hex << static_cast<int>(pAdapterInfo->Address[3]) << \
-                        hex << static_cast<int>(pAdapterInfo->Address[4]) << \
-                        hex << static_cast<int>(pAdapterInfo->Address[5]) << endl;
+                            hex << static_cast<int>(pAdapterInfo->Address[1]) << \
+                            hex << static_cast<int>(pAdapterInfo->Address[2]) << \
+                            hex << static_cast<int>(pAdapterInfo->Address[3]) << \
+                            hex << static_cast<int>(pAdapterInfo->Address[4]) << \
+                            hex << static_cast<int>(pAdapterInfo->Address[5]) << endl;
 
-                        if (IP_addr!="0.0.0.0") found_WiFi_IP= IP_addr;
+                        found_WiFi_IP= IP_addr;
                     }
+                }
                 pIpAddress = pIpAddress->Next;
             }
+
             pAdapterInfo = pAdapterInfo->Next;
-
         }
+    } else {
+        cout << "GetAdaptersInfo: nothing found o error, dwRetVal = " << dwRetVal << endl;
     }
-    free(pAdapterInfos);
-   
+
+    // Clean up
+    if (pAdapterInfos) {
+        free(pAdapterInfos);
+    }
 }
-
-
-
 
 void RSP_IP_DISCOVERY::scan_and_ping_wifi(string wifi_name)
 {
@@ -321,11 +331,12 @@ void RSP_IP_DISCOVERY::scan_and_ping_wifi(string wifi_name)
                              to_string(ip_addr[1])+"."+ \
                              to_string(ip_addr[2])+"." ; //""192.168.1.";
 
-        // Ping addresses from 192.168.1.1 to 192.168.1.255 in parallel
+        std::cout << "Ping addresses from 192.168.1.1 to 192.168.1.255 in parallel" << "\n";
+
         for (int i = 1; i < 255; i++) {
             std::string ip = baseIP + std::to_string(i);
             threads.emplace_back(std::thread(pingIP, ip));  // Start a new thread for each ping
-            std::cout << "ping ip " << ip << "\n";
+//          std::cout << "ping ip " << ip << "\n";
         }
 
         // Join all threads to ensure they finish before exiting
@@ -349,7 +360,13 @@ void pingIP(const std::string& ip)
     #ifdef QT_VERSION
             QProcess proc;
             QStringList args = { "-n", "1", ip.c_str() };
+            std::cout << "ping ip = " <<  ip.c_str() << "\n";
             proc.start("ping", args);
+
+            if (!proc.waitForFinished(5000)) {
+                std::cout << "Ping process failed!";
+                return;
+            }
     #else
         std::string command = "ping -n 1 " + ip + " | FIND \"TTL\" ";  // Windows command; for Linux use `ping -c 1`
         int result = system(command.c_str());      // Execute the ping command

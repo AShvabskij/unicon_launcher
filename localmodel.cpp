@@ -12,23 +12,35 @@ void LocalModel::scanIP()
     future = QtConcurrent::run(&LocalModel::th_scanIP, this);
 
     QObject::connect(&watcher, &QFutureWatcher<void>::finished, [this]() {
-        qDebug() << "Asynchronous member function finished!";
+        qDebug() << "Asynchronous scan IP finished!";
         if (m_listIP.count() == 0) {
-            emit errorRaised("No devices are connected!", "Make sure a device is connected directly or is in the local network");
+            QString errMsg = "No devices are connected!";
+            qDebug() << errMsg;
+
+            emit errorRaised(errMsg, "Make sure a device is connected directly or is in the local network");
         } else {
             emit connected();
         }
     });
 
     watcher.setFuture(future);
+}
 
+QTextStream& qStdOut()
+{
+    static QTextStream ts( stdout );
+    return ts;
 }
 
 void LocalModel::th_scanIP(QPromise<void>& promise)
 {
+    qDebug() << "Asynchronous scan IP started!";
+
     RSP_IP_DISCOVERY rsp_ip;
 
     rsp_ip.run_IP_discovery();
+
+    qDebug() << "Run IP discovery finished!";
 
     std::vector <std::string> ip_list;
 
@@ -39,7 +51,7 @@ void LocalModel::th_scanIP(QPromise<void>& promise)
     for (std::string& s : ip_list)
     {
         QString address = s.c_str();
-        qDebug() << address << Qt::endl;
+        qDebug() << "detected address" << address << Qt::endl;
 
         m_listIP.append(address);
 
@@ -56,7 +68,17 @@ void LocalModel::th_scanIP(QPromise<void>& promise)
 
 QString LocalModel::getURL()
 {
+    if (m_listIP.count() ==  0) {
+        qDebug() << "getURL: No addresses found!" << Qt::endl;
+    }
+
+    if (m_listIP.count() > 1) {
+        qDebug() << "getURL: found addresses =" << m_listIP.count() << Qt::endl;
+    }
+
     QString res = !m_listIP.empty() ? "http://" + m_listIP.first() + ":3000" : "";
+
+    qDebug() << "getURL: result = " << res << Qt::endl;
 
     return res;
 }

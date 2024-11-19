@@ -15,15 +15,16 @@ Item {
 
     property string nodeName: ""
     state: "progress"
+    property int progressValue: 0
 
     function onProgressFinished() {
-        state = "content"
-        applicationFlow.toggleToFullScreen();
-        applicationFlow.onWebOpened();
     }
 
     function onRefreshPage() {
-        webView.reload()
+        if (webView) {
+//          webView.profile.clearHttpCache();
+            webView.reload()
+        }
     }
 
     states: [
@@ -42,7 +43,7 @@ Item {
 
     ProgressItem {
         id: progressItem
-        scanTime: 3000
+        scanTime: 1000
         pageText: "Connecting to " + nodeName
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -55,22 +56,16 @@ Item {
     WebView {
         id: webView
         url: nodeUrl
-        visible: false
-
-        // Layout.preferredHeight: parent.height
-        // Layout.preferredWidth: parent.width
-        // Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        // Layout.margins: 5
-
-//      anchors.horizontalCenter: parent.horizontalCenter
+        visible: true
 
         anchors.top: remoteNode.top
         width: parent.width
         height: parent.height
 
        onLoadingChanged: function(loadRequest) {
-            if (loadRequest.errorString)
-                console.error(loadRequest.errorString);
+            if (loadRequest.errorString && nodeUrl !== "") {
+                console.error("Failed to open " + nodeUrl + ", error = " + loadRequest.errorString);
+            }
         }
 
         Component.onCompleted: {
@@ -81,12 +76,56 @@ Item {
         }
     }
 */
-
     property QtObject defaultProfile: WebEngineProfile {
             storageName: "Profile"
             offTheRecord: false
             httpCacheType : WebEngineProfile.DiskHttpCache
+            cachePath: "./webcache"
      }
+
+    Timer {
+        id: timerOnCompleted
+        interval: 1000
+        repeat: false
+        running: false
+        onTriggered: {
+            remoteNode.state = "content"
+            applicationFlow.toggleToFullScreen();
+            applicationFlow.onWebOpened();
+        }
+    }
+
+    Timer {
+        id: timerOnProgress
+        interval: 100
+        repeat: true
+        running: true
+        onTriggered: {
+            if (progressValue >= webView.loadProgress) {
+                progressValue = progressValue < 97 ? progressValue + 1 : 97
+            } else {
+                progressValue = webView.loadProgress
+            }
+
+            progressItem.progressBarValue = progressValue / 100
+
+            if (progressValue > 80 && progressValue <= 90) {
+                interval = 1000;
+            }
+
+            if (progressValue > 90) {
+                interval = 3000;
+            }
+
+
+            progressItem.progressText = "Loading... " + progressValue + "%"
+
+            if (webView.loadProgress === 100) {
+                timerOnProgress.running = false;
+                timerOnCompleted.running = true;
+            }
+        }
+    }
 
     WebEngineView {
         id: webView
@@ -109,15 +148,35 @@ Item {
 
         profile : defaultProfile
 
-        // profile.offTheRecord: false
-        // profile.httpCacheType : WebEngineProfile.DiskHttpCache
-        // profile.cachePath: "web_cache"
-        // profile.storageName: "web_storage"
+        onRenderProcessTerminated: {
+            console.error("render proccess terminated")
+        }
 
+        onFileDialogRequested: {
+            console.info("File dialog requested")
+        }
+
+        onLoadProgressChanged: {
+            if (loadProgress === 0) {
+                console.info("loading of the web page started")
+            }
+
+            if (loadProgress === 100) {
+                console.info("Loading of the web page completed");
+            }
+        }
 
         onLoadingChanged: function(loadRequest) {
-             if (loadRequest.errorString)
-                 console.error(loadRequest.errorString);
+            if (loadRequest.status === 0) {
+                console.info("Load from profile cach path = " + profile.cachePath)
+            }
+             if (loadRequest.errorString && nodeUrl !== "")
+                 if (!loadRequest.errorString.includes('failedUrl')) {
+                     console.error("Failed to open " + nodeUrl + ", error = " + loadRequest.errorString);
+                 }
+        }
+
+        Component.onCompleted: {
         }
     }
 }

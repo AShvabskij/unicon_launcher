@@ -154,7 +154,7 @@ Item {
                         licenseModel.usrPhone = input2.text;
                     }
                     input2.placeholderText: "+1 (___) ___-____"
-                    input2.inputMask: "+9 (999) 999-9999;_"
+//                  input2.inputMask: "+9 (999) 999-9999;_"
                 }
 
                 CustomRowSingleTextInput {

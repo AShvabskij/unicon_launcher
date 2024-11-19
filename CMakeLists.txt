@@ -4,9 +4,9 @@ project(unicon_launcher VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick WebView)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick WebView)
 
-qt_standard_project_setup(REQUIRES 6.5)
+qt_standard_project_setup(REQUIRES 6.8)
 
 
 file(GLOB IP_DISCOVERY_SOURCES "./RSP_IP_WIN_discovery/*.cpp")
@@ -133,3 +133,11 @@ install(TARGETS appunicon_launcher
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+string(TOLOWER ${CMAKE_BUILD_TYPE} build_type)
+if (build_type STREQUAL release)
+#    target_compile_definitions(${PROJECT_NAME} PUBLIC
+#        QT_NO_DEBUG_OUTPUT
+#        QT_NO_WARNING_OUTPUT
+#        )
+endif()

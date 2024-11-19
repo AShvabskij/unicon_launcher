@@ -11,35 +11,15 @@ Item {
     property alias pageText: caption.text
     property alias progressText: progressText.text
 
-    property alias timer: timer
+//  property alias timer: timer
 
     property int scanTime: 3000
 
-    property double progressBarValue: 0
+    property alias progressBarValue: control.value
 
     FontLoader {
         id: montserratFont
         source: "./fonts/montserrat/montserrat-regular.ttf"
-    }
-
-    //! [Timer]
-    Timer {
-        id: timer
-        interval: scanTime
-        running: true
-        repeat: false
-        onTriggered: {
-            root.parent.onProgressFinished()
-        }
-    }
-
-    Timer {
-        id: timer2
-        interval: 100
-        running: true
-        onTriggered: {
-            progressBarValue = 1
-        }
     }
 
     Behavior on greenBar.width {
@@ -105,7 +85,7 @@ Item {
         ProgressBar {
             id: control
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            value: progressBarValue
+//          value: progressBarValue
             indeterminate: true
             Layout.topMargin: 20
             Layout.minimumWidth: 250

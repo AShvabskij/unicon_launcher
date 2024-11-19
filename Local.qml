@@ -14,8 +14,10 @@ Item {
     property string initialUrl: "" //"http://localhost:3000"
     state: "progress"
 
+    property int progressValue: 0
+
     function onProgressFinished() {
-        progressItem.progressBarValue = progressItem.progressBarValue === 0 ? 1 : 0;
+//      progressItem.progressBarValue = progressItem.progressBarValue === 0 ? 1 : 0;
     }
 
     function onRefreshPage() {
@@ -38,6 +40,7 @@ Item {
 
     ProgressItem {
         id: progressItem
+        scanTime: 5000
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         pageText: "ESTABLISHING DIRECT CONNECTION"
@@ -46,6 +49,17 @@ Item {
 //      anchors.topMargin: parent.height / 40
         anchors.top: localPage.top
         visible: true
+    }
+
+    //! [Timer]
+    Timer {
+        id: timer
+        interval: 1000
+        running: true
+        repeat: false
+        onTriggered: {
+            progressItem.progressBarValue = 1
+        }
     }
 
     LocalModel {
@@ -87,8 +101,11 @@ Item {
         height: parent.height
 
        onLoadingChanged: function(loadRequest) {
-            if (loadRequest.errorString)
-                console.error(loadRequest.errorString);
+            if (loadRequest.errorString && initialUrl !== "") {
+                if (!loadRequest.errorString.includes('failedUrl')) {
+                    console.error(loadRequest.errorString);
+                }
+            }
         }
 
         Component.onCompleted: {

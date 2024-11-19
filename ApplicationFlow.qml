@@ -68,16 +68,12 @@ ApplicationFlowForm {
     function backButton() {
         stack.pop()
         toggleToWindowScreen()
-        if (applicationFlow.state == "Settings" && applicationFlow.previousState == "Remote") {
-            stack.pop()
-            applicationFlow.state = "Home";
-            return;
+
+        if (applicationFlow.state === "Settings" && applicationFlow.previousState === "Remote") {
+            sendRefreshClicked()
         }
 
         applicationFlow.state = applicationFlow.previousState
-        if (applicationFlow.state == "Remote") {
-            sendRefreshClicked();
-        }
     }
 
     //! [On clicked]
@@ -242,7 +238,6 @@ ApplicationFlowForm {
             PropertyChanges {
                 target: applicationFlow
                 previousState: "Home"
-
             }
 
             PropertyChanges {
@@ -250,6 +245,7 @@ ApplicationFlowForm {
                 anchors.top: toolbar.bottom
                 anchors.topMargin: 0
             }
+
         },
         State {
             name: "RemoteIP"
