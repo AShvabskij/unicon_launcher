@@ -16,14 +16,32 @@ Item {
     property string nodeName: ""
     state: "progress"
     property int progressValue: 0
+    property int refreshCount: 0
 
     function onProgressFinished() {
     }
 
     function onRefreshPage() {
-        if (webView) {
-//          webView.profile.clearHttpCache();
+        if (webView && webView.visible === true) {
+            refreshCount++;
+            if (refreshCount >= 3) {
+                webView.profile.clearHttpCache();
+                refreshCount = 0;
+            } else {
+                timerRefreshCount.restart()
+            }
+
             webView.reload()
+        }
+    }
+
+    Timer {
+        id: timerRefreshCount
+        interval: 1000 * 30
+        repeat: false
+        running: false
+        onTriggered: {
+            refreshCount = 0;
         }
     }
 
@@ -120,7 +138,7 @@ Item {
 
             progressItem.progressText = "Loading... " + progressValue + "%"
 
-            if (webView.loadProgress === 100) {
+            if (webView.loadProgress === 100 && webView.loading === false) {
                 timerOnProgress.running = false;
                 timerOnCompleted.running = true;
             }

@@ -57,7 +57,6 @@ private:
 	void read_ARP();
 	//void read_ARP_linux();
 	void read_ARP_win();
-//    void get_interfaces_win();
     void get_interfaces_win();
 	void scan_and_ping_wifi(string wifi_name);
 	uint16_t timeout_s = 5; //by defult 5 seconds for dicovery

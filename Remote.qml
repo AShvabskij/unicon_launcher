@@ -20,6 +20,10 @@ Item {
     }
 
     function onRefreshPage() {
+        if (applicationFlow.state !== "Remote") {
+            return;
+        }
+
         licenseModel.parseLicense();
         if (licenseModel.isExists) {
             root.state = "connecting"
