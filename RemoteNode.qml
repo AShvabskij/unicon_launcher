@@ -24,7 +24,7 @@ Item {
     function onRefreshPage() {
         if (webView && webView.visible === true) {
             refreshCount++;
-            if (refreshCount >= 3) {
+            if (refreshCount >= 5) {
                 webView.profile.clearHttpCache();
                 refreshCount = 0;
             } else {
@@ -185,9 +185,6 @@ Item {
         }
 
         onLoadingChanged: function(loadRequest) {
-            if (loadRequest.status === 0) {
-                console.info("Load from profile cach path = " + profile.cachePath)
-            }
              if (loadRequest.errorString && nodeUrl !== "")
                  if (!loadRequest.errorString.includes('failedUrl')) {
                      console.error("Failed to open " + nodeUrl + ", error = " + loadRequest.errorString);
