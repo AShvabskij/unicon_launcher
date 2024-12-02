@@ -14,9 +14,11 @@ ApplicationFlowForm {
     property string mode: ""
 
     property string _nodeIP: ""
+    property string _nodeRoute: ""
     property string _nodeName: ""
 
     signal sendRefreshClicked()
+    signal sendDemoClicked()
 
     //! [Theme button]
     function themeButton() {
@@ -51,6 +53,12 @@ ApplicationFlowForm {
         }
     }
 
+    function demoButton() {
+        if (applicationFlow.state == "Local") {
+            sendDemoClicked()
+        }
+    }
+
     function toggleToFullScreen() {
         window.visibility = "Maximized" //"FullScreen"
     }
@@ -60,8 +68,10 @@ ApplicationFlowForm {
     }
 
     function onWebOpened() {
-        toolbar.theme = Colors.light
-        toolbar.refreshButton.visible = true;
+        toolbar.theme = Colors.light;
+        if (applicationFlow.state === "Local") {
+            toolbar.demoButton.visible = true;
+        }
     }
 
 
@@ -98,6 +108,7 @@ ApplicationFlowForm {
             state: applicationFlow.mode
             Component.onCompleted: {
                 sendRefreshClicked.connect(onRefreshPage)
+                sendDemoClicked.connect(onDemoPage)
             }
         }
     }
@@ -124,6 +135,7 @@ ApplicationFlowForm {
             state: applicationFlow.mode
             Component.onCompleted: {
                 remoteNodeComp.nodeIP = _nodeIP
+                remoteNodeComp.nodeRoute = _nodeRoute
                 remoteNodeComp.nodeName = _nodeName
                 sendRefreshClicked.connect(onRefreshPage)
             }
@@ -148,9 +160,10 @@ ApplicationFlowForm {
         }
     }
 
-    function onNodeClicked(nodeAddress, nodeName) {
+    function onNodeClicked(nodeAddress, nodeRoute, nodeName) {
         applicationFlow.state = "RemoteIP"
         _nodeIP = nodeAddress
+        _nodeRoute = nodeRoute
         _nodeName = nodeName
         stack.push(remoteNodePage)
     }
@@ -173,6 +186,7 @@ ApplicationFlowForm {
                 settingsButton.visible: false
                 aboutButton.visible: true
                 refreshButton.visible: false
+                demoButton.visible: false
                 backButton.visible: false
 
                 height: 0
@@ -201,7 +215,8 @@ ApplicationFlowForm {
                 backButton.visible: true
                 themeButton.opacity: 0
                 themeButton.enabled: true
-                refreshButton.visible: false
+                refreshButton.visible: true
+                demoButton.visible: false
                 settingsButton.visible: false
                 about.visible: true
                 theme: Colors.currentTheme
@@ -229,6 +244,7 @@ ApplicationFlowForm {
                 themeButton.opacity: 0
                 themeButton.enabled: true
                 refreshButton.visible: true
+                demoButton.visible: false
                 settingsButton.visible: true
                 aboutButton.visible: true
                 theme: Colors.currentTheme
@@ -257,6 +273,7 @@ ApplicationFlowForm {
                 themeButton.opacity: 0
                 themeButton.enabled: true
                 refreshButton.visible: true
+                demoButton.visible: false
                 aboutButton.visible: false
                 theme: Colors.currentTheme
                 visible: true
@@ -276,6 +293,7 @@ ApplicationFlowForm {
                 settingsButton.visible: false
                 aboutButton.visible: false
                 refreshButton.visible: false
+                demoButton.visible: false
                 backButton.visible: true
                 theme: Colors.currentTheme
                 visible: true
@@ -295,6 +313,7 @@ ApplicationFlowForm {
                 settingsButton.visible: false
                 aboutButton.visible: false
                 refreshButton.visible: false
+                demoButton.visible: false
                 backButton.visible: true
 
                 theme: Colors.currentTheme

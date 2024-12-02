@@ -26,6 +26,8 @@ struct Node
     int totalStartNumber = 0;
     NodeStatus status;
     QString ipAddress;
+    QString ipPath;
+
     bool activated = false;
 
     QString nodeStatusToString() const {
@@ -54,7 +56,8 @@ public:
         StartNumberRole,
         StatusRole,
         ActivatedRole,
-        IPAddressRole
+        IPAddressRole,
+        IPPathRole
 
     };
 

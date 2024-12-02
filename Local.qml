@@ -24,6 +24,12 @@ Item {
         webView.reload()
     }
 
+    function onDemoPage() {
+        initialUrl = localModel.getURL() + "/demo"
+        console.log("load demo web url = " + webView.url)
+//      webView.reload() not allowed
+    }
+
     states: [
         State {
             name: "content"
@@ -100,10 +106,14 @@ Item {
         width: parent.width
         height: parent.height
 
-       onLoadingChanged: function(loadRequest) {
+        onLoadingChanged: function(loadRequest) {
             if (loadRequest.errorString && initialUrl !== "") {
                 if (!loadRequest.errorString.includes('failedUrl')) {
                     console.error(loadRequest.errorString);
+                    state = "error"
+                    msgError.text = "Failed to connect"
+                    msgError.informativeText = loadRequest.errorString
+                    msgError.visible = true
                 }
             }
         }

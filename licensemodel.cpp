@@ -12,6 +12,7 @@
 #include <QUrlQuery>
 #include <QGuiApplication>
 
+const int MAX_EQUIP_COUNT = 3;
 LicenseModel::LicenseModel(QObject *parent)
     : QObject{parent}
 {
@@ -88,9 +89,13 @@ void LicenseModel::parseLicense()
             m_equipmentListmodel->clear();
         }
 
+        int i = 0;
         foreach (const QVariant &node, nodes) {
             EquipmentListModel::Equipment equip(node.toMap());
             m_equipmentListmodel->addItem(equip);
+            if (++i == MAX_EQUIP_COUNT ) {
+                break; // Only three eqipment are supported
+            }
         }
     }
 

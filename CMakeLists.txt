@@ -83,6 +83,7 @@ qt_add_qml_module(appunicon_launcher
         images/icons/info.svg
         images/icons/stats.svg
         images/icons/refresh.svg
+        images/icons/demo.svg
         images/icons/email.svg
         images/icons/folder-plus.svg
         images/icons/user-circle.svg

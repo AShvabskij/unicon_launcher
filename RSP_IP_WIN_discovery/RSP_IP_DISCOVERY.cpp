@@ -215,8 +215,6 @@ void RSP_IP_DISCOVERY::get_interfaces_win()
 {
     ULONG outBufLen = 0;
     DWORD dwRetVal = 0;
-    DWORD s = sizeof(IP_ADAPTER_INFO);
-    cout << "size = " << s << std::endl;
 
     IP_ADAPTER_INFO* pAdapterInfos = nullptr;
 
@@ -243,7 +241,7 @@ void RSP_IP_DISCOVERY::get_interfaces_win()
 
         if (dwRetVal == NO_ERROR)
         {
-            cout << "GetAdaptersInfo: no error";
+            cout << "GetAdaptersInfo: no error" << std::endl;
             break;
         }
     }
@@ -276,6 +274,7 @@ void RSP_IP_DISCOVERY::get_interfaces_win()
                         found_WiFi_IP= IP_addr;
                     }
                 }
+
                 pIpAddress = pIpAddress->Next;
             }
 
@@ -323,15 +322,18 @@ void RSP_IP_DISCOVERY::scan_and_ping_wifi(string wifi_name)
     
     if (found_WiFi_IP != "0.0.0.0") {
         
+        cout << "call getIPFields for WiFi_IP" << found_WiFi_IP << endl;
         vector<int> ip_addr = getIPFields(found_WiFi_IP);
-
+        if (ip_addr.empty() || ip_addr.size() != 4) {
+            return;
+        }
         
         std::vector<std::thread> threads;
         std::string baseIP = to_string(ip_addr[0])+"."+\
                              to_string(ip_addr[1])+"."+ \
                              to_string(ip_addr[2])+"." ; //""192.168.1.";
 
-        std::cout << "Ping addresses from 192.168.1.1 to 192.168.1.255 in parallel" << "\n";
+        std::cout << "Ping addresses from 192.168.X.1 to 192.168.X.255 in parallel" << "\n";
 
         for (int i = 1; i < 255; i++) {
             std::string ip = baseIP + std::to_string(i);
@@ -413,6 +415,12 @@ std::vector<int> getIPFields(const std::string& ip) {
         std::cerr << "Invalid IP address format\n";
         return {};
     }
+
+    // std::cout << "result octets = ";
+    // for (int oct: octets) {
+    //     std::cout << oct << ".";
+    // }
+    // std::cout << endl;
 
     return octets;
 }

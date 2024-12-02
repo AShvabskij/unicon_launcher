@@ -1,0 +1,9 @@
+<svg width="900px" height="800px" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top Letters -->
+  <text x="290" y="350" font-family="Arial" font-size="400" text-anchor="middle" fill="black">D</text>
+  <text x="700" y="350" font-family="Arial" font-size="400" text-anchor="middle" fill="black">E</text>
+
+  <!-- Bottom Letters -->
+  <text x="290" y="750" font-family="Arial" font-size="380" text-anchor="middle" fill="black">M</text>
+  <text x="700" y="750" font-family="Arial" font-size="380" text-anchor="middle" fill="black">O</text>  
+</svg>

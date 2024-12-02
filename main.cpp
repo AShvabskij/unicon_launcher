@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
 
     // Redirect std::cout to the log file
     std::cout.rdbuf(logFile.rdbuf()); // Redirect to file buffer
+    std::cerr.rdbuf(logFile.rdbuf()); // Redirect to file buffer
 
     qtLogFile.open(QIODevice::WriteOnly | QIODevice::Append);
     if (!qtLogFile.isOpen()) {

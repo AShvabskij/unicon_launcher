@@ -21,6 +21,7 @@ AbstractButton {
     required property string startNumber
     required property string status
     required property string ipAddress
+    required property string ipPath
 
     property bool isSmallLayout: false
     property string iconName: "node.svg"

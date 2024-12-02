@@ -29,11 +29,19 @@
             "ipAddress": "10.9.0.22"
         },
         {
-            "name": "R&D Lab Demo",
+            "name": "R&D Lab",
             "region": "Konig",
             "owner": "SI-GROUP",
             "address": "Pravaia Naberejnaya 21",
             "ipAddress": "10.9.0.7"
-        }		        
+        },
+        {
+            "name": "Demo-mode",
+            "region": "",
+            "owner": "",
+            "address": "",
+            "ipAddress": "10.9.0.7",
+            "ipPath": "demo"
+        }
     ]
 }

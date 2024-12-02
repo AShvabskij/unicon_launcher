@@ -1,0 +1,18 @@
+
+App started at Fri Nov 29 17:07:35 2024
+qrc:/qt/qml/unicon_launcher/ApplicationFlow.qml:212:13: QML PropertyChanges: Cannot assign to non-existent property "about.visible"
+qrc:/qt/qml/unicon_launcher/ProgressItem.qml:100:26: QML QQuickItem: The current style does not support customization of this control (property: "contentItem" item: QQuickItem(0x22cd1ac5190, parent=0x0, geometry=0,0 0x4)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+The following paths were searched for Qt WebEngine locales:
+  C:/Dev/unicon_launcher/Installer/packages/com.solconigel.irst/data/translations\qtwebengine_locales
+  C:/Users/���������/.appunicon_launcher
+but could not find the translation file for the current locale: en-US.pak
+You may override the default search paths by using QTWEBENGINE_LOCALES_PATH environment variable.
+Translations WILL NOT be correct.
+qrc:/qt/qml/unicon_launcher/ProgressItem.qml:95:25: QML QQuickRectangle: The current style does not support customization of this control (property: "background" item: QQuickRectangle(0x22cd8015100, parent=0x0, geometry=0,0 0x20)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+Asynchronous scan IP started!
+Run IP discovery finished!
+detected address "169.254.197.30" 
+
+Asynchronous scan IP finished!
+getURL: result =  "http://169.254.197.30:3000" 
+

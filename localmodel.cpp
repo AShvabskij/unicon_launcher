@@ -53,17 +53,24 @@ void LocalModel::th_scanIP(QPromise<void>& promise)
         QString address = s.c_str();
         qDebug() << "detected address" << address << Qt::endl;
 
-        m_listIP.append(address);
-
-        // QTcpSocket tcpSocket;
-        // QHostAddress host(address);
-        // tcpSocket.connectToHost(host, 22);
-        // if (tcpSocket.waitForConnected(1000)) {
-        //     m_listIP.append(address);
-        // }
+        if (checkConnection(address)) {
+            m_listIP.append(address);
+        }
     }
 
     promise.finish();
+}
+
+bool LocalModel::checkConnection(QString address)
+{
+    QTcpSocket tcpSocket;
+    QHostAddress host(address);
+    tcpSocket.connectToHost(host, 22);
+    if (tcpSocket.waitForConnected(3000)) {
+        return true;
+    }
+
+    return false;
 }
 
 QString LocalModel::getURL()

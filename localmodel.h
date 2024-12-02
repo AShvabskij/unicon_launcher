@@ -19,6 +19,8 @@ signals:
     void errorRaised(QString errorTxt, QString informativeError);
 
 private:
+    bool checkConnection(QString address);
+
     QStringList m_listIP;
 
     QFuture<void> future;

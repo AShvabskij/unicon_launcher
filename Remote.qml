@@ -13,7 +13,7 @@ Item {
     required property var nodesModel
 
     //  property alias model: repeater.model
-    signal sendNodeClicked(string ipAddress, string name)
+    signal sendNodeClicked(string ipAddress, string ipPath, string name)
     FontLoader {
         id: montserratFont
         source: "./fonts/montserrat/montserrat-regular.ttf"
@@ -109,7 +109,7 @@ Item {
 
                     onClicked: {
                         if (activated) {
-                            sendNodeClicked(ipAddress, fullName)
+                            sendNodeClicked(ipAddress, ipPath, fullName)
                         }
                     }
                 }

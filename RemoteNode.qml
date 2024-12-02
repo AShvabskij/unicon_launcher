@@ -10,7 +10,8 @@ import QtWebEngine
 Item {
     id: remoteNode
     property string nodeIP: "localhost"
-    property string nodeUrl: "http://" + nodeIP + ":" + nodePort
+    property string nodeRoute: ""
+    property string nodeUrl: "http://" + nodeIP + ":" + nodePort + "/" + nodeRoute
     property string nodePort: "3000"
 
     property string nodeName: ""

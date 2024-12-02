@@ -14,6 +14,7 @@ Rectangle {
     property alias settingsButton: settingsButton
     property alias aboutButton: aboutButton
     property alias refreshButton: refreshButton
+    property alias demoButton: demoButton
 
     property var theme: Colors.dark
 
@@ -25,12 +26,13 @@ Rectangle {
 
         Row {
             Layout.alignment: Qt.AlignLeft
+            spacing: 5
 
             Button {
                 id: backButton
                 icon.color: theme.iconColor //(theme == Colors.dark) ? "#FFFFFF" : "#121111"
                 icon.source: "./images/icons/keyboard_backspace_black_left.svg"
-                flat: true
+                flat: false
                 background: null
                 transitions: Transition {
                     NumberAnimation {
@@ -55,6 +57,27 @@ Rectangle {
                 }
 
             }
+
+            Button {
+                id: demoButton
+                icon.color: theme.iconColor
+                icon.source: "./images/icons/demo.svg"
+                flat: true
+                background: null
+                checkable: true
+//                display: AbstractButton.TextOnly
+//                text: " D "
+//              font.bold: true
+//              font.pixelSize: 16
+                transitions: Transition {
+                    NumberAnimation {
+                        properties: "scale"
+                        duration: 100
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+
         }
 
         Row {

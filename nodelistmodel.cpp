@@ -67,6 +67,8 @@ void NodeListModel::init()
         node.address = nodeMap.value("address").toString();
         node.owner = nodeMap.value("owner").toString();
         node.ipAddress = nodeMap.value("ipAddress").toString();
+        node.ipPath = nodeMap.value("ipPath", "").toString();
+
         node.activated = false;
 
         addItem(node);
@@ -118,7 +120,7 @@ void NodeListModel::update()
     n3.totalWorkTime = 500;
     n3.currStartNumber = 10;
     n3.totalStartNumber = 1000;
-    n3.status = NodeStatus::Normal;
+    n3.status = NodeStatus::ServiceRequired;
     n3.activated = true;
 
     fakeNodes << n3;
@@ -129,7 +131,7 @@ void NodeListModel::update()
     n4.totalWorkTime = 500;
     n4.currStartNumber = 1200;
     n4.totalStartNumber = 1000;
-    n4.status = NodeStatus::ServiceRequired; // service required
+    n4.status = NodeStatus::Normal;
     n4.activated = false;
 
     fakeNodes << n4;
@@ -227,6 +229,8 @@ QVariant NodeListModel::data(const QModelIndex & index, int role) const {
         return node.activated ? node.nodeStatusToString() : "Not available";
     case IPAddressRole:
         return node.ipAddress;
+    case IPPathRole:
+        return node.ipPath;
     case ActivatedRole:
         return node.activated;
 
@@ -249,6 +253,7 @@ QHash<int, QByteArray> NodeListModel::roleNames() const {
     roles[StartNumberRole] = "startNumber";
     roles[StatusRole] = "status";
     roles[IPAddressRole] = "ipAddress";
+    roles[IPPathRole] = "ipPath";
     roles[ActivatedRole] = "activated";
 
     return roles;
