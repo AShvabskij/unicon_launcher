@@ -61,7 +61,7 @@ void LicenseService::createLicFile()
     QString baseFileName = "license";
 
     QString datFile = path + "/" + baseFileName + ".dat";
-    saveObj(datFile, res, false);
+    save(datFile, res, false);
 }
 
 void LicenseService::deleteLicFile()
@@ -72,7 +72,7 @@ void LicenseService::deleteLicFile()
     datFile.remove();
 }
 
-long LicenseService::saveObj(const QString fileName, const QJsonObject &obj, bool useBinaryFormat)
+long LicenseService::save(const QString fileName, const QJsonObject &obj, bool useBinaryFormat)
 {
     long res = 1;
 
@@ -110,7 +110,7 @@ long LicenseService::saveObj(const QString fileName, const QJsonObject &obj, boo
     return res;
 }
 
-long LicenseService::getConfig(QVariantMap& retDat)
+long LicenseService::load(QJsonObject& retObj)
 {
     QString path = QCoreApplication::applicationDirPath() + "\\config";
     QString datFileName = path + "/" + "license" + ".dat";
@@ -127,10 +127,19 @@ long LicenseService::getConfig(QVariantMap& retDat)
     datFile.close();
 
     QJsonDocument d = QJsonDocument::fromJson(content.toUtf8());
-    QJsonObject obj = d.object();
+    retObj = d.object();
+
+    return 1;
+}
+
+long LicenseService::getConfig(QVariantMap& retDat)
+{
+    QJsonObject obj;
+    long res = load(obj);
+    if (res != 1) return res;
 
     if (!obj.contains("config")) {
-        qWarning() << "The license file is not valid! Key config is absent";
+        qWarning() << "The license file is not valid! Config section is not found";
         return 0;
     }
 
@@ -143,11 +152,45 @@ long LicenseService::getConfig(QVariantMap& retDat)
 bool LicenseService::checkConfig(const QVariantMap &dat)
 {
     QStringList keys;
-    keys << "Number" << "Address" << "AllowedIPs" << "Endpoint" << "AppKey" << "VPKey" << "ServerKey" << "ServerIP";
+    keys << "Number" << "AppKey";
 
     for (QString key : keys) {
         if (!dat.contains(key)) {
-            qWarning() << "The license file is not valid! Key is absent:" << key;
+            qWarning() << "The license is not valid! Key is absent:" << key;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+long LicenseService::getServerConfig(QVariantMap& retDat, bool useReserveConfig)
+{
+    QJsonObject obj;
+    long res = load(obj);
+    if (res != 1) return res;
+
+    const QString key = useReserveConfig ? "reserve" : "server";
+
+    if (!obj.contains(key)) {
+        qWarning() << "The license file is not valid! Server section is not found";
+        return 0;
+    }
+
+    QJsonObject configObj = obj.value(key).toObject();
+
+    retDat = configObj.toVariantMap();
+    return 1;
+}
+
+bool LicenseService::checkServerConfig(const QVariantMap &dat)
+{
+    QStringList keys;
+    keys << "Address" << "AllowedIPs" << "Endpoint" << "VPKey" << "ServerKey" << "ServerIP";
+
+    for (QString key : keys) {
+        if (!dat.contains(key)) {
+            qWarning() << "The license is not valid! Key is absent:" << key;
             return false;
         }
     }

@@ -5,6 +5,7 @@
 #include "tunnelservice.h"
 
 #include <QObject>
+#include <QPromise>
 
 class QTunnel : public QObject
 {
@@ -19,6 +20,8 @@ signals:
     void connected();
     void errorRaised(QString errorTxt, QString informativeError);
 
+private:
+    void waitForfinishConnecting(QPromise<void> &promise);
 private slots:
     void onFinishConnecting();
 

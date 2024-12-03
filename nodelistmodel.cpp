@@ -57,6 +57,25 @@ void NodeListModel::init()
         return;
     }
 
+    QVariantMap conf;
+    ret = license.getServerConfig(conf, false);
+
+    if (ret != 1) {
+        emit errorRaised("LICENSE ERROR", "Please request valid license before starting remote support");
+        return;
+    }
+
+    QString subnetMain = conf.value("Subnet").toString().trimmed();
+
+    ret = license.getServerConfig(conf, true);
+
+    if (ret != 1) {
+        emit errorRaised("LICENSE ERROR", "Please request valid license before starting remote support");
+        return;
+    }
+
+    QString subnetReserve = conf.value("Subnet").toString().trimmed();
+
     for (QVariant nodeObj: nodes) {
 
         QVariantMap nodeMap = nodeObj.toMap();
@@ -66,8 +85,10 @@ void NodeListModel::init()
         node.region = nodeMap.value("region").toString();
         node.address = nodeMap.value("address").toString();
         node.owner = nodeMap.value("owner").toString();
-        node.ipAddress = nodeMap.value("ipAddress").toString();
+        node.ipNum = nodeMap.value("ipNum").toString();
         node.ipPath = nodeMap.value("ipPath", "").toString();
+        node.ipSubnetMain = subnetMain;
+        node.ipSubnetReserve = subnetReserve;
 
         node.activated = false;
 
@@ -83,7 +104,14 @@ void NodeListModel::th_nodeUpdate(QPromise<void>& promise, int iIndex)
     }
 
     Node& node = m_nodes[iIndex];
+
+    node.ipAddress = node.ipSubnetMain + "." + node.ipNum;
     node.activated = checkConnection(node.ipAddress);
+
+    if (!node.activated) {
+        node.ipAddress = node.ipSubnetReserve + "." + node.ipNum;
+        node.activated = checkConnection(node.ipAddress);
+    }
 
     promise.finish();
 }

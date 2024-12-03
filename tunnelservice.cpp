@@ -69,6 +69,7 @@ long TunnelService::createConfigFile(const QVariantMap &configObj)
 
     QFile configFile( m_configFile );
 
+    configFile.remove();
     if(!configFile.open( QIODevice::NewOnly))
     {
         QTextStream(stdout) << "file open failed: " << m_configFile << Qt::endl;
@@ -93,7 +94,7 @@ long TunnelService::generateContent(const QVariantMap &configObj, QTextStream& s
 
     for (QString key: interfaceKeys.keys()) {
         if (!configObj.contains(key)) {
-            qWarning() << "Config is not valid! Key " << key << "is absent";
+            qWarning() << "Config is not valid! Key " << key << "is not found";
             return 0;
         }
         stream << interfaceKeys[key] << " = " << configObj[key].toString() << Qt::endl;;
@@ -109,7 +110,7 @@ long TunnelService::generateContent(const QVariantMap &configObj, QTextStream& s
 
     for (QString key: peerKeys.keys()) {
         if (!configObj.contains(key)) {
-            qWarning() << "Config is not valid! Key " << key << "is absent";
+            qWarning() << "Config is not valid! Key " << key << "is not found";
             return 0;
         }
         stream << peerKeys[key] << " = " << configObj[key].toString() << Qt::endl;
@@ -129,8 +130,8 @@ long TunnelService::connect(const QVariantMap &configObj)
         return 0;
     }
 
-    if (!configObj.contains("ServerIP")) {
-        qWarning() << "Config is not valid! Key " << "ServerIP" << "is absent";
+    if (!(configObj.contains("ServerIP"))) {
+        qWarning() << "Config is not valid! Key " << "ServerIP" << "is not found";
         return 0;
     }
 
@@ -172,11 +173,16 @@ long TunnelService::checkConnection()
     QHostAddress mainVpnHost(m_serverIP);
 
     tcpSocket.connectToHost(mainVpnHost, 22);
-    if (tcpSocket.waitForConnected(7000)) {
+    if (tcpSocket.waitForConnected(3000)) {
         return 1;
     } else {
-        qWarning() << "Server is not available!";
-        return 0;
+        tcpSocket.connectToHost(mainVpnHost, 22);
+        if (tcpSocket.waitForConnected(3000)) {
+            return 1;
+        } else {
+            qWarning() << "Server is not available!";
+            return 0;
+        }
     }
 }
 

@@ -25,7 +25,12 @@ struct Node
     int currStartNumber = 0;
     int totalStartNumber = 0;
     NodeStatus status;
+
     QString ipAddress;
+    QString ipNum;
+    QString ipSubnetMain;
+    QString ipSubnetReserve;
+
     QString ipPath;
 
     bool activated = false;
