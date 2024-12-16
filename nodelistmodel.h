@@ -8,6 +8,9 @@
 #include <QPromise>
 #include <QtConcurrent/QtConcurrent>
 
+class LicenseService;
+class TunnelService;
+
 enum NodeStatus {
     Normal = 0,
     ServiceRequired
@@ -94,6 +97,8 @@ private:
     QList<Node> m_nodes;
     bool m_IsDestroyed = false;
 
+    LicenseService* m_licenseSrv;
+    TunnelService* m_tunnelSrv;
 
 };
 
