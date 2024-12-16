@@ -21,32 +21,54 @@ QTunnel::QTunnel(QObject *parent) : QObject(parent)
 
 QTunnel::~QTunnel()
 {
+    waitForThreads(5000);
     m_tunnelSrv->closeConnection();
+}
+
+void QTunnel::waitForThreads(int millisecondsToWait)
+{
+    if (!m_watcher) return;
+
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+
+    while (QTime::currentTime() < dieTime) {
+        if (m_watcher->isFinished()) {
+            break;
+        }
+    }
+
+    delete m_watcher;
+    m_watcher = nullptr;
+}
+
+long QTunnel::connectTo(QVariantMap configObj)
+{
+    m_isConnected = false;
+    long res = m_tunnelSrv->connect(configObj);
+
+    if (res != 1) {
+        return res;
+    }
+
+    waitForFinishConnecting();
+
+    return m_isConnected ? 1 : 0;
 }
 
 void QTunnel::connect()
 {
-    if (m_isConnected == true) {
-        auto future = QtConcurrent::run(&QTunnel::waitForfinishConnecting, this);
-        return;
-    }
+    waitForThreads(5000);
 
-    // get conf file from license file
-    QVariantMap configObj;
-    long res = m_license->getServerConfig(configObj, false);
+    Q_ASSERT(m_watcher == nullptr);
 
-    if (res == 1) {
-        res = m_tunnelSrv->connect(configObj);
-    }
+    auto future = QtConcurrent::run(&QTunnel::th_connect, this);
 
-    if (res != 1) {
-        emit errorRaised("Couldn't create tunnel", "Make sure the license is valid");
-    }
+    m_watcher = new QFutureWatcher<void>();
 
-    QTimer::singleShot(100, this, SLOT(onFinishConnecting()));
+    m_watcher->setFuture(future);
 }
 
-void QTunnel::waitForfinishConnecting(QPromise<void>& promise)
+void QTunnel::waitForFinishConnecting()
 {
     long res = m_tunnelSrv->checkConnection();
 
@@ -58,50 +80,29 @@ void QTunnel::waitForfinishConnecting(QPromise<void>& promise)
     }
 
     m_tunnelSrv->finish();
-    promise.finish();
 }
 
-void QTunnel::onFinishConnecting()
+void QTunnel::th_connect()
 {
-    auto future = QtConcurrent::run(&QTunnel::waitForfinishConnecting, this);
+    QVariantMap configObj;
+    long res = m_license->getServerConfig(configObj, false);
+    if (res == 1) {
+        res = connectTo(configObj);
+    }
 
-    QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
-    watcher->setFuture(future);
+    if (res != 1) {
+        QVariantMap reserveConfigObj;
+        res = m_license->getServerConfig(reserveConfigObj, true); // reserve scheme
+        Q_ASSERT(res == 1);
+        res = connectTo(configObj);
+    }
 
-    QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, watcher]() {
-        if (m_isConnected) {
-            emit connected();
-        } else {
+    if (res == 1 && m_isConnected) {
+        emit connected();
+    } else {
+        emit errorRaised("Couldn't create tunnel", "Make sure the license is valid");
+    }
 
-            // Let's try reserve scheme
-            QVariantMap configObj;
-            long res = m_license->getServerConfig(configObj, true);
-
-            if (res == 1) {
-                res = m_tunnelSrv->connect(configObj);
-            }
-
-            if (res != 1) {
-                emit errorRaised("Couldn't create tunnel", "Make sure the license is valid");
-            }
-
-            auto future = QtConcurrent::run(&QTunnel::waitForfinishConnecting, this);
-            delete watcher;
-            QFutureWatcher<void>* watcher2 = new QFutureWatcher<void>();
-            watcher2->setFuture(future);
-            QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, watcher2]() {
-                if (m_isConnected) {
-                    emit connected();
-                } else {
-                    emit errorRaised("Server is not available!", "Please try again");
-                }
-                delete watcher2;
-
-            });
-        }
-
-        delete watcher;
-    });
-
+    return;
 }
 

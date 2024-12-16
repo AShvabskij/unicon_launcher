@@ -28,8 +28,6 @@ struct Node
 
     QString ipAddress;
     QString ipNum;
-    QString ipSubnetMain;
-    QString ipSubnetReserve;
 
     QString ipPath;
 
@@ -91,9 +89,11 @@ protected:
 private:
     bool checkConnection(QString address);
     void th_nodeUpdate(QPromise<void> &promise, int iIndex);
+    void waitForThreads(int millisecondsToWait);
 
     QList<Node> m_nodes;
     bool m_IsDestroyed = false;
+
 
 };
 

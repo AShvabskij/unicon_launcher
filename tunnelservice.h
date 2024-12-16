@@ -21,6 +21,8 @@ public:
     long checkConnection();
     long closeConnection();
     void finish();
+    bool isConnected();
+    QString getSubnet();
 
 private:
     long createConfigFile(const QVariantMap &configObj);
@@ -29,7 +31,8 @@ private:
     QProcess* m_proc = nullptr;
     QString m_configFile = "";
     QString m_serverIP = "";
-
+    QString m_subnet = "";
+    bool m_isConnected = false;
 
 };
 

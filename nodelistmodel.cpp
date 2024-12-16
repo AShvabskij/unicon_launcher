@@ -1,21 +1,33 @@
 #include "nodelistmodel.h"
 #include "licenseservice.h"
+#include "tunnelservice.h"
+
 #include <qtcpsocket.h>
 
 
 NodeListModel::NodeListModel(QObject *parent)
     : QAbstractListModel(parent) {
 
-
+    m_licenseSrv = LicenseService::instance();
+    m_tunnelSrv = TunnelService::instance();
 }
 
 NodeListModel::~NodeListModel()
 {
-    for (auto* watcher: m_watcherList) {
-        watcher->cancel();
-        watcher->deleteLater();
+    waitForThreads(5000);
+}
+
+void NodeListModel::waitForThreads(int millisecondsToWait)
+{
+    if (m_watcherList.empty()) return;
+
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+
+    while (QTime::currentTime() < dieTime) {
+        if (m_watcherList.empty()) {
+            break;
+        }
     }
-    m_watcherList.clear();
 }
 
 void NodeListModel::clear()
@@ -42,10 +54,8 @@ void NodeListModel::init()
     clear();
     endResetModel();
 
-    LicenseService license;
-
     QVariantList nodes;
-    long ret = license.getNodes(nodes);
+    long ret = m_licenseSrv->getNodes(nodes);
     if (ret != 1 ) {
         emit errorRaised("NO LICENSE FOUND", "Please request license before starting remote support");
         return;
@@ -58,28 +68,16 @@ void NodeListModel::init()
     }
 
     QVariantMap conf;
-    ret = license.getServerConfig(conf, false);
+    ret = m_licenseSrv->getServerConfig(conf, false);
 
     if (ret != 1) {
         emit errorRaised("LICENSE ERROR", "Please request valid license before starting remote support");
         return;
     }
-
-    QString subnetMain = conf.value("Subnet").toString().trimmed();
-
-    ret = license.getServerConfig(conf, true);
-
-    if (ret != 1) {
-        emit errorRaised("LICENSE ERROR", "Please request valid license before starting remote support");
-        return;
-    }
-
-    QString subnetReserve = conf.value("Subnet").toString().trimmed();
 
     for (QVariant nodeObj: nodes) {
 
         QVariantMap nodeMap = nodeObj.toMap();
-
         Node node;
         node.name = nodeMap.value("name").toString();
         node.region = nodeMap.value("region").toString();
@@ -87,8 +85,6 @@ void NodeListModel::init()
         node.owner = nodeMap.value("owner").toString();
         node.ipNum = nodeMap.value("ipNum").toString();
         node.ipPath = nodeMap.value("ipPath", "").toString();
-        node.ipSubnetMain = subnetMain;
-        node.ipSubnetReserve = subnetReserve;
 
         node.activated = false;
 
@@ -105,19 +101,15 @@ void NodeListModel::th_nodeUpdate(QPromise<void>& promise, int iIndex)
 
     Node& node = m_nodes[iIndex];
 
-    node.ipAddress = node.ipSubnetMain + "." + node.ipNum;
     node.activated = checkConnection(node.ipAddress);
-
-    if (!node.activated) {
-        node.ipAddress = node.ipSubnetReserve + "." + node.ipNum;
-        node.activated = checkConnection(node.ipAddress);
-    }
 
     promise.finish();
 }
 
 void NodeListModel::update()
 {
+    waitForThreads(5000);
+
     QList<Node> fakeNodes;
     QString dtFormat = "yyyy-MM-dd hh:mm";
     Node n1;
@@ -166,6 +158,8 @@ void NodeListModel::update()
 
     m_IsDestroyed = false;
 
+    QString subnet = m_tunnelSrv->getSubnet();
+
     int iIndex = 0;
     for (Node& node: m_nodes) {
         Node fakeNode = fakeNodes.value(iIndex, Node());
@@ -175,12 +169,17 @@ void NodeListModel::update()
         node.totalWorkTime = fakeNode.totalWorkTime;
         node.totalStartNumber = fakeNode.totalStartNumber;
         node.status = fakeNode.status;
+        node.ipAddress = subnet + "." + node.ipNum;
         node.activated = false;
 
         auto future = QtConcurrent::run(&NodeListModel::th_nodeUpdate, this, iIndex);
+        iIndex++;
 
         QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
-        QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex]() {
+        watcher->setFuture(future);
+        m_watcherList.append(watcher);
+
+        QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex, watcher]() {
 //          qDebug() << "Thread finished for index = " << iIndex;
 
             if (m_IsDestroyed) return;
@@ -191,20 +190,16 @@ void NodeListModel::update()
             QModelIndex mLastIndex = this->index(iIndex);
             emit dataChanged(mFirstIndex, mLastIndex, roles);
 
+            m_watcherList.removeAll(watcher);
+            delete watcher;
         });
-
-        watcher->setFuture(future);
-        m_watcherList.append(watcher);
-
-        iIndex++;
     }
 
     QList<int> roles;
-    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole << IPAddressRole;
     QModelIndex mFirstIndex = this->index(0);
     QModelIndex mLastIndex = this->index(m_nodes.count() - 1);
     emit dataChanged(mFirstIndex, mLastIndex, roles);
-
 }
 
 bool NodeListModel::checkConnection(QString address)

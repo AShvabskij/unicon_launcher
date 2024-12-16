@@ -135,7 +135,8 @@ long TunnelService::connect(const QVariantMap &configObj)
         return 0;
     }
 
-    m_serverIP = configObj["ServerIP"].toString();
+    m_serverIP = configObj["ServerIP"].toString().trimmed();
+    m_subnet = configObj["Subnet"].toString().trimmed();
 
     QProcess proc;
 
@@ -173,14 +174,18 @@ long TunnelService::checkConnection()
     QHostAddress mainVpnHost(m_serverIP);
 
     tcpSocket.connectToHost(mainVpnHost, 22);
-    if (tcpSocket.waitForConnected(3000)) {
+
+    if (tcpSocket.waitForConnected(1000)) {
+        m_isConnected = true;
         return 1;
     } else {
         tcpSocket.connectToHost(mainVpnHost, 22);
-        if (tcpSocket.waitForConnected(3000)) {
+        if (tcpSocket.waitForConnected(5000)) {
+            m_isConnected = true;
             return 1;
         } else {
             qWarning() << "Server is not available!";
+            m_isConnected = false;
             return 0;
         }
     }
@@ -214,4 +219,14 @@ void TunnelService::finish()
 {
     QFile file (m_configFile);
     file.remove();
+}
+
+bool TunnelService::isConnected()
+{
+    return m_isConnected;
+}
+
+QString TunnelService::getSubnet()
+{
+    return m_subnet;
 }
