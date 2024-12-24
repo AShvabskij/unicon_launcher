@@ -157,7 +157,6 @@ void NodeListModel::update()
     fakeNodes << n4;
 
     m_IsDestroyed = false;
-    m_addresses.clear();
 
     QString subnet = m_tunnelSrv->getSubnet();
 
