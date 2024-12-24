@@ -7,11 +7,16 @@
 
 LocalModel::LocalModel() {}
 
+LocalModel::~LocalModel()
+{
+    m_future.waitForFinished();
+}
+
 void LocalModel::scanIP()
 {
-    future = QtConcurrent::run(&LocalModel::th_scanIP, this);
+    m_future = QtConcurrent::run(&LocalModel::th_scanIP, this);
 
-    QObject::connect(&watcher, &QFutureWatcher<void>::finished, [this]() {
+    QObject::connect(&m_watcher, &QFutureWatcher<void>::finished, [this]() {
         qDebug() << "Asynchronous scan IP finished!";
         if (m_listIP.count() == 0) {
             QString errMsg = "No devices are connected!";
@@ -23,7 +28,7 @@ void LocalModel::scanIP()
         }
     });
 
-    watcher.setFuture(future);
+    m_watcher.setFuture(m_future);
 }
 
 QTextStream& qStdOut()

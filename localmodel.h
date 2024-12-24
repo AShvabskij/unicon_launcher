@@ -10,6 +10,7 @@ class LocalModel : public QObject
     Q_OBJECT
 public:
     LocalModel();
+    ~LocalModel();
     Q_INVOKABLE void scanIP();
     void th_scanIP(QPromise<void> &promise);
     Q_INVOKABLE QString getURL();
@@ -23,8 +24,8 @@ private:
 
     QStringList m_listIP;
 
-    QFuture<void> future;
-    QFutureWatcher<void> watcher;
+    QFuture<void> m_future;
+    QFutureWatcher<void> m_watcher;
 
 };
 
