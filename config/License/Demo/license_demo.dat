@@ -1,17 +1,29 @@
 {
     "config": {
-        "Address": "10.9.0.15/24",
-        "AllowedIPs": "10.9.0.0/24",
-        "Endpoint": "92.118.113.157:51820",
         "AppKey": "SE3EWFywLD4l4c/TihYpyNwb8fJoLUEq5LGofw4cF0w=",
-        "VPKey": "SE3EWFywLD4l4c/TihYpyNwb8fJoLUEq5LGofw4cF0w=",
         "Number": "#1509-SOLC",
-        "ServerKey": "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=",
-        "ServerIP": "10.9.0.1",
         "UserName": "User D.",
         "UserEmail": "user@solconigel.com",
         "UserPhone": "+49(111) 1111111",
         "Company": "Demo"
+    },
+    "server": {
+        "Address": "10.9.0.15/24",
+        "AllowedIPs": "10.9.0.0/24",
+        "Endpoint": "92.118.113.157:51820",
+        "VPKey": "SE3EWFywLD4l4c/TihYpyNwb8fJoLUEq5LGofw4cF0w=",
+        "ServerKey": "Fs5WF+c1G0Bh2x/ur33wmw33zY3Id9FR/mQQc7XaiSA=",
+        "ServerIP": "10.9.0.1",
+        "Subnet": "10.9.0"
+    },
+    "reserve": {
+        "Address": "10.8.0.15/24",
+        "AllowedIPs": "10.8.0.0/24",
+        "Endpoint": "165.22.198.121:51820",
+        "VPKey": "SE3EWFywLD4l4c/TihYpyNwb8fJoLUEq5LGofw4cF0w=",
+        "ServerKey": " g9Z69+9SCKnVy4iEiUWTEB5CM07E/5aVl8txYnQBkGc=",
+        "ServerIP": "10.8.0.1",
+        "Subnet": "10.8.0"
     },
     "nodes": [
         {
@@ -19,21 +31,24 @@
             "region": "USA",
             "owner": "Solcon Industries",
             "address": "",
-            "ipAddress": "10.9.0.16"
+            "ipAddress": "10.9.0.16",
+            "ipNum": "16"
         },
         {
             "name": "Starter 1",
             "region": "Dortmund",
             "owner": "SI-GROUP",
             "address": "Hauert 12, 44227 Dortmund Germany",
-            "ipAddress": "10.9.0.22"
+            "ipAddress": "10.9.0.22",
+            "ipNum": "22"
         },
         {
             "name": "R&D Lab",
             "region": "Konig",
             "owner": "SI-GROUP",
             "address": "Pravaia Naberejnaya 21",
-            "ipAddress": "10.9.0.7"
+            "ipAddress": "10.9.0.7",
+            "ipNum": "07"
         },
         {
             "name": "Demo-mode",
@@ -41,6 +56,7 @@
             "owner": "",
             "address": "",
             "ipAddress": "10.9.0.7",
+            "ipNum": "07",
             "ipPath": "demo"
         }
     ]

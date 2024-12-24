@@ -17,6 +17,8 @@ public:
 
     long getConfig(QVariantMap &retDat);
     bool checkConfig(const QVariantMap &dat);
+    long getServerConfig(QVariantMap& retDat, bool useReserveConfig = false);
+    bool checkServerConfig(const QVariantMap &dat);
     long getNodes(QVariantList &retDat);
     long saveFile(QString licFilePath);
     long saveKey(const QString &key);
@@ -24,7 +26,8 @@ public:
     long deleteKey();
 
 private:
-    long saveObj(const QString fileName, const QJsonObject &obj, bool useBinaryFormat);
+    long load(QJsonObject& retObj);
+    long save(const QString fileName, const QJsonObject &obj, bool useBinaryFormat);
     long replaceFile(const QString &sourceFilePath, const QString &destinationFilePath);
     QString removeFilePrefix(const QString &filePath);
 };

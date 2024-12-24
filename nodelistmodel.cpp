@@ -1,21 +1,33 @@
 #include "nodelistmodel.h"
 #include "licenseservice.h"
+#include "tunnelservice.h"
+
 #include <qtcpsocket.h>
 
 
 NodeListModel::NodeListModel(QObject *parent)
     : QAbstractListModel(parent) {
 
-
+    m_licenseSrv = LicenseService::instance();
+    m_tunnelSrv = TunnelService::instance();
 }
 
 NodeListModel::~NodeListModel()
 {
-    for (auto* watcher: m_watcherList) {
-        watcher->cancel();
-        watcher->deleteLater();
+    waitForThreads(5000);
+}
+
+void NodeListModel::waitForThreads(int millisecondsToWait)
+{
+    if (m_watcherList.empty()) return;
+
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+
+    while (QTime::currentTime() < dieTime) {
+        if (m_watcherList.empty()) {
+            break;
+        }
     }
-    m_watcherList.clear();
 }
 
 void NodeListModel::clear()
@@ -42,10 +54,8 @@ void NodeListModel::init()
     clear();
     endResetModel();
 
-    LicenseService license;
-
     QVariantList nodes;
-    long ret = license.getNodes(nodes);
+    long ret = m_licenseSrv->getNodes(nodes);
     if (ret != 1 ) {
         emit errorRaised("NO LICENSE FOUND", "Please request license before starting remote support");
         return;
@@ -57,16 +67,23 @@ void NodeListModel::init()
         return;
     }
 
+    QVariantMap conf;
+    ret = m_licenseSrv->getServerConfig(conf, false);
+
+    if (ret != 1) {
+        emit errorRaised("LICENSE ERROR", "Please request valid license before starting remote support");
+        return;
+    }
+
     for (QVariant nodeObj: nodes) {
 
         QVariantMap nodeMap = nodeObj.toMap();
-
         Node node;
         node.name = nodeMap.value("name").toString();
         node.region = nodeMap.value("region").toString();
         node.address = nodeMap.value("address").toString();
         node.owner = nodeMap.value("owner").toString();
-        node.ipAddress = nodeMap.value("ipAddress").toString();
+        node.ipNum = nodeMap.value("ipNum").toString();
         node.ipPath = nodeMap.value("ipPath", "").toString();
 
         node.activated = false;
@@ -83,6 +100,7 @@ void NodeListModel::th_nodeUpdate(QPromise<void>& promise, int iIndex)
     }
 
     Node& node = m_nodes[iIndex];
+
     node.activated = checkConnection(node.ipAddress);
 
     promise.finish();
@@ -90,6 +108,8 @@ void NodeListModel::th_nodeUpdate(QPromise<void>& promise, int iIndex)
 
 void NodeListModel::update()
 {
+    waitForThreads(5000);
+
     QList<Node> fakeNodes;
     QString dtFormat = "yyyy-MM-dd hh:mm";
     Node n1;
@@ -109,7 +129,7 @@ void NodeListModel::update()
     n2.totalWorkTime = 400;
     n2.currStartNumber = 7;
     n2.totalStartNumber = 1000;
-    n2.status = NodeStatus::Normal;
+    n2.status = NodeStatus::ServiceRequired;
     n2.activated = true;
 
     fakeNodes << n2;
@@ -120,7 +140,7 @@ void NodeListModel::update()
     n3.totalWorkTime = 500;
     n3.currStartNumber = 10;
     n3.totalStartNumber = 1000;
-    n3.status = NodeStatus::ServiceRequired;
+    n3.status = NodeStatus::Normal;
     n3.activated = true;
 
     fakeNodes << n3;
@@ -137,6 +157,9 @@ void NodeListModel::update()
     fakeNodes << n4;
 
     m_IsDestroyed = false;
+    m_addresses.clear();
+
+    QString subnet = m_tunnelSrv->getSubnet();
 
     int iIndex = 0;
     for (Node& node: m_nodes) {
@@ -147,45 +170,94 @@ void NodeListModel::update()
         node.totalWorkTime = fakeNode.totalWorkTime;
         node.totalStartNumber = fakeNode.totalStartNumber;
         node.status = fakeNode.status;
+        node.ipAddress = subnet + "." + node.ipNum;
         node.activated = false;
 
-        auto future = QtConcurrent::run(&NodeListModel::th_nodeUpdate, this, iIndex);
+        QTimer::singleShot(100, [this, iIndex]() {
+            auto future = QtConcurrent::run(&NodeListModel::th_nodeUpdate, this, iIndex);
 
-        QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
-        QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex]() {
-//          qDebug() << "Thread finished for index = " << iIndex;
+            QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
+            watcher->setFuture(future);
+            m_watcherList.append(watcher);
 
-            if (m_IsDestroyed) return;
+            QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex, watcher]() {
+                //          qDebug() << "Thread finished for index = " << iIndex;
 
-            QList<int> roles;
-            roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
-            QModelIndex mFirstIndex = this->index(iIndex);
-            QModelIndex mLastIndex = this->index(iIndex);
-            emit dataChanged(mFirstIndex, mLastIndex, roles);
+                if (m_IsDestroyed) return;
+
+                QList<int> roles;
+                roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+                QModelIndex mFirstIndex = this->index(iIndex);
+                QModelIndex mLastIndex = this->index(iIndex);
+                emit dataChanged(mFirstIndex, mLastIndex, roles);
+
+                m_watcherList.removeAll(watcher);
+                delete watcher;
+            });
 
         });
-
-        watcher->setFuture(future);
-        m_watcherList.append(watcher);
 
         iIndex++;
     }
 
     QList<int> roles;
-    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole << IPAddressRole;
     QModelIndex mFirstIndex = this->index(0);
     QModelIndex mLastIndex = this->index(m_nodes.count() - 1);
     emit dataChanged(mFirstIndex, mLastIndex, roles);
-
 }
+
+// void NodeListModel::th_update(QPromise<void>& promise,  QList<Node> fakeNodes)
+// {
+//     if (m_IsDestroyed) {
+//         promise.finish();
+//         return;
+//     }
+
+//     QString subnet = m_tunnelSrv->getSubnet();
+
+//     int iIndex = 0;
+//     for (Node& node: m_nodes) {
+//         if (node.activated) {
+//             continue;
+//         }
+
+//         Node fakeNode = fakeNodes.value(iIndex, Node());
+//         node.lastAccessTime = fakeNode.lastAccessTime;
+//         node.currWorkTime = fakeNode.currWorkTime;
+//         node.currStartNumber = fakeNode.currStartNumber;
+//         node.totalWorkTime = fakeNode.totalWorkTime;
+//         node.totalStartNumber = fakeNode.totalStartNumber;
+//         node.status = fakeNode.status;
+//         node.ipAddress = subnet + "." + node.ipNum;
+
+//         node.activated = checkConnection(node.ipAddress, 4000);
+
+//         QList<int> roles;
+//         roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+//         QModelIndex mFirstIndex = this->index(iIndex);
+//         QModelIndex mLastIndex = this->index(iIndex);
+
+//         emit dataChanged(mFirstIndex, mLastIndex, roles);
+//         iIndex++;
+//     }
+
+//     promise.finish();
+// }
 
 bool NodeListModel::checkConnection(QString address)
 {
     QTcpSocket tcpSocket;
     QHostAddress host(address);
     tcpSocket.connectToHost(host, 22);
-    if (tcpSocket.waitForConnected(4000)) {
+    if (tcpSocket.waitForConnected(1000)) {
+        tcpSocket.disconnectFromHost();
         return true;
+    } else {
+        if (tcpSocket.waitForConnected(4000)) {
+            tcpSocket.disconnectFromHost();
+            return true;
+        }
     }
 
     return false;

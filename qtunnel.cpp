@@ -9,6 +9,9 @@
 #include <QJsonObject>
 #include <QTcpSocket>
 #include <QTimer>
+#include <QPromise>
+#include <QtConcurrent/QtConcurrent>
+
 
 QTunnel::QTunnel(QObject *parent) : QObject(parent)
 {
@@ -18,46 +21,88 @@ QTunnel::QTunnel(QObject *parent) : QObject(parent)
 
 QTunnel::~QTunnel()
 {
+    waitForThreads(5000);
     m_tunnelSrv->closeConnection();
+}
+
+void QTunnel::waitForThreads(int millisecondsToWait)
+{
+    if (!m_watcher) return;
+
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+
+    while (QTime::currentTime() < dieTime) {
+        if (m_watcher->isFinished()) {
+            break;
+        }
+    }
+
+    delete m_watcher;
+    m_watcher = nullptr;
+}
+
+long QTunnel::connectTo(QVariantMap configObj)
+{
+    m_isConnected = false;
+    long res = m_tunnelSrv->connect(configObj);
+
+    if (res != 1) {
+        return res;
+    }
+
+    waitForFinishConnecting();
+
+    return m_isConnected ? 1 : 0;
 }
 
 void QTunnel::connect()
 {
-    if (m_isConnected == true) {
-        onFinishConnecting();
-        return;
-    }
+    waitForThreads(5000);
 
-    // get conf file from license file
-    QVariantMap configObj;
-    long res = m_license->getConfig(configObj);
+    Q_ASSERT(m_watcher == nullptr);
 
-    if (res != 1) {
-        emit errorRaised("Couldn't create configuration", "Make sure the license file is valid");
-    }
+    auto future = QtConcurrent::run(&QTunnel::th_connect, this);
 
-    res = m_tunnelSrv->connect(configObj);
+    m_watcher = new QFutureWatcher<void>();
 
-    if (res != 1) {
-        emit errorRaised("Couldn't create tunnel", "Make sure the license file is valid");
-    }
-
-    QTimer::singleShot(1000, this, SLOT(onFinishConnecting()));
+    m_watcher->setFuture(future);
 }
 
-void QTunnel::onFinishConnecting()
+void QTunnel::waitForFinishConnecting()
 {
     long res = m_tunnelSrv->checkConnection();
 
     if (res == 1) {
-        emit connected();
         m_isConnected = true;
     } else {
-        emit errorRaised("Server is not available!", "Please try again");
         m_tunnelSrv->closeConnection();
         m_isConnected = false;
     }
 
     m_tunnelSrv->finish();
+}
+
+void QTunnel::th_connect()
+{
+    QVariantMap configObj;
+    long res = m_license->getServerConfig(configObj, false);
+    if (res == 1) {
+        res = connectTo(configObj);
+    }
+
+    if (res != 1) {
+        QVariantMap reserveConfigObj;
+        res = m_license->getServerConfig(reserveConfigObj, true); // reserve scheme
+        Q_ASSERT(res == 1);
+        res = connectTo(configObj);
+    }
+
+    if (res == 1 && m_isConnected) {
+        emit connected();
+    } else {
+        emit errorRaised("Couldn't create tunnel", "Please try again");
+    }
+
+    return;
 }
 

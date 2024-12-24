@@ -4,7 +4,9 @@
 #include "licenseservice.h"
 #include "tunnelservice.h"
 
+#include <QFutureWatcher>
 #include <QObject>
+#include <QPromise>
 
 class QTunnel : public QObject
 {
@@ -20,13 +22,19 @@ signals:
     void errorRaised(QString errorTxt, QString informativeError);
 
 private slots:
-    void onFinishConnecting();
+    void waitForFinishConnecting();
+    void th_connect();
 
 private:
+    long connectTo(QVariantMap configObj);
+    void waitForThreads(int millisecondsToWait);
+
     TunnelService* m_tunnelSrv;
     LicenseService* m_license;
 
     bool m_isConnected = false;
+
+    QFutureWatcher<void>* m_watcher = nullptr;
 };
 
 #endif // QTUNNEL_H

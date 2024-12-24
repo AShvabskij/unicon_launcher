@@ -8,6 +8,9 @@
 #include <QPromise>
 #include <QtConcurrent/QtConcurrent>
 
+class LicenseService;
+class TunnelService;
+
 enum NodeStatus {
     Normal = 0,
     ServiceRequired
@@ -25,7 +28,10 @@ struct Node
     int currStartNumber = 0;
     int totalStartNumber = 0;
     NodeStatus status;
+
     QString ipAddress;
+    QString ipNum;
+
     QString ipPath;
 
     bool activated = false;
@@ -85,11 +91,15 @@ protected:
 
 private:
     bool checkConnection(QString address);
+//  void th_update(QPromise<void> &promise, QList<Node> fakeNodes);
     void th_nodeUpdate(QPromise<void> &promise, int iIndex);
+    void waitForThreads(int millisecondsToWait);
 
     QList<Node> m_nodes;
     bool m_IsDestroyed = false;
 
+    LicenseService* m_licenseSrv;
+    TunnelService* m_tunnelSrv;
 };
 
 #endif // NODELISTMODEL_H
