@@ -129,7 +129,7 @@ void NodeListModel::update()
     n2.totalWorkTime = 400;
     n2.currStartNumber = 7;
     n2.totalStartNumber = 1000;
-    n2.status = NodeStatus::Normal;
+    n2.status = NodeStatus::ServiceRequired;
     n2.activated = true;
 
     fakeNodes << n2;
@@ -140,7 +140,7 @@ void NodeListModel::update()
     n3.totalWorkTime = 500;
     n3.currStartNumber = 10;
     n3.totalStartNumber = 1000;
-    n3.status = NodeStatus::ServiceRequired;
+    n3.status = NodeStatus::Normal;
     n3.activated = true;
 
     fakeNodes << n3;
@@ -157,6 +157,7 @@ void NodeListModel::update()
     fakeNodes << n4;
 
     m_IsDestroyed = false;
+    m_addresses.clear();
 
     QString subnet = m_tunnelSrv->getSubnet();
 
@@ -172,27 +173,31 @@ void NodeListModel::update()
         node.ipAddress = subnet + "." + node.ipNum;
         node.activated = false;
 
-        auto future = QtConcurrent::run(&NodeListModel::th_nodeUpdate, this, iIndex);
-        iIndex++;
+        QTimer::singleShot(100, [this, iIndex]() {
+            auto future = QtConcurrent::run(&NodeListModel::th_nodeUpdate, this, iIndex);
 
-        QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
-        watcher->setFuture(future);
-        m_watcherList.append(watcher);
+            QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
+            watcher->setFuture(future);
+            m_watcherList.append(watcher);
 
-        QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex, watcher]() {
-//          qDebug() << "Thread finished for index = " << iIndex;
+            QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex, watcher]() {
+                //          qDebug() << "Thread finished for index = " << iIndex;
 
-            if (m_IsDestroyed) return;
+                if (m_IsDestroyed) return;
 
-            QList<int> roles;
-            roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
-            QModelIndex mFirstIndex = this->index(iIndex);
-            QModelIndex mLastIndex = this->index(iIndex);
-            emit dataChanged(mFirstIndex, mLastIndex, roles);
+                QList<int> roles;
+                roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+                QModelIndex mFirstIndex = this->index(iIndex);
+                QModelIndex mLastIndex = this->index(iIndex);
+                emit dataChanged(mFirstIndex, mLastIndex, roles);
 
-            m_watcherList.removeAll(watcher);
-            delete watcher;
+                m_watcherList.removeAll(watcher);
+                delete watcher;
+            });
+
         });
+
+        iIndex++;
     }
 
     QList<int> roles;
@@ -202,13 +207,57 @@ void NodeListModel::update()
     emit dataChanged(mFirstIndex, mLastIndex, roles);
 }
 
+// void NodeListModel::th_update(QPromise<void>& promise,  QList<Node> fakeNodes)
+// {
+//     if (m_IsDestroyed) {
+//         promise.finish();
+//         return;
+//     }
+
+//     QString subnet = m_tunnelSrv->getSubnet();
+
+//     int iIndex = 0;
+//     for (Node& node: m_nodes) {
+//         if (node.activated) {
+//             continue;
+//         }
+
+//         Node fakeNode = fakeNodes.value(iIndex, Node());
+//         node.lastAccessTime = fakeNode.lastAccessTime;
+//         node.currWorkTime = fakeNode.currWorkTime;
+//         node.currStartNumber = fakeNode.currStartNumber;
+//         node.totalWorkTime = fakeNode.totalWorkTime;
+//         node.totalStartNumber = fakeNode.totalStartNumber;
+//         node.status = fakeNode.status;
+//         node.ipAddress = subnet + "." + node.ipNum;
+
+//         node.activated = checkConnection(node.ipAddress, 4000);
+
+//         QList<int> roles;
+//         roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole;
+//         QModelIndex mFirstIndex = this->index(iIndex);
+//         QModelIndex mLastIndex = this->index(iIndex);
+
+//         emit dataChanged(mFirstIndex, mLastIndex, roles);
+//         iIndex++;
+//     }
+
+//     promise.finish();
+// }
+
 bool NodeListModel::checkConnection(QString address)
 {
     QTcpSocket tcpSocket;
     QHostAddress host(address);
     tcpSocket.connectToHost(host, 22);
-    if (tcpSocket.waitForConnected(4000)) {
+    if (tcpSocket.waitForConnected(1000)) {
+        tcpSocket.disconnectFromHost();
         return true;
+    } else {
+        if (tcpSocket.waitForConnected(4000)) {
+            tcpSocket.disconnectFromHost();
+            return true;
+        }
     }
 
     return false;

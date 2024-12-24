@@ -91,6 +91,7 @@ protected:
 
 private:
     bool checkConnection(QString address);
+//  void th_update(QPromise<void> &promise, QList<Node> fakeNodes);
     void th_nodeUpdate(QPromise<void> &promise, int iIndex);
     void waitForThreads(int millisecondsToWait);
 
@@ -99,7 +100,6 @@ private:
 
     LicenseService* m_licenseSrv;
     TunnelService* m_tunnelSrv;
-
 };
 
 #endif // NODELISTMODEL_H

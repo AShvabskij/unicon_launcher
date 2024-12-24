@@ -100,7 +100,7 @@ void QTunnel::th_connect()
     if (res == 1 && m_isConnected) {
         emit connected();
     } else {
-        emit errorRaised("Couldn't create tunnel", "Make sure the license is valid");
+        emit errorRaised("Couldn't create tunnel", "Please try again");
     }
 
     return;
