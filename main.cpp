@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QQuickStyle>
 
 #include "qtunnel.h"
 #include "nodelistmodel.h"
@@ -44,6 +45,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<EquipmentListModel>("qmlmodels", 1, 0,"EquipmentListModel");
     qRegisterMetaType<EquipmentListModel::Equipment>("Equipment");
 
+    QQuickStyle::setStyle("Basic");
     QQmlApplicationEngine engine;
     QObject::connect(
         &engine,
@@ -80,7 +82,12 @@ int main(int argc, char *argv[])
     std::cout.rdbuf(logFile.rdbuf()); // Redirect to file buffer
     std::cerr.rdbuf(logFile.rdbuf()); // Redirect to file buffer
 
-    qtLogFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    if (QFileInfo(qtLogFile.fileName()).lastModified().date() != QDateTime::currentDateTime().date()) {
+        qtLogFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    } else {
+        qtLogFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    }
+
     if (!qtLogFile.isOpen()) {
         std::cerr << "Error opening log file!" << std::endl;
         return 1;

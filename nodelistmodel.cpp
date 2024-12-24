@@ -176,9 +176,6 @@ void NodeListModel::update()
             auto future = QtConcurrent::run(&NodeListModel::th_nodeUpdate, this, iIndex);
 
             QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
-            watcher->setFuture(future);
-            m_watcherList.append(watcher);
-
             QObject::connect(watcher, &QFutureWatcher<void>::finished, [this, iIndex, watcher]() {
                 //          qDebug() << "Thread finished for index = " << iIndex;
 
@@ -194,6 +191,8 @@ void NodeListModel::update()
                 delete watcher;
             });
 
+            watcher->setFuture(future);
+            m_watcherList.append(watcher);
         });
 
         iIndex++;

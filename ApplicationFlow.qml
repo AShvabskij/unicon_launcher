@@ -218,7 +218,6 @@ ApplicationFlowForm {
                 refreshButton.visible: true
                 demoButton.visible: false
                 settingsButton.visible: false
-                about.visible: true
                 theme: Colors.currentTheme
                 visible: true
             }
