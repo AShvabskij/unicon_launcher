@@ -63,8 +63,8 @@ public:
         StatusRole,
         ActivatedRole,
         IPAddressRole,
-        IPPathRole
-
+        IPPathRole,
+        IPNumRole
     };
 
     NodeListModel(QObject *parent = nullptr);

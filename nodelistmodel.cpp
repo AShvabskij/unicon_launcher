@@ -199,7 +199,7 @@ void NodeListModel::update()
     }
 
     QList<int> roles;
-    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole << IPAddressRole;
+    roles << LastAccessTimeRole << WorkTimeRole << StartNumberRole << StatusRole << ActivatedRole << IPAddressRole << IPNumRole;
     QModelIndex mFirstIndex = this->index(0);
     QModelIndex mLastIndex = this->index(m_nodes.count() - 1);
     emit dataChanged(mFirstIndex, mLastIndex, roles);
@@ -301,6 +301,8 @@ QVariant NodeListModel::data(const QModelIndex & index, int role) const {
         return node.ipAddress;
     case IPPathRole:
         return node.ipPath;
+    case IPNumRole:
+        return node.ipNum;
     case ActivatedRole:
         return node.activated;
 
@@ -324,6 +326,7 @@ QHash<int, QByteArray> NodeListModel::roleNames() const {
     roles[StatusRole] = "status";
     roles[IPAddressRole] = "ipAddress";
     roles[IPPathRole] = "ipPath";
+    roles[IPNumRole] = "ipNum";
     roles[ActivatedRole] = "activated";
 
     return roles;

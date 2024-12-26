@@ -22,6 +22,7 @@ AbstractButton {
     required property string status
     required property string ipAddress
     required property string ipPath
+    required property string ipNum
 
     property bool isSmallLayout: false
     property string iconName: "node.svg"
@@ -42,12 +43,7 @@ AbstractButton {
             easing.type: Easing.InOutQuad
         }
     }
-/*
-    topPadding: 12
-    leftPadding: 12
-    bottomPadding: 0
-    rightPadding: 16
-*/
+
     contentItem: Rectangle {
         id: card
 
@@ -68,13 +64,6 @@ AbstractButton {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                 Layout.leftMargin: internal.columnMargin
                 Layout.rightMargin: internal.columnMargin
-/*
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.rightMargin: internal.columnMargin
-                anchors.leftMargin: internal.columnMargin
-*/
                 spacing: 16
 
                 Item {
@@ -157,12 +146,6 @@ AbstractButton {
                 Layout.leftMargin: internal.columnMargin
                 Layout.topMargin: 12
 
-                // anchors.left: parent.left
-                // anchors.right: parent.right
-                // anchors.top: propsColumn.bottom
-                // anchors.leftMargin: internal.columnMargin
-                // anchors.topMargin: 12
-
                 spacing: 12
 
                 Item {
@@ -186,7 +169,6 @@ AbstractButton {
                     }
                 }
 
-
                 Label {
                     text: status
                     visible: status != "" ? true : false
@@ -198,25 +180,27 @@ AbstractButton {
 
             }
         }
-}
-        QtObject {
-            id: internal
 
-            property int rightMargin: 60
-            property int leftPadding: 16
-            property int titleSpacing: 8
-            property int spacing: 4
-            property int columnMargin: 16
-            property int iconSize: 34
-            property int switchMargin: 9
+        CirculeNumberComp {
+            id: nodeNumber
+            number: ipNum
+            width: internal.iconSize
+            height: internal.iconSize
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.margins: 10
         }
-/*
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.scale = 0.9
-        }
-*/
+    }
 
+    QtObject {
+        id: internal
 
+        property int rightMargin: 60
+        property int leftPadding: 16
+        property int titleSpacing: 8
+        property int spacing: 4
+        property int columnMargin: 16
+        property int iconSize: 34
+        property int switchMargin: 9
+    }
 }
-

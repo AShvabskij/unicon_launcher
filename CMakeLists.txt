@@ -57,6 +57,7 @@ qt_add_qml_module(appunicon_launcher
         CustomRowSingleTextInput.qml
         CustomRowDblTextInput.qml
         CustomRowSingleText.qml
+        CirculeNumberComp.qml
 
     RESOURCES
         qtquickcontrols2.conf
