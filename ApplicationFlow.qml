@@ -32,14 +32,16 @@ ApplicationFlowForm {
     }
 
     function settingsButton() {
-        applicationFlow.previousState = applicationFlow.state
+        const prevState = applicationFlow.state
         applicationFlow.state = "Settings"
+        applicationFlow.previousState = prevState
         stack.push(settingsPage)
     }
 
     function aboutButton() {
-        applicationFlow.previousState = applicationFlow.state
+        const prevState = applicationFlow.state
         applicationFlow.state = "About"
+        applicationFlow.previousState = prevState
         stack.push(aboutPage)
     }
 
@@ -182,8 +184,8 @@ ApplicationFlowForm {
             PropertyChanges {
                 target: toolbar
                 themeButton.opacity: 0
-                // themeButton.enabled: true
-                settingsButton.visible: false
+                themeButton.enabled: true
+                settingsButton.visible: true
                 aboutButton.visible: true
                 refreshButton.visible: false
                 demoButton.visible: false
@@ -296,11 +298,6 @@ ApplicationFlowForm {
                 backButton.visible: true
                 theme: Colors.currentTheme
                 visible: true
-            }
-
-            PropertyChanges {
-                target: applicationFlow
-                previousState: "Remote"
             }
         },
         State {
